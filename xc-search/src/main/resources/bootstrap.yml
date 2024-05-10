@@ -22,6 +22,8 @@ spring:
             refresh: false
           - data-id: shared-xxljob.yaml # 共享xxljob配置
             refresh: false
+          - data-id: shared-feign.yaml # 共享feign配置
+            refresh: false
 xc:
   jdbc:
     database: xc_search
