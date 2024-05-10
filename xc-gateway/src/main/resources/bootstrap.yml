@@ -1,0 +1,83 @@
+server:
+  port: 10010  #端口
+  tomcat:
+    uri-encoding: UTF-8   #服务编码
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        shared-configs: # 共享配置
+          - data-id: shared-spring.yaml # 共享spring配置
+            refresh: false
+          - data-id: shared-redis.yaml # 共享redis配置
+            refresh: false
+          - data-id: shared-mybatis.yaml # 共享mybatis配置
+            refresh: false
+          - data-id: shared-logs.yaml # 共享日志配置
+            refresh: false
+          - data-id: shared-xxljob.yaml # 共享xxljob配置
+            refresh: false
+    gateway:
+      default-filters:
+        - StripPrefix=1
+      globalcors: # 全局的跨域处理
+        add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: # 允许哪些网站的跨域请求
+              - "*"
+            allowedMethods: # 允许的跨域ajax的请求方式
+              - "GET"
+              - "POST"
+              - "DELETE"
+              - "PUT"
+              - "OPTIONS"
+            allowedHeaders: "*" # 允许在请求中携带的头信息
+            allowCredentials: true # 是否允许携带cookie
+            maxAge: 360000 # 这次跨域检测的有效期
+      routes:
+        - id: fs
+          # uri后面指定消费者的服务id，lb代表从注册中心获取服务，lb是Load Balance的缩写
+          uri: lb://firmad-service
+          predicates:
+            # 匹配转发路径
+            - Path=/firmad/**
+        - id: log
+          uri: lb://log-service
+          predicates:
+            - Path=/log/**
+        - id: product-service
+          uri:
+            lb://product-service
+          predicates:
+            - Path=/product/**
+        - id: promotion-service
+          uri:
+            lb://promotion-service
+          predicates:
+            - Path=/promotion/**
+        - id: remark-service
+          uri:
+            lb://remark-service
+          predicates:
+            - Path=/remark/**
+        - id: search-service
+          uri:
+            lb://search-service
+          predicates:
+            - Path=/search/**
+        - id: trade-service
+          uri:
+            lb://trade-service
+          predicates:
+            - Path=/trade/**
+        - id: user-service
+          uri:
+            lb://user-service
+          predicates:
+            - Path=/user/**
