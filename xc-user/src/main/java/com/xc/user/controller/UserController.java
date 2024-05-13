@@ -22,7 +22,7 @@ import javax.validation.Valid;
  * @since 2024年05月11日
  */
 @RestController
-@RequestMapping("/userLogin")
+@RequestMapping("/user")
 @Api(tags = "用户")
 public class UserController {
 

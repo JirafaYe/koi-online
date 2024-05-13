@@ -23,6 +23,7 @@ import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
 import com.xc.user.utils.JwtTokenUtils;
 import com.xc.user.utils.MD5Utils;
+import com.xc.user.utils.RandomStringGenerator;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
@@ -168,6 +169,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         userBase.setAccount(account);
         userBase.setPassword(newPass);
         userBase.setSrcface(UserConstants.deSrcUrl);
+        userBase.setNickName(RandomStringGenerator.usingRandom(6));
         return this.save(userBase);
 
     }
