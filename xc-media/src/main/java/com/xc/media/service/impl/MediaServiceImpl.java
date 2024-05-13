@@ -49,7 +49,6 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         if(duration * 100 > 3000){
             throw new BizIllegalException("视频最多为30秒");
         }
-        UserContext.setUser(1L);
         String originalFilename = media.getOriginalFilename();
         String fileName = generateNewFileName(originalFilename);
         long size = media.getSize();
