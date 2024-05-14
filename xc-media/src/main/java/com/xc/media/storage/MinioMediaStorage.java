@@ -72,9 +72,7 @@ public class MinioMediaStorage implements IFileStorage {
         }
         try {
             List<DeleteObject> list = BeanUtils.copyList(files, DeleteObject.class);
-            minioClient.deleteObjectTags(DeleteObjectTagsArgs.builder().bucket(bucketName).object().build());
             minioClient.removeObjects(RemoveObjectsArgs.builder().bucket(bucketName).objects(list).build());
-            log.info("清理视频成功");
         }  catch (Exception e) {
             log.error("{}清理视频时发生异常：", LocalDateTime.now(), e);
             throw new CommonException("删除异常。", e);
