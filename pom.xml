@@ -50,6 +50,7 @@
         <redisson.version>3.13.6</redisson.version>
         <elasticsearch.version>7.12.1</elasticsearch.version>
         <xxl-job-version>2.3.1</xxl-job-version>
+        <minio.version>8.3.4</minio.version>
     </properties>
 
     <!-- 对依赖包进行管理 -->
@@ -113,6 +114,11 @@
                 <groupId>com.xuxueli</groupId>
                 <artifactId>xxl-job-core</artifactId>
                 <version>${xxl-job-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -3,6 +3,11 @@ server:
   tomcat:
     uri-encoding: UTF-8   #服务编码
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 1000MB
   profiles:
     active: dev
   application:
@@ -27,3 +32,10 @@ spring:
 xc:
   jdbc:
     database: xc_media
+  minio:
+    endpoint: http://47.108.192.109:9000
+    accessKey: minioadmin
+    secretKey: minioadmin
+    bucket:
+      files: files
+      media: media
