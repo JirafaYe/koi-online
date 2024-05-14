@@ -4,6 +4,7 @@ import com.xc.common.constants.Constant;
 import com.xc.common.domain.R;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.exceptions.DbException;
+import com.xc.common.exceptions.UnauthorizedException;
 import com.xc.common.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -75,6 +76,12 @@ public class CommonExceptionAdvice {
         return processResponse(500, 500, "服务器内部异常");
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public Object handleUnauthorizedException(UnauthorizedException e){
+        log.error("权限异常 , 状态码：{}, 异常原因：{}  ",e.getClass().getName(), e.getStatus(), e.getMessage());
+        return processResponse(e.getStatus(), e.getCode(), e.getMessage());
+    }
+
     private Object processResponse(int status, int code, String msg){
         // 1.标记响应异常已处理（避免重复处理）
         WebUtils.setResponseHeader(Constant.BODY_PROCESSED_MARK_HEADER, "true");
@@ -84,4 +91,6 @@ public class CommonExceptionAdvice {
                 R.error(code, msg)
                 : ResponseEntity.status(status).body(msg);
     }
+
+
 }

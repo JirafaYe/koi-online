@@ -55,6 +55,12 @@
             <artifactId>xc-api</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!--common-->
+        <dependency>
+            <groupId>com.xc</groupId>
+            <artifactId>xc-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!--config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -75,7 +81,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
-<!--        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
         <!--lombok依赖-->
         <dependency>
@@ -113,12 +118,7 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.45</version>
         </dependency>
-<!--        jwt工具-->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
+
 
 
     </dependencies>

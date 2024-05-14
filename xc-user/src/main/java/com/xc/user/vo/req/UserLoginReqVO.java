@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @ApiModel(description = "用户登录参数")
 public class UserLoginReqVO {
@@ -20,5 +22,6 @@ public class UserLoginReqVO {
     private String code;
 
     @ApiModelProperty("登录类型")
+    @NotNull(message = "类型不能为空")
     private Integer loginType;
 }

@@ -12,22 +12,24 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xc.common.constants.ErrorInfo;
+import com.xc.common.constants.JwtConstant;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.JwtTokenUtils;
 import com.xc.common.utils.UserContext;
 import com.xc.user.entity.UserBase;
 import com.xc.user.enums.UserConstants;
 import com.xc.user.mapper.UserBaseMapper;
 import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
-import com.xc.user.utils.JwtTokenUtils;
 import com.xc.user.utils.MD5Utils;
 import com.xc.user.utils.RandomStringGenerator;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
 import com.xc.user.vo.res.UserLoginResVO;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -59,18 +61,18 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
      */
     private static final Integer LOGIN_TYPE_PHONE = 2;
 
-    private static final  String PHONE_CODE = "code";
-
+    private static final  String PHONE_CODE_KEY = "code";
 
     @Resource
     private RedisTemplate redisTemplate;
     @Resource
     private UserBaseMapper userBaseMapper;
+
     @Override
-    public UserLoginResVO login(UserLoginReqVO vo) {
+    public UserLoginResVO login( UserLoginReqVO vo) {
 
         Integer type= vo.getLoginType();
-//        1.账号登录
+//        1.账号密码登录
         UserBase user = null;
         if(LOGIN_TYPE_USER.equals(type)){
             String account = vo.getAccount();
@@ -84,7 +86,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
                     .eq(UserBase::getPassword, newPw);
              user = userBaseMapper.selectOne(lqw);
             if(user == null){
-                throw new CommonException("用户不存在");
+                throw new CommonException(USER_NOT_EXISTS);
             }
 
         }else if (LOGIN_TYPE_PHONE.equals(type)){
@@ -94,27 +96,30 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
                 throw new CommonException("手机号不能为空");
             }
             //redis 中获取验证码
-            String o = (String)redisTemplate.opsForValue().get(PHONE_CODE);
+            String o = (String)redisTemplate.opsForValue().get(PHONE_CODE_KEY);
             if(!vo.getCode().equals(o)){
-                throw  new CommonException("验证码错误");
+                throw  new CommonException(INVALID_VERIFY_CODE);
             }
             LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>().eq(UserBase::getMobile, phone);
             user = userBaseMapper.selectOne(lqw);
             if(user == null){
-                throw new CommonException("用户不存在");
+                throw new CommonException(USER_NOT_EXISTS);
             }
         }
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put(JwtConstant.USER_ID,user.getUserId());
 //        2、登录成功，生成JWT返回
-        String token = JwtTokenUtils.createToken(user,1);
+        String token = JwtTokenUtils.createJWT(claims);
+
         UserLoginResVO resVO = new UserLoginResVO();
         BeanUtils.copyProperties(user,resVO);
         resVO.setToken(token);
         return resVO;
-
     }
 
       /**
      * 发送短信验证码
+       * TODO
      */
       @Override
     public void sendCode(String phone) {
@@ -146,7 +151,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
               e.printStackTrace();
           }
           //保存验证码(60s失效）
-          redisTemplate.opsForValue().set(PHONE_CODE,code,60, TimeUnit.SECONDS);
+          redisTemplate.opsForValue().set(PHONE_CODE_KEY,code,60, TimeUnit.SECONDS);
       }
 
     @Override
@@ -182,7 +187,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
             throw new CommonException(USER_NOT_EXISTS);
         }
         //校验验证码
-        if(!vo.getCode().equals(redisTemplate.opsForValue().get(PHONE_CODE))){
+        if(!vo.getCode().equals(redisTemplate.opsForValue().get(PHONE_CODE_KEY))){
             throw new CommonException(INVALID_VERIFY_CODE);
         }
        //更新新密码
@@ -193,6 +198,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         return false;
 
     }
+
 
 
 }

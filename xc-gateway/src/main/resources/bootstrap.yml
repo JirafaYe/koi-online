@@ -77,7 +77,13 @@ spring:
           predicates:
             - Path=/trade/**
         - id: user-service
-          uri:
-            lb://user-service
+          uri: lb://user-service
           predicates:
             - Path=/user/**
+
+xc:
+  auth:
+    excludePaths: # 无需登录校验的路径
+      - /user/login
+      - /user/register
+      - /user/**

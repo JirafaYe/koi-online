@@ -1,6 +1,8 @@
 package com.xc.user.controller;
 
 
+import com.xc.common.constants.JwtConstant;
+import com.xc.common.utils.UserContext;
 import com.xc.user.service.UserBaseService;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -51,6 +54,13 @@ public class UserController {
     @PostMapping("resetPwd")
     public boolean resetPwd(@RequestBody ResetPwdReqVO vo) {
       return userBaseService.resetPwd(vo);
+    }
+
+    @GetMapping("testGateWay")
+    public void testGateWay(){
+        Long user = UserContext.getUser();
+        System.out.println(user);
+//        String s = request.getHeader(JwtConstant.USER_ID);
     }
 }
 
