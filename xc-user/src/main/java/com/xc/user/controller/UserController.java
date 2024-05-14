@@ -56,11 +56,5 @@ public class UserController {
       return userBaseService.resetPwd(vo);
     }
 
-    @GetMapping("testGateWay")
-    public void testGateWay(){
-        Long user = UserContext.getUser();
-        System.out.println(user);
-//        String s = request.getHeader(JwtConstant.USER_ID);
-    }
 }
 
