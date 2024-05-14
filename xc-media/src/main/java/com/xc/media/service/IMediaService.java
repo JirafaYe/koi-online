@@ -29,4 +29,8 @@ public interface IMediaService extends IService<Media> {
     void deleteMediaById(Long id);
 
     void deleteMediaByIds(List<Long> ids);
+
+    List<String> queryAllUselessFile();
+
+    List<MediaDTO> getMediaInfos(List<Long> ids);
 }
