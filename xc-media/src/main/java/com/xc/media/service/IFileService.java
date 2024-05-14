@@ -29,4 +29,8 @@ public interface IFileService extends IService<File> {
     PageDTO<FileVO> queryFilePage(FileMediaQuery query);
 
     void deleteFileByIds(List<Long> ids);
+
+    List<String> queryAllUselessFile();
+
+    List<FileDTO> getFileInfos(List<Long> ids);
 }

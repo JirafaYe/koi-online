@@ -3,15 +3,18 @@ package com.xc.media.storage;
 
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.AssertUtils;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.RemoveObjectArgs;
+import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.CollUtils;
+import io.minio.*;
+import io.minio.messages.DeleteObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.xc.media.constants.FileConstants.Msg.*;
 
@@ -57,6 +60,23 @@ public class MinioMediaStorage implements IFileStorage {
             minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
         } catch (Exception e) {
             log.error("删除视频[{}]时发生异常：", fileName, e);
+            throw new CommonException("删除异常。", e);
+        }
+    }
+
+    @Override
+    public void deleteFiles(List<String> files) {
+        AssertUtils.isNotBlank(bucketName, BUCKET_NAME_IS_NULL);
+        if (CollUtils.isEmpty(files)){
+            return;
+        }
+        try {
+            List<DeleteObject> list = BeanUtils.copyList(files, DeleteObject.class);
+            minioClient.deleteObjectTags(DeleteObjectTagsArgs.builder().bucket(bucketName).object().build());
+            minioClient.removeObjects(RemoveObjectsArgs.builder().bucket(bucketName).objects(list).build());
+            log.info("清理视频成功");
+        }  catch (Exception e) {
+            log.error("{}清理视频时发生异常：", LocalDateTime.now(), e);
             throw new CommonException("删除异常。", e);
         }
     }

@@ -1,8 +1,11 @@
 package com.xc.media.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.enums.CommonStatus;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.exceptions.DbException;
 import com.xc.common.utils.BeanUtils;
@@ -24,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.xc.media.constants.FileConstants.Msg.FILE_UPLOAD_ERROR;
 
@@ -101,6 +106,27 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     @Override
     public void deleteFileByIds(List<Long> ids) {
         removeByIds(ids);
+    }
+
+    @Override
+    public List<String> queryAllUselessFile() {
+        LocalDateTime time = LocalDateTime.now().minusDays(7L);
+        List<File> list = baseMapper.queryUselessFile(time);
+        if(CollUtils.isEmpty(list)){
+            return CollUtils.emptyList();
+        }
+        List<Long> ids = list.stream().map(File::getId).collect(Collectors.toList());
+        baseMapper.deleteUselessFile(ids);
+        return list.stream().map(File::getKey).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FileDTO> getFileInfos(List<Long> ids) {
+        if (CollUtils.isEmpty(ids)){
+            return CollUtils.emptyList();
+        }
+        List<File> files = baseMapper.selectBatchIds(ids);
+        return CollUtils.isEmpty(files) ? CollUtils.emptyList() : BeanUtils.copyList(files, FileDTO.class);
     }
 
     private String generateNewFileName(String originalFilename) {
