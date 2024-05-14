@@ -2,6 +2,7 @@ package com.xc.media.controller;
 
 
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.media.domain.dto.FileDTO;
 import com.xc.media.domain.dto.MediaDTO;
 import com.xc.media.domain.query.FileMediaQuery;
 import com.xc.media.domain.vo.MediaVO;
@@ -72,5 +73,15 @@ public class MediaController {
     @DeleteMapping
     public void deleteMediaByIds(@RequestParam("ids") List<Long> ids){
         mediaService.deleteMediaByIds(ids);
+    }
+
+    /**
+     * 暴露给其他服务调用，用于返回视频的信息
+     * @param ids
+     * @return
+     */
+    @GetMapping("/ids")
+    public List<MediaDTO> getFileInfos(List<Long> ids) {
+        return mediaService.getMediaInfos(ids);
     }
 }

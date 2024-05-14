@@ -1,16 +1,18 @@
 package com.xc.media.service.impl;
 
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.enums.CommonStatus;
 import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.exceptions.DbException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.StringUtils;
-import com.xc.common.utils.UserContext;
 import com.xc.media.domain.dto.MediaDTO;
+import com.xc.media.domain.po.File;
 import com.xc.media.domain.po.Media;
 import com.xc.media.domain.query.FileMediaQuery;
 import com.xc.media.domain.vo.MediaVO;
@@ -25,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.xc.media.constants.FileConstants.Msg.MEDIA_UPLOAD_ERROR;
 
@@ -108,6 +112,27 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
     @Override
     public void deleteMediaByIds(List<Long> ids) {
         removeByIds(ids);
+    }
+
+    @Override
+    public List<String> queryAllUselessFile() {
+        LocalDateTime time = LocalDateTime.now().minusDays(7L);
+        List<Media> list = baseMapper.queryUselessMedia(time);
+        if(CollUtils.isEmpty(list)){
+            return CollUtils.emptyList();
+        }
+        List<Long> ids = list.stream().map(Media::getId).collect(Collectors.toList());
+        baseMapper.deleteUselessMedia(ids);
+        return list.stream().map(Media::getKey).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MediaDTO> getMediaInfos(List<Long> ids) {
+        if (CollUtils.isEmpty(ids)){
+            return CollUtils.emptyList();
+        }
+        List<Media> media = baseMapper.selectBatchIds(ids);
+        return CollUtils.isEmpty(media) ? CollUtils.emptyList() : BeanUtils.copyList(media, MediaDTO.class);
     }
 
     private String generateNewFileName(String originalFilename) {

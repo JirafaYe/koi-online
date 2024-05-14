@@ -73,4 +73,14 @@ public class FileController {
     public void deleteFileByIds(@RequestParam("ids") List<Long> ids){
         fileService.deleteFileByIds(ids);
     }
+
+    /**
+     * 暴露给其他服务调用，用于返回图片的信息
+     * @param ids
+     * @return
+     */
+    @GetMapping("/ids")
+    public List<FileDTO> getFileInfos(List<Long> ids){
+        return fileService.getFileInfos(ids);
+    }
 }
