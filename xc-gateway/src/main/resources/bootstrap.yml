@@ -46,40 +46,45 @@ spring:
           uri: lb://firmad-service
           predicates:
             # 匹配转发路径
-            - Path=/firmad/**
-        - id: log
+            - Path=/fs/**
+        - id: ls
           uri: lb://log-service
           predicates:
-            - Path=/log/**
-        - id: product-service
+            - Path=/ls/**
+        - id: ms
+          uri:
+            lb://media-service
+          predicates:
+            - Path=/ms/**
+        - id: ps
           uri:
             lb://product-service
           predicates:
-            - Path=/product/**
-        - id: promotion-service
+            - Path=/ps/**
+        - id: pms
           uri:
             lb://promotion-service
           predicates:
-            - Path=/promotion/**
-        - id: remark-service
+            - Path=/pms/**
+        - id: rs
           uri:
             lb://remark-service
           predicates:
-            - Path=/remark/**
-        - id: search-service
+            - Path=/rs/**
+        - id: ss
           uri:
             lb://search-service
           predicates:
-            - Path=/search/**
-        - id: trade-service
+            - Path=/ss/**
+        - id: ts
           uri:
             lb://trade-service
           predicates:
-            - Path=/trade/**
-        - id: user-service
+            - Path=/ts/**
+        - id: us
           uri: lb://user-service
           predicates:
-            - Path=/user/**
+            - Path=/us/**
 
 xc:
   auth:
