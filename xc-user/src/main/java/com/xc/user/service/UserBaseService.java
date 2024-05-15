@@ -2,10 +2,12 @@ package com.xc.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import com.xc.common.domain.dto.CommonLongIdDTO;
 import com.xc.user.entity.UserBase;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
+import com.xc.user.vo.res.UserInfoResVO;
 import com.xc.user.vo.res.UserLoginResVO;
 
 /**
@@ -43,4 +45,10 @@ public interface UserBaseService extends IService<UserBase> {
      * @return
      */
     boolean resetPwd(ResetPwdReqVO vo);
+
+    /**
+     * 获取单个用户信息
+     * @return
+     */
+    UserInfoResVO getUserInfo(CommonLongIdDTO vo);
 }

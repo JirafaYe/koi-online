@@ -15,7 +15,7 @@ public class UserRegisterReqVO {
     private String account;
 
     @ApiModelProperty("密码")
-    private String passsword;
+    private String password;
 
 
 }

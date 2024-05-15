@@ -12,7 +12,10 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xc.api.client.log.LogClient;
+import com.xc.api.dto.log.IogInfoReqDTO;
 import com.xc.common.constants.JwtConstant;
+import com.xc.common.domain.dto.CommonLongIdDTO;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.JwtTokenUtils;
@@ -27,6 +30,7 @@ import com.xc.user.utils.RandomStringGenerator;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
+import com.xc.user.vo.res.UserInfoResVO;
 import com.xc.user.vo.res.UserLoginResVO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -67,6 +71,9 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     private RedisTemplate redisTemplate;
     @Resource
     private UserBaseMapper userBaseMapper;
+
+    @Resource
+    private LogClient logClient;
 
     @Override
     public UserLoginResVO login( UserLoginReqVO vo) {
@@ -114,6 +121,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         UserLoginResVO resVO = new UserLoginResVO();
         BeanUtils.copyProperties(user,resVO);
         resVO.setToken(token);
+        logClient.saveLog(new IogInfoReqDTO("登录","管理员登录了"));
         return resVO;
     }
 
@@ -157,8 +165,8 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     @Override
     public boolean register(UserRegisterReqVO vo) {
         String account = vo.getAccount(); //账号唯一
-        String passsword = vo.getPasssword();
-        if(StringUtils.isAnyBlank(account,passsword)){
+        String password = vo.getPassword();
+        if(StringUtils.isAnyBlank(account,password)){
             throw new CommonException("账号或者密码不能为空");
         }
         LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<>();
@@ -168,7 +176,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
             throw new CommonException("账号不能重复");
         }
         //密码加密
-        String newPass = MD5Utils.inputPassToFormPass(passsword);
+        String newPass = MD5Utils.inputPassToFormPass(password);
         UserBase userBase = new UserBase();
         userBase.setUserId(IdGeneratorSnowflake.snowflakeId());
         userBase.setAccount(account);
@@ -193,12 +201,17 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
        //更新新密码
         String password = MD5Utils.inputPassToFormPass(vo.getPassword());
         boolean b = userBaseMapper.updatePassword(password,userId);
-
-
         return false;
 
     }
 
+    @Override
+    public UserInfoResVO getUserInfo(CommonLongIdDTO vo) {
+        UserBase userBase = userBaseMapper.selectById(vo.getId());
+        UserInfoResVO userInfoResVO = new UserInfoResVO();
+        BeanUtils.copyProperties(userBase,userInfoResVO);
+        return userInfoResVO;
+    }
 
 
 }
