@@ -3,10 +3,13 @@ server:
   tomcat:
     uri-encoding: UTF-8   #服务编码
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   profiles:
     active: dev
   application:
-    name: user-service
+    name: user-service # 服务名称
   cloud:
     nacos:
       config:
@@ -24,6 +27,7 @@ spring:
             refresh: false
           - data-id: shared-feign.yaml # 共享feign配置
             refresh: false
+
 xc:
   jdbc:
     database: xc_user
