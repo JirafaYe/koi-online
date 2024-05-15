@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-05-13
  */
 public interface IStandardProductUnitService extends IService<StandardProductUnit> {
-
+    Integer countByBrand(Long brandId);
 }
