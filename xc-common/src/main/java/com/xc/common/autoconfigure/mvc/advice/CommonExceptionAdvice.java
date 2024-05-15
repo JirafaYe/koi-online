@@ -8,6 +8,7 @@ import com.xc.common.exceptions.UnauthorizedException;
 import com.xc.common.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -80,6 +81,12 @@ public class CommonExceptionAdvice {
     public Object handleUnauthorizedException(UnauthorizedException e){
         log.error("权限异常 , 状态码：{}, 异常原因：{}  ",e.getClass().getName(), e.getStatus(), e.getMessage());
         return processResponse(e.getStatus(), e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public Object handleDuplicateKey(DuplicateKeyException e){
+        log.error("关键参数重复->{}",e.getMessage());
+        return processResponse(400,400,"关键参数重复");
     }
 
     private Object processResponse(int status, int code, String msg){
