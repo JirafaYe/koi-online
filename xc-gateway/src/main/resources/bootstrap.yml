@@ -89,5 +89,5 @@ spring:
 xc:
   auth:
     excludePaths: # 无需登录校验的路径
-      - /user/user/login
-      - /user/user/register
+      - /us/user/login
+      - /us/user/register
