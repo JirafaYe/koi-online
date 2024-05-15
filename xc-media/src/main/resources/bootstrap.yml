@@ -32,6 +32,9 @@ spring:
 xc:
   jdbc:
     database: xc_media
+  auth:
+    resource:
+      enable: true
   minio:
     endpoint: http://47.108.192.109:9000
     accessKey: minioadmin

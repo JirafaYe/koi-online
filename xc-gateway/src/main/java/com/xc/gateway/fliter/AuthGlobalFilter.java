@@ -63,10 +63,11 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             return response.setComplete();
         }
         if(userId == null){
-          throw new CommonException("");
+          throw new CommonException("未登录");
         }
-        // TODO 5.如果有效，传递用户信息
-        System.out.println("userId = " + userId);
+        Long finalUserId = userId;
+        exchange.mutate().request(builder -> builder.header(JwtConstant.USER_HEADER, finalUserId.toString())).build();
+        //  5.如果有效，传递用户信息
         UserContext.setUser(userId);
         // 6.放行
         return chain.filter(exchange);
@@ -88,6 +89,6 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1;
+        return 1000;
     }
 }

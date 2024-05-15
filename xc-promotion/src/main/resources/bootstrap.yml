@@ -27,3 +27,8 @@ spring:
 xc:
   jdbc:
     database: xc_promotion
+  auth:
+    resource:
+      enable: true
+      exclude-login-paths:
+        - /coupons/list

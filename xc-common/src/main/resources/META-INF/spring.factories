@@ -3,4 +3,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
  com.xc.common.autoconfigure.mvc.MvcConfig,\
  com.xc.common.autoconfigure.mvc.ParamCheckerConfig,\
  com.xc.common.autoconfigure.mybatisplus.MybatisConfig,\
- com.xc.common.autoconfigure.xxljob.XxlJobConfig
+ com.xc.common.autoconfigure.xxljob.XxlJobConfig,\
+ com.xc.common.config.ResourceInterceptorConfiguration,\
+ com.xc.common.config.FeignRelayUserAutoConfiguration

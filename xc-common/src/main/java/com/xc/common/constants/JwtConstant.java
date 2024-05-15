@@ -6,4 +6,6 @@ package com.xc.common.constants;
 public interface JwtConstant {
 
      String USER_ID = "userId";
+
+     String USER_HEADER = "user-info";
 }
