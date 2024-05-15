@@ -32,7 +32,7 @@ public class MediaController {
      * 分页查询视频
      * @return
      */
-    @GetMapping
+    @GetMapping("/list")
     public PageDTO<MediaVO> queryMediaPage(FileMediaQuery query){
         return mediaService.queryMediaPage(query);
     }
@@ -42,7 +42,7 @@ public class MediaController {
      * @param media
      * @return
      */
-    @PostMapping
+    @PostMapping("/upload")
     public MediaDTO uploadMedia(@RequestParam("media") MultipartFile media, @RequestParam("duration") Float duration){
         return mediaService.uploadMedia(media, duration);
     }
@@ -70,7 +70,7 @@ public class MediaController {
      * 批量删除视频
      * @param ids
      */
-    @DeleteMapping
+    @DeleteMapping("mediaIds")
     public void deleteMediaByIds(@RequestParam("ids") List<Long> ids){
         mediaService.deleteMediaByIds(ids);
     }

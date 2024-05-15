@@ -31,7 +31,7 @@ public class FileController {
      * @param query
      * @return
      */
-    @GetMapping
+    @GetMapping("/list")
     public PageDTO<FileVO> queryFilePage(FileMediaQuery query){
         return fileService.queryFilePage(query);
     }
@@ -41,7 +41,7 @@ public class FileController {
      * @param file
      * @return
      */
-    @PostMapping
+    @PostMapping("/upload")
     public FileDTO uploadFile(@RequestParam("file") MultipartFile file){
         return fileService.uploadFile(file);
     }
@@ -69,7 +69,7 @@ public class FileController {
      * 批量删除图片
      * @param ids
      */
-    @DeleteMapping
+    @DeleteMapping("/fileIds")
     public void deleteFileByIds(@RequestParam("ids") List<Long> ids){
         fileService.deleteFileByIds(ids);
     }
