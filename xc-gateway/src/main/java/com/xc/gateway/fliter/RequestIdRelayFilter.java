@@ -40,4 +40,8 @@ public class RequestIdRelayFilter implements GlobalFilter, Ordered {
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
+//    public int getOrder() {
+//        return 1200;
+//    }
+
 }

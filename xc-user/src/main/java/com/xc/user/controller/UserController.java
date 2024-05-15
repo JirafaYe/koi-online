@@ -24,37 +24,47 @@ import javax.validation.Valid;
  * @author pengyalin
  * @since 2024年05月11日
  */
+
+/**
+ * 用户操作
+ */
 @RestController
 @RequestMapping("/user")
-@Api(tags = "用户")
 public class UserController {
 
     @Resource
     private UserBaseService userBaseService;
 
-    @ApiOperation("登录")
+    /**
+     * 登录
+     */
     @PostMapping("login")
     public UserLoginResVO login(@Valid @RequestBody UserLoginReqVO vo){
         return userBaseService.login(vo);
     }
-
-    @ApiOperation("发送验证码")
+    /**
+     * 发送验证码
+     */
     @PostMapping("sendcode/{phone}")
     public void sendCode(@Valid @RequestParam("phone")  String phone){
         userBaseService.sendCode(phone);
     }
-
-    @ApiOperation("注册")
+    /**
+     * 注册
+     */
     @PostMapping("register")
     public boolean login(@Valid @RequestBody UserRegisterReqVO vo){
         return userBaseService.register(vo);
     }
-
-    @ApiOperation("重置密码")
+    /**
+     * 重置密码
+     */
     @PostMapping("resetPwd")
     public boolean resetPwd(@RequestBody ResetPwdReqVO vo) {
       return userBaseService.resetPwd(vo);
     }
+
+
 
 }
 
