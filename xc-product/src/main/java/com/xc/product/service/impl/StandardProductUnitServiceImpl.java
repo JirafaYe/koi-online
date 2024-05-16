@@ -1,5 +1,6 @@
 package com.xc.product.service.impl;
 
+import com.xc.product.entity.Brand;
 import com.xc.product.entity.StandardProductUnit;
 import com.xc.product.mapper.StandardProductUnitMapper;
 import com.xc.product.service.IStandardProductUnitService;
@@ -16,5 +17,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductUnitMapper, StandardProductUnit> implements IStandardProductUnitService {
-
+    @Override
+    public Integer countByBrand(Long brandId) {
+        Integer integer = baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getBrandId,brandId));
+        return integer;
+    }
 }

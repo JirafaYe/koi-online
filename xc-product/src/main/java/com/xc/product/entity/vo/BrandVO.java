@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Data
 public class BrandVO {
+    private Long brandId;
+
     @NotBlank
     private String brandName;
 
