@@ -1,7 +1,11 @@
 package com.xc.promotion.service;
 
+import com.xc.common.domain.dto.PageDTO;
+import com.xc.promotion.domain.po.Coupon;
 import com.xc.promotion.domain.po.ExchangeCode;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xc.promotion.domain.query.CodeQuery;
+import com.xc.promotion.domain.vo.ExchangeCodeVo;
 
 /**
  * <p>
@@ -13,4 +17,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IExchangeCodeService extends IService<ExchangeCode> {
 
+    void asyncGenerateCode(Coupon coupon);
+
+    PageDTO<ExchangeCodeVo> queryCodePage(CodeQuery query);
 }
