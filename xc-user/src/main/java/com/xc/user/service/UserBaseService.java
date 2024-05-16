@@ -2,13 +2,12 @@ package com.xc.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import com.xc.common.domain.dto.CommonLongIdDTO;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.user.entity.UserBase;
-import com.xc.user.vo.req.LongIdsVO;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
-import com.xc.user.vo.res.UserInfoResVO;
 import com.xc.user.vo.res.UserLoginResVO;
 
 import java.util.List;

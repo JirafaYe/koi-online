@@ -1,12 +1,15 @@
 package com.xc.log.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.api.client.user.UserClient;
-import com.xc.api.dto.log.IogInfoReqDTO;
-import com.xc.api.dto.user.LongIdsVO;
-import com.xc.api.dto.user.UserInfoResVO;
-import com.xc.common.domain.dto.CommonLongIdDTO;
+import com.xc.api.dto.log.req.IogInfoReqDTO;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
+import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.domain.query.PageQuery;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.UserContext;
 import com.xc.log.mapper.LogInfoMapper;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,15 +48,27 @@ public class LogInfoServiceImpl extends ServiceImpl<LogInfoMapper, LogInfo> impl
         }
         LongIdsVO vo = new LongIdsVO();
         vo.setIds(Arrays.asList(userId));
-        //TODO 我们从用户模块获取了用户信息
+        // 从用户模块获取了用户信息
         List<UserInfoResVO> userInfos = userClient.getUserInfos(vo);
         String method = iogInfoReqDTO.getMethod();
         String message = iogInfoReqDTO.getMessage();
         LogInfo logInfo = new LogInfo();
         logInfo.setUserId(userId);
-        logInfo.setUserName(userInfos.get(1).getAccount());
+        logInfo.setUserName(userInfos.get(0).getAccount());
         logInfo.setMethod(method);
         logInfo.setMessage(message);
         this.save(logInfo);
+    }
+
+    @Override
+    public PageDTO<LogInfo> listPageLog(PageQuery vo) {
+
+        Page<LogInfo> page = new Page<>(vo.getPageNo(), vo.getPageSize());
+        LambdaQueryWrapper<LogInfo> lqw = new LambdaQueryWrapper<LogInfo>().orderByDesc(LogInfo::getEventTime);
+        Page<LogInfo> pageInfos = logInfoMapper.selectPage(page, lqw);
+        PageDTO<LogInfo> ans = new PageDTO<>();
+        ans.setList(pageInfos.getRecords());
+        ans.setTotal(pageInfos.getTotal());
+        return ans;
     }
 }

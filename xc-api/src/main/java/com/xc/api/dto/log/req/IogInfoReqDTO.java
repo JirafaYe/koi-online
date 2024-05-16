@@ -1,4 +1,4 @@
-package com.xc.api.dto.log;
+package com.xc.api.dto.log.req;
 
 import lombok.Data;
 

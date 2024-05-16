@@ -1,10 +1,8 @@
 package com.xc.api.client.user.fallback;
 
 import com.xc.api.client.user.UserClient;
-import com.xc.api.dto.user.LongIdsVO;
-import com.xc.api.dto.user.UserInfoResVO;
-import com.xc.common.domain.dto.CommonLongIdDTO;
-import com.xc.common.utils.CollUtils;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import org.springframework.cloud.openfeign.FallbackFactory;
 
 import java.util.List;

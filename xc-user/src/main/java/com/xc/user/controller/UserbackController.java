@@ -1,10 +1,9 @@
 package com.xc.user.controller;
 
 
-import com.xc.common.domain.dto.CommonLongIdDTO;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.user.service.UserBaseService;
-import com.xc.user.vo.req.LongIdsVO;
-import com.xc.user.vo.res.UserInfoResVO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

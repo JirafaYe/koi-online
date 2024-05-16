@@ -13,9 +13,10 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.api.client.log.LogClient;
-import com.xc.api.dto.log.IogInfoReqDTO;
+import com.xc.api.dto.log.req.IogInfoReqDTO;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.constants.JwtConstant;
-import com.xc.common.domain.dto.CommonLongIdDTO;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.JwtTokenUtils;
@@ -27,14 +28,10 @@ import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
 import com.xc.user.utils.MD5Utils;
 import com.xc.user.utils.RandomStringGenerator;
-import com.xc.user.vo.req.LongIdsVO;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
-import com.xc.user.vo.res.UserInfoResVO;
 import com.xc.user.vo.res.UserLoginResVO;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -124,7 +121,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         UserLoginResVO resVO = new UserLoginResVO();
         BeanUtils.copyProperties(user,resVO);
         resVO.setToken(token);
-        logClient.saveLog(new IogInfoReqDTO("登录","管理员登录了"));
+//        logClient.saveLog(new IogInfoReqDTO("登录","管理员登录了"));
         return resVO;
     }
 
