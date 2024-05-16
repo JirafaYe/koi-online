@@ -2,9 +2,11 @@ package com.xc.product.service;
 
 import com.xc.product.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xc.product.entity.vo.CategoryVO;
+import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.OrderCategoryVO;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p>
@@ -15,7 +17,11 @@ import java.util.LinkedList;
  * @since 2024-05-13
  */
 public interface ICategoryService extends IService<Category> {
-    boolean createCategory(CategoryVO vo);
+    boolean createCategory(CategoryReqVO vo);
 
     LinkedList<String> queryCategoryById(Long id, LinkedList<String> result);
+
+    boolean removeCategory(Long id);
+
+    Boolean orderCategory(List<OrderCategoryVO> vos);
 }

@@ -1,13 +1,19 @@
 package com.xc.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xc.common.exceptions.CommonException;
+import com.xc.common.utils.CollUtils;
 import com.xc.product.entity.Category;
-import com.xc.product.entity.vo.CategoryVO;
+import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.OrderCategoryVO;
 import com.xc.product.mapper.CategoryMapper;
 import com.xc.product.service.ICategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p>
@@ -20,7 +26,7 @@ import java.util.LinkedList;
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements ICategoryService {
     @Override
-    public boolean createCategory(CategoryVO vo) {
+    public boolean createCategory(CategoryReqVO vo) {
         Category category = new Category();
         category.setCategoryName(vo.getName());
         if(vo.getParentId()!=null){
@@ -39,4 +45,32 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return names;
     }
 
+    //todo: 判断优惠券依赖
+    @Override
+    public boolean removeCategory(Long id) {
+        QueryWrapper<Category> wrapper = new QueryWrapper<>();
+        wrapper.eq("parent_id",id);
+        if(baseMapper.selectCount(wrapper)!=0){
+            throw new CommonException(" there are children belong to current category");
+        }
+
+        return removeById(id);
+    }
+
+    @Override
+    public Boolean orderCategory(List<OrderCategoryVO> vos) {
+        List<Category> categories = new LinkedList<>();
+        for(OrderCategoryVO vo:vos){
+            Category category = baseMapper.selectById(vo.getId());
+            if(category!=null){
+                category.setSequence(vo.getSequence());
+                categories.add(category);
+            }
+        }
+        boolean res=false;
+        if(!CollUtils.isEmpty(categories)){
+            res=updateBatchById(categories);
+        }
+        return res;
+    }
 }

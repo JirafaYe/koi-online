@@ -1,13 +1,14 @@
 package com.xc.product.controller;
 
-import com.xc.product.entity.vo.CategoryVO;
+import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.OrderCategoryVO;
 import com.xc.product.service.ICategoryService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.LinkedList;
-import java.util.Stack;
+import java.util.List;
 
 /**
  * 目录
@@ -24,7 +25,7 @@ public class CategoryController {
      * @return
      */
     @PostMapping("/create")
-    public boolean createCategory(@Valid CategoryVO vo){
+    public boolean createCategory(@Valid CategoryReqVO vo){
         return categoryService.createCategory(vo);
     }
 
@@ -38,5 +39,25 @@ public class CategoryController {
         LinkedList<String> names = new LinkedList<>();
         names=categoryService.queryCategoryById(id,names);
         return String.join("/",names);
+    }
+
+    /**
+     * 根据id删除
+     * @param id
+     * @return
+     */
+    @PostMapping ("/remove/{id}")
+    public boolean removeCategoryById(@PathVariable Long id){
+        return categoryService.removeCategory(id);
+    }
+
+    /**
+     * 排序
+     * @param vos
+     * @return
+     */
+    @PostMapping ("/order")
+    public boolean orderCategoryById(List<OrderCategoryVO> vos){
+        return categoryService.orderCategory(vos);
     }
 }

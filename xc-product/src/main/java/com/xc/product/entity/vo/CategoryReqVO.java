@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class CategoryVO {
+public class CategoryReqVO {
     /**
      * 父目录，为空则为一级目录
      */
