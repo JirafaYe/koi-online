@@ -1,6 +1,7 @@
 package com.xc.product.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xc.api.client.user.UserClient;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
@@ -16,6 +17,9 @@ import com.xc.product.service.IStandardProductUnitService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -30,6 +34,9 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
 
     @Resource
     IStandardProductUnitService spuService;
+
+    @Resource
+    UserClient userClient;
 
     @Override
     public Boolean updateBrand(BrandVO vo) {
@@ -71,7 +78,18 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
     public PageDTO<BrandDTO> queryBrandsByPage(BrandQuery q) {
         Page<Brand> page = lambdaQuery().page(q.toMpPageDefaultSortByCreateTimeDesc());
         PageDTO<BrandDTO> result = PageDTO.empty(page);
-        if(!CollUtils.isEmpty(page.getRecords())){
+        List<Brand> records = page.getRecords();
+        if(!CollUtils.isEmpty(records)){
+            List<Long> userIds = records.stream().map(Brand::getCreater).collect(Collectors.toList());
+            userIds.addAll(records.stream().map(Brand::getUpdater).collect(Collectors.toList()));
+
+            HashMap<Long, String> userMap = new HashMap<>();
+            for(Long id:userIds){
+                if(!userMap.containsKey(id)){
+
+                }
+            }
+
             result=PageDTO.of(page, BeanUtils.copyList(page.getRecords(), BrandDTO.class));
         }
         return result;
