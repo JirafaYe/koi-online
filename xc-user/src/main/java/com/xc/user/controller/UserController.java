@@ -1,20 +1,18 @@
 package com.xc.user.controller;
 
 
-import com.xc.common.constants.JwtConstant;
-import com.xc.common.utils.UserContext;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
+import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.domain.query.PageQuery;
 import com.xc.user.service.UserBaseService;
-import com.xc.user.vo.req.ResetPwdReqVO;
-import com.xc.user.vo.req.UserLoginReqVO;
-import com.xc.user.vo.req.UserRegisterReqVO;
+import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * <p>
@@ -39,32 +37,68 @@ public class UserController {
      * 登录
      */
     @PostMapping("login")
-    public UserLoginResVO login(@Valid @RequestBody UserLoginReqVO vo){
+    public UserLoginResVO login(@Valid @RequestBody UserLoginReqVO vo) {
         return userBaseService.login(vo);
     }
+
     /**
      * 发送验证码
      */
     @PostMapping("sendcode/{phone}")
-    public void sendCode(@Valid @RequestParam("phone")  String phone){
+    public void sendCode(@Valid @RequestParam("phone") String phone) {
         userBaseService.sendCode(phone);
     }
+
     /**
      * 注册
      */
     @PostMapping("register")
-    public boolean login(@Valid @RequestBody UserRegisterReqVO vo){
+    public boolean login(@Valid @RequestBody UserRegisterReqVO vo) {
         return userBaseService.register(vo);
     }
+
     /**
      * 重置密码
      */
     @PostMapping("resetPwd")
     public boolean resetPwd(@RequestBody ResetPwdReqVO vo) {
-      return userBaseService.resetPwd(vo);
+        return userBaseService.resetPwd(vo);
     }
 
 
+    /**
+     * 手机号绑定
+     */
+    @PostMapping("bindMobile")
+    public int bindMobile(@RequestBody @Valid BindMobileVO vo) {
+        return userBaseService.bindMobile(vo);
+    }
+
+    /**
+     * 展示用户信息
+     */
+    @PostMapping("listPageUser")
+    PageDTO<UserInfoResVO> listPageUser(@RequestBody @Valid PageQuery vo){
+        return userBaseService.listPageUser(vo);
+    }
+
+
+    /**
+     * 获取多个用户信息
+     */
+    @PostMapping("getUserInfos")
+    public List<UserInfoResVO> getUserInfos(@RequestBody @Valid LongIdsVO vo){
+        return userBaseService.getUserInfos(vo);
+    }
+
+    /**
+     * 管理员修改用户状态
+     * @param vo
+     * @return
+     */
+    @PostMapping("updateUserStatus")
+    public boolean updateUserStatus(@RequestBody @Valid  LongIdsVO vo){
+        return userBaseService.updateUserStatus(vo);
+    }
 
 }
-

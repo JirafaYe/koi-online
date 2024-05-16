@@ -4,7 +4,10 @@ package com.xc.user.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xc.user.entity.UserBase;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,8 +20,8 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface UserBaseMapper extends BaseMapper<UserBase> {
 
-    @Update("UPDATE xc_user.user_base\n" +
-            "SET password = 'new_password'\n" +
-            "WHERE user_id = 'specific_user_id';")
-    boolean updatePassword(String password, Long userId);
+    @Update("UPDATE xc_user.user_base SET password = #{password} WHERE user_id = #{userId}")
+    boolean updatePassword(@Param("password") String password, @Param("userId") Long userId);
+
+    boolean updateUserStatus(@Param("ids") List<Long> ids);
 }

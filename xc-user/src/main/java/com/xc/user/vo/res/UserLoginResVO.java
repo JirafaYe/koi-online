@@ -12,7 +12,7 @@ public class UserLoginResVO {
     /**
      * id
      */
-    private Long id;
+    private Long userId;
     /**
      * 1 管理员  2用户
      */
@@ -52,7 +52,7 @@ public class UserLoginResVO {
     /**
      * 默认地址id
      */
-    private Integer defaultAdress;
+    private Integer defaultAddress;
 
     /**
      * token

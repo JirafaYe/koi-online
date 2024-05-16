@@ -14,14 +14,28 @@
         <result column="gender" property="gender" />
         <result column="email" property="email" />
         <result column="srcface" property="srcface" />
-        <result column="default_adress" property="defaultAdress" />
+        <result column="default_address" property="defaultAddress" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        user_id, user_role, status, account, nick_name, password, mobile, gender, email, srcface, default_adress, create_time, update_time
+        user_id, user_role, status, account, nick_name, password, mobile, gender, email, srcface, default_address, create_time, update_time
     </sql>
+
+    <update id="updateUserStatus" parameterType="java.util.List">
+        update user_base
+        SET status =
+            CASE
+                WHEN status = 1 THEN 0
+                WHEN status = 0 THEN 1
+            END
+        where user_id in
+        <foreach  item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
 
 </mapper>

@@ -71,8 +71,8 @@ public class UserBase implements Serializable {
     private String srcface;
 
     @ApiModelProperty("默认地址id ")
-    @TableField("default_adress")
-    private Integer defaultAdress;
+    @TableField("default_address")
+    private Integer defaultAddress;
 
     @ApiModelProperty("创建时间")
     @TableField("create_time")
