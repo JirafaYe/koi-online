@@ -101,4 +101,8 @@ public class UserController {
         return userBaseService.updateUserStatus(vo);
     }
 
+    public void test(){
+        System.out.println("xxxxx");
+    }
+
 }
