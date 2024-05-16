@@ -2,8 +2,8 @@ package com.xc.product.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.user.UserClient;
-import com.xc.api.dto.user.LongIdsVO;
-import com.xc.api.dto.user.UserInfoResVO;
+import com.xc.api.dto.user.req.LongIdsVO;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.CommonLongIdDTO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.CommonException;
@@ -93,7 +93,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             longIdsVO.setIds(new ArrayList<>(userIds));
             HashMap<Long, String> userMap = new HashMap<>();
             for (UserInfoResVO userInfo : userClient.getUserInfos(longIdsVO)) {
-                userMap.put(userInfo.getId(),userInfo.getAccount());
+                userMap.put(userInfo.getUserId(),userInfo.getAccount());
             }
 
             if(!CollUtils.isEmpty(userMap)){
