@@ -4,6 +4,7 @@ import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.utils.UserContext;
 import com.xc.product.entity.dto.BrandDTO;
 import com.xc.product.entity.query.BrandQuery;
+import com.xc.product.entity.vo.BrandPageVO;
 import com.xc.product.entity.vo.BrandVO;
 import com.xc.product.service.IBrandService;
 import lombok.RequiredArgsConstructor;
@@ -28,19 +29,19 @@ public class BrandController {
      */
     @PostMapping("/create")
     public Boolean createBrand(@Valid BrandVO vo){
-        UserContext.setUser(1790297174534524928L);
+//        UserContext.setUser(1790297174534524928L);
         return brandService.createBand(vo);
     }
 
     @PostMapping("/remove/{id}")
     public boolean removeBrand(@PathVariable Long id){
-        UserContext.setUser(1790297174534524928L);
+//        UserContext.setUser(1790297174534524928L);
         return brandService.removeBrand(id);
     }
 
     @GetMapping("/page")
-    public PageDTO<BrandDTO> queryByPage(BrandQuery query){
-        UserContext.setUser(1790297174534524928L);
+    public PageDTO<BrandPageVO> queryByPage(BrandQuery query){
+//        UserContext.setUser(1790297174534524928L);
         return brandService.queryBrandsByPage(query);
     }
 

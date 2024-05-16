@@ -1,0 +1,14 @@
+#nacos配置
+spring:
+  cloud:
+    nacos:
+      config:
+        namespace: c70aecf2-757e-441d-9edd-5bea96c80bd4
+        server-addr: 47.108.192.109:8848 # nacos注册中心
+        username: nacos
+        password: nacos
+      server-addr: 47.108.192.109:8848 # nacos注册中心
+      discovery:
+        namespace: c70aecf2-757e-441d-9edd-5bea96c80bd4
+        group: DEFAULT_GROUP
+        ip: 192.168.43.39

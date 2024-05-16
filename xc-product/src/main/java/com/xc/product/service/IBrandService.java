@@ -5,6 +5,7 @@ import com.xc.product.entity.Brand;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.product.entity.dto.BrandDTO;
 import com.xc.product.entity.query.BrandQuery;
+import com.xc.product.entity.vo.BrandPageVO;
 import com.xc.product.entity.vo.BrandVO;
 
 /**
@@ -22,5 +23,5 @@ public interface IBrandService extends IService<Brand> {
 
    Boolean removeBrand(Long brandId);
 
-   PageDTO<BrandDTO> queryBrandsByPage(BrandQuery q);
+   PageDTO<BrandPageVO> queryBrandsByPage(BrandQuery q);
 }
