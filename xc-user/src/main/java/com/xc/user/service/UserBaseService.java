@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.xc.common.domain.dto.CommonLongIdDTO;
 import com.xc.user.entity.UserBase;
+import com.xc.user.vo.req.LongIdsVO;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
 import com.xc.user.vo.res.UserInfoResVO;
 import com.xc.user.vo.res.UserLoginResVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -47,8 +50,15 @@ public interface UserBaseService extends IService<UserBase> {
     boolean resetPwd(ResetPwdReqVO vo);
 
     /**
-     * 获取单个用户信息
+     * 获取多个用户信息
      * @return
      */
-    UserInfoResVO getUserInfo(CommonLongIdDTO vo);
+    List<UserInfoResVO> getUserInfos(LongIdsVO vo);
+
+    /**
+     * 获取多个用户信息
+     * @param vo
+     * @return
+     */
+//    List<UserInfoResVO> getUserInfos(LongIdsVO vo);
 }

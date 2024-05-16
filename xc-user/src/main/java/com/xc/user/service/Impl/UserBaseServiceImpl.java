@@ -27,6 +27,7 @@ import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
 import com.xc.user.utils.MD5Utils;
 import com.xc.user.utils.RandomStringGenerator;
+import com.xc.user.vo.req.LongIdsVO;
 import com.xc.user.vo.req.ResetPwdReqVO;
 import com.xc.user.vo.req.UserLoginReqVO;
 import com.xc.user.vo.req.UserRegisterReqVO;
@@ -39,7 +40,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -206,11 +209,16 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     }
 
     @Override
-    public UserInfoResVO getUserInfo(CommonLongIdDTO vo) {
-        UserBase userBase = userBaseMapper.selectById(vo.getId());
-        UserInfoResVO userInfoResVO = new UserInfoResVO();
-        BeanUtils.copyProperties(userBase,userInfoResVO);
-        return userInfoResVO;
+    public List<UserInfoResVO> getUserInfos(LongIdsVO vo) {
+        List<UserBase> infos = userBaseMapper.selectBatchIds(vo.getIds());
+        List<UserInfoResVO> list = new ArrayList<>();
+        for (UserBase info : infos) {
+            UserInfoResVO userInfoResVO = new UserInfoResVO();
+            BeanUtils.copyProperties(info,userInfoResVO);
+            list.add(userInfoResVO);
+        }
+
+        return list;
     }
 
 

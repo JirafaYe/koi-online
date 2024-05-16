@@ -2,10 +2,9 @@ package com.xc.user.controller;
 
 
 import com.xc.common.domain.dto.CommonLongIdDTO;
-import com.xc.common.domain.dto.PageDTO;
 import com.xc.user.service.UserBaseService;
+import com.xc.user.vo.req.LongIdsVO;
 import com.xc.user.vo.res.UserInfoResVO;
-import org.apache.ibatis.annotations.ResultMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +26,18 @@ public class UserbackController {
 //    PageDTO<List<UserInfoResVO>> listUserInfo
 
     /**
-     * 获取用户信息
+     * 获取单个用户信息
      */
-    @PostMapping("/getUserInfo")
-      public UserInfoResVO getUserInfo(@RequestBody @Valid CommonLongIdDTO vo){
-         return userBaseService.getUserInfo(vo);
+//    @PostMapping("/getUserInfo")
+//      public UserInfoResVO getUserInfo(@RequestBody @Valid CommonLongIdDTO vo){
+//         return userBaseService.getUserInfo(vo);
+//      }
+//
+    /**
+     * 获取多个用户信息
+     */
+      @PostMapping("getUserInfos")
+      public List<UserInfoResVO> getUserInfos(@RequestBody @Valid LongIdsVO vo){
+         return userBaseService.getUserInfos(vo);
       }
-
 }

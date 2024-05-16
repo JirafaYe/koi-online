@@ -12,5 +12,5 @@ public interface LogClient {
      * @param iogInfoReqDTO
      */
     @PostMapping("/saveLog")
-    public void saveLog(IogInfoReqDTO iogInfoReqDTO);
+     void saveLog(IogInfoReqDTO iogInfoReqDTO);
 }
