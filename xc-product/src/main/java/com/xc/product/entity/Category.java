@@ -33,12 +33,12 @@ public class Category implements Serializable {
      */
     private Long parentId;
 
-    private String name;
+    private String categoryName;
 
     /**
      * 指定顺序
      */
-    private Integer order;
+    private Integer sequence;
 
     /**
      * 不为空则已删除
