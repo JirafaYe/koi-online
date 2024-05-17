@@ -1,5 +1,6 @@
 package com.xc.product.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -19,12 +20,18 @@ public class CategoryResVO {
     private String categoryName;
 
     /**
-     * 更新者
+     * 创键者
      */
+    @JsonIgnore
     private Long creater;
 
     /**
-     * 更新者名字
+     * 父ID
+     */
+    private Long parentId;
+
+    /**
+     * 创建者名字
      */
     private String  createrName;
 }

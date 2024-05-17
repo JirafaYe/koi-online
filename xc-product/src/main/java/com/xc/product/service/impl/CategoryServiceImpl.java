@@ -2,6 +2,8 @@ package com.xc.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xc.api.client.user.UserClient;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
@@ -14,8 +16,9 @@ import com.xc.product.service.ICategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -27,6 +30,10 @@ import java.util.List;
  */
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements ICategoryService {
+
+    @Resource
+    UserClient userClient;
+
     @Override
     public boolean createCategory(CategoryReqVO vo) {
         Category category = new Category();
@@ -79,7 +86,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Override
     public List<CategoryResVO> queryCategories() {
         List<CategoryResVO> categoryResVOS = queryCategories(new LinkedList<>(), true);
-        return null;
+        Set<Long> userSet = getUserSet(categoryResVOS);
+        Map<Long, String> userMap = userClient.getUserInfos(userSet).stream().collect(Collectors.toMap(
+                UserInfoResVO::getUserId, UserInfoResVO::getAccount
+        ));
+
+        return setUserName(categoryResVOS,userMap);
     }
 
     public List<CategoryResVO> queryCategories(List<CategoryResVO> vos, boolean isFirst) {
@@ -102,5 +114,30 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             }
         }
         return vos;
+    }
+
+    public List<CategoryResVO> setUserName(List<CategoryResVO> categoryResVOS,Map<Long,String> map){
+        for(CategoryResVO vo:categoryResVOS){
+            if(!CollUtils.isEmpty(vo.getChildren())){
+                vo.setChildren(setUserName(vo.getChildren(),map));
+            }
+        }
+        if(!CollUtils.isEmpty(categoryResVOS)){
+            categoryResVOS.forEach(obj->
+                obj.setCreaterName(map.get(obj.getCreater()))
+            );
+        }
+        return categoryResVOS;
+    }
+
+    public  Set<Long> getUserSet(List<CategoryResVO> categoryResVOS){
+        Set<Long> userSet=new HashSet<>();
+        for(CategoryResVO vo:categoryResVOS){
+            if(!CollUtils.isEmpty(vo.getChildren())){
+                userSet.addAll(getUserSet(vo.getChildren()));
+            }
+        }
+        userSet.addAll(categoryResVOS.stream().map(CategoryResVO::getCreater).collect(Collectors.toSet()));
+        return userSet;
     }
 }

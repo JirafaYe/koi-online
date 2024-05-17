@@ -89,8 +89,6 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             Set<Long> userIds = records.stream().map(Brand::getCreater).collect(Collectors.toSet());
             userIds.addAll(records.stream().map(Brand::getUpdater).collect(Collectors.toList()));
 
-//            LongIdsVO longIdsVO = new LongIdsVO();
-//            longIdsVO.setIds(new ArrayList<>(userIds));
             HashMap<Long, String> userMap = new HashMap<>();
             for (UserInfoResVO userInfo : userClient.getUserInfos(userIds)) {
                 userMap.put(userInfo.getUserId(),userInfo.getAccount());
