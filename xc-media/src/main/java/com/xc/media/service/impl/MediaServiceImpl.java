@@ -100,13 +100,16 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         if(CollUtils.isEmpty(records)){
             return PageDTO.empty(page);
         }
-        //TODO 增加创建人
-//        List<Long> createrIds = records.stream().map(Media::getCreater).collect(Collectors.toList());
-//        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
-//        Map<Long, String> userNameMap = userInfos.stream()
-//                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
-        List<MediaVO> list = BeanUtils.copyList(records, MediaVO.class);
-//        list.forEach(e -> e.setCreater(userNameMap.get(e.getId())));
+        // 增加创建人
+        List<Long> createrIds = records.stream().map(Media::getCreater).collect(Collectors.toList());
+        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
+        Map<Long, String> userNameMap = userInfos.stream()
+                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
+        List<MediaVO> list = records.stream().map(c -> {
+            MediaVO vo = BeanUtils.copyBean(c, MediaVO.class);
+            vo.setCreater(userNameMap.get(c.getCreater()));
+            return vo;
+        }).collect(Collectors.toList());
         return PageDTO.of(page, list);
     }
 

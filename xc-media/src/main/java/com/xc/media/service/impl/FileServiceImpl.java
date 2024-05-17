@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -107,13 +108,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         if(CollUtils.isEmpty(records)){
             return PageDTO.empty(page);
         }
-        // TODO 增加修改人
-//        List<Long> createrIds = records.stream().map(File::getCreater).collect(Collectors.toList());
-//        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
-//        Map<Long, String> userNameMap = userInfos.stream()
-//                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
-        List<FileVO> list = BeanUtils.copyList(records, FileVO.class);
-//        list.forEach(e -> e.setCreater(userNameMap.get(e.getId())));
+        // 增加修改人
+        List<Long> createrIds = records.stream().map(File::getCreater).collect(Collectors.toList());
+        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
+        Map<Long, String> userNameMap = userInfos.stream()
+                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
+        List<FileVO> list = records.stream().map(c -> {
+            FileVO vo = BeanUtils.copyBean(c, FileVO.class);
+            vo.setCreater(userNameMap.get(c.getCreater()));
+            return vo;
+        }).collect(Collectors.toList());
         return PageDTO.of(page, list);
     }
 
