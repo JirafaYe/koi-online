@@ -73,13 +73,12 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             throw new CommonException("required brandId value");
         }
         boolean ret=false;
-        if(spuService.countByBrand(brandId)==0){
+        if(spuService.countByBrand(brandId).equals(0)){
             ret=removeById(brandId);
         }
         return ret;
     }
 
-    //todo: convert userId to userName
     @Override
     public PageDTO<BrandPageVO> queryBrandsByPage(BrandQuery q) {
         Page<Brand> page = lambdaQuery().page(q.toMpPageDefaultSortByCreateTimeDesc());

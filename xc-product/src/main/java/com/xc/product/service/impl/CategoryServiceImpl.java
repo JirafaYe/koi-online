@@ -15,6 +15,7 @@ import com.xc.product.entity.vo.OrderCategoryVO;
 import com.xc.product.mapper.CategoryMapper;
 import com.xc.product.service.ICategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xc.product.service.IStandardProductUnitService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,6 +39,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Resource
     PromotionClient promotionClient;
 
+    @Resource
+    IStandardProductUnitService spuService;
+
     @Override
     public boolean createCategory(CategoryReqVO vo) {
         Category category = new Category();
@@ -58,11 +62,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return names;
     }
 
-    //todo: 判断优惠券依赖
     @Override
     public boolean removeCategory(Long id) {
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",id);
+        if(!spuService.countByCategory(id).equals(0)){
+            throw new CommonException("there are spues belong to current category");
+        }
         if(!baseMapper.selectCount(wrapper).equals(0)){
             throw new CommonException("there are children belong to current category");
         }
