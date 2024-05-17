@@ -18,8 +18,23 @@ public class SpuController {
     @Resource
     IStandardProductUnitService spuService;
 
+    /**
+     * 创建spu
+     * @param vo
+     * @return
+     */
     @PostMapping("/create")
     public boolean createSpu(@Valid SpuVO vo){
         return spuService.createSpu(vo);
+    }
+
+    /**
+     * 更新spu
+     * @param vo
+     * @return
+     */
+    @PostMapping("/update")
+    public boolean updateSpu(@Valid SpuVO vo){
+        return spuService.updateSpu(vo);
     }
 }

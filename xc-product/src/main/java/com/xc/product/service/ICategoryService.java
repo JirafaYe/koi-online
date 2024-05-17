@@ -27,4 +27,6 @@ public interface ICategoryService extends IService<Category> {
     Boolean orderCategory(List<OrderCategoryVO> vos);
 
     List<CategoryResVO> queryCategories();
+
+    boolean update(CategoryReqVO vo);
 }

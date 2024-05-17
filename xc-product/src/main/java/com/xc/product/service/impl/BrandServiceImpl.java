@@ -47,7 +47,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
     @Override
     public Boolean updateBrand(BrandVO vo) {
         Long brandId = vo.getBrandId();
-        if(brandId==null||brandId==0){
+        if(brandId==null||brandId.equals(0L)){
             throw new CommonException("required brandId value");
         }
         Brand brand = new Brand();

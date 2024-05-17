@@ -2,6 +2,7 @@ package com.xc.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.StringUtils;
@@ -72,7 +73,10 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
 
     @Override
     public boolean updateSpu(SpuVO vo) {
-        return false;
+        if(vo.getId()==null||vo.getId().equals(0L)){
+            throw new CommonException("required value of spu");
+        }
+        return updateById(BeanUtils.copyBean(vo, StandardProductUnit.class));
     }
 
     @Override

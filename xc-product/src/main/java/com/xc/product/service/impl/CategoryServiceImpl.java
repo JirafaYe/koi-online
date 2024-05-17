@@ -97,6 +97,21 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     }
 
     @Override
+    public boolean update(CategoryReqVO vo) {
+        if(vo.getId()==null||vo.getId().equals(0L)){
+            throw new CommonException("required value of id");
+        }
+        if(vo.getParentId()!=null) {
+            QueryWrapper<Category> wrapper = new QueryWrapper<>();
+            wrapper.eq("id", vo.getParentId());
+            if(baseMapper.selectCount(wrapper).equals(0)){
+                throw new CommonException("parent_id does not exist");
+            }
+        }
+        return updateById(BeanUtils.copyBean(vo,Category.class));
+    }
+
+    @Override
     public List<CategoryResVO> queryCategories() {
         List<CategoryResVO> categoryResVOS = queryCategories(new LinkedList<>(), true);
         Set<Long> userSet = getUserSet(categoryResVOS);

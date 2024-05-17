@@ -7,6 +7,11 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class SpuVO {
+    /**
+     * spu id
+     */
+    private Long id;
+
     @NotBlank
     private String spuName;
 

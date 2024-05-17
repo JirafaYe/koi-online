@@ -70,4 +70,14 @@ public class CategoryController {
     public  List<CategoryResVO> queryAll(){
         return categoryService.queryCategories();
     }
+
+    /**
+     * 更新
+     * @param vo
+     * @return
+     */
+    @PostMapping ("/update")
+    public boolean orderCategoryById(@Valid CategoryReqVO vo){
+        return categoryService.update(vo);
+    }
 }

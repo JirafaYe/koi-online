@@ -7,6 +7,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CategoryReqVO {
     /**
+     * 主键
+     */
+    private Long id;
+    /**
      * 父目录，为空则为一级目录
      */
     private Long parentId;
