@@ -1,6 +1,7 @@
 package com.xc.product.controller;
 
 import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.CategoryResVO;
 import com.xc.product.entity.vo.OrderCategoryVO;
 import com.xc.product.service.ICategoryService;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +58,16 @@ public class CategoryController {
      * @return
      */
     @PostMapping ("/order")
-    public boolean orderCategoryById(List<OrderCategoryVO> vos){
+    public boolean orderCategoryById(@Valid List<OrderCategoryVO> vos){
         return categoryService.orderCategory(vos);
+    }
+
+    /**
+     * 查询所有目录
+     * @return
+     */
+    @GetMapping("/all")
+    public  List<CategoryResVO> queryAll(){
+        return categoryService.queryCategories();
     }
 }

@@ -3,9 +3,11 @@ package com.xc.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xc.common.exceptions.CommonException;
+import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.product.entity.Category;
 import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.CategoryResVO;
 import com.xc.product.entity.vo.OrderCategoryVO;
 import com.xc.product.mapper.CategoryMapper;
 import com.xc.product.service.ICategoryService;
@@ -51,7 +53,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",id);
         if(baseMapper.selectCount(wrapper)!=0){
-            throw new CommonException(" there are children belong to current category");
+            throw new CommonException("there are children belong to current category");
         }
 
         return removeById(id);
@@ -72,5 +74,33 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             res=updateBatchById(categories);
         }
         return res;
+    }
+
+    @Override
+    public List<CategoryResVO> queryCategories() {
+        List<CategoryResVO> categoryResVOS = queryCategories(new LinkedList<>(), true);
+        return null;
+    }
+
+    public List<CategoryResVO> queryCategories(List<CategoryResVO> vos, boolean isFirst) {
+        QueryWrapper<Category> wrapper = new QueryWrapper<>();
+        if(isFirst){
+            wrapper.isNull("parent_id");
+            wrapper.orderByAsc("sequence");
+            List<Category> categories = baseMapper.selectList(wrapper);
+            vos= BeanUtils.copyList(categories,CategoryResVO.class);
+        }
+        for(CategoryResVO cat:vos){
+            wrapper = new QueryWrapper<>();
+            wrapper.eq("parent_id",cat.getId());
+            wrapper.orderByAsc("sequence");
+            List<Category> list = baseMapper.selectList(wrapper);
+            if(!CollUtils.isEmpty(list)){
+                List<CategoryResVO> intermedia = BeanUtils.copyList(list, CategoryResVO.class);
+                intermedia=queryCategories(intermedia,false);
+                cat.setChildren(intermedia);
+            }
+        }
+        return vos;
     }
 }
