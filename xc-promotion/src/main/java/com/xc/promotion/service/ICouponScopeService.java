@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICouponScopeService extends IService<CouponScope> {
 
+    Boolean judgeCouponExist(Long id);
 }

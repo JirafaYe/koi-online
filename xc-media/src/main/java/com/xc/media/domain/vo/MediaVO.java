@@ -38,7 +38,7 @@ public class MediaVO {
     private LocalDateTime createTime;
 
     /**
-     * 创建人id
+     * 创建人名字
      */
-    private Long creater;
+    private String creater;
 }

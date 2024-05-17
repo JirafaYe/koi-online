@@ -3,6 +3,8 @@ package com.xc.media.service.impl;
 import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xc.api.client.user.UserClient;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.enums.CommonStatus;
 import com.xc.common.exceptions.BizIllegalException;
@@ -15,6 +17,7 @@ import com.xc.media.domain.dto.MediaDTO;
 import com.xc.media.domain.po.File;
 import com.xc.media.domain.po.Media;
 import com.xc.media.domain.query.FileMediaQuery;
+import com.xc.media.domain.vo.FileVO;
 import com.xc.media.domain.vo.MediaVO;
 import com.xc.media.mapper.MediaMapper;
 import com.xc.media.service.IMediaService;
@@ -29,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.xc.media.constants.FileConstants.Msg.MEDIA_UPLOAD_ERROR;
@@ -47,6 +51,8 @@ import static com.xc.media.constants.FileConstants.Msg.MEDIA_UPLOAD_ERROR;
 public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements IMediaService {
 
     private final MinioMediaStorage mediaStorage;
+
+    private final UserClient userClient;
 
     @Override
     public MediaDTO uploadMedia(MultipartFile media, Float duration) {
@@ -94,7 +100,13 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         if(CollUtils.isEmpty(records)){
             return PageDTO.empty(page);
         }
+        //TODO 增加创建人
+//        List<Long> createrIds = records.stream().map(Media::getCreater).collect(Collectors.toList());
+//        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
+//        Map<Long, String> userNameMap = userInfos.stream()
+//                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
         List<MediaVO> list = BeanUtils.copyList(records, MediaVO.class);
+//        list.forEach(e -> e.setCreater(userNameMap.get(e.getId())));
         return PageDTO.of(page, list);
     }
 

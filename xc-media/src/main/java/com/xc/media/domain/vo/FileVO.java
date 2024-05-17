@@ -18,7 +18,7 @@ public class FileVO {
     /**
      * 图片名称
      */
-    private String name;
+    private String filename;
 
     /**
      * 图片地址
@@ -31,8 +31,9 @@ public class FileVO {
     private LocalDateTime createTime;
 
     /**
-     * 创建人id
+     * 创建人名称
      */
-    private Long creater;
+    private String creater;
+
 
 }

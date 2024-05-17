@@ -17,4 +17,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CouponScopeServiceImpl extends ServiceImpl<CouponScopeMapper, CouponScope> implements ICouponScopeService {
 
+    @Override
+    public Boolean judgeCouponExist(Long id) {
+        CouponScope scope = lambdaQuery().eq(CouponScope::getBizId, id).one();
+        return scope != null;
+    }
 }
