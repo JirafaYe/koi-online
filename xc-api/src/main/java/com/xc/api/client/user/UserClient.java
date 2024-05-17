@@ -17,7 +17,7 @@ public interface UserClient {
     /**
      * 获取用户信息
      */
-    @GetMapping("admin/getUserInfos")
+    @GetMapping("user/getUserInfos")
     List<UserInfoResVO> getUserInfos(@RequestParam("ids") Iterable<Long> ids);
 
 }

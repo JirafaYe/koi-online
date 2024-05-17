@@ -23,6 +23,11 @@ public interface UserBaseMapper extends BaseMapper<UserBase> {
     @Update("UPDATE xc_user.user_base SET password = #{password} WHERE user_id = #{userId}")
     boolean updatePassword(@Param("password") String password, @Param("userId") Long userId);
 
+    /**
+     * 更新用户状态
+     * @param ids
+     * @return
+     */
     boolean updateUserStatus(@Param("ids") List<Long> ids);
 
 

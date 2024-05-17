@@ -6,3 +6,5 @@ spring:
         namespace: 9ac56948-58ba-45d2-919e-770fd091b3b1
         group: DEFAULT_GROUP
         ip: 47.108.192.109
+
+

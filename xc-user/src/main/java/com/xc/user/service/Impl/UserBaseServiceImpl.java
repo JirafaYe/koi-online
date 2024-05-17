@@ -239,6 +239,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         if (userBase == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
+
         int flag = 0;
         //启用用户
         if (vo.getStatus().equals(1)) {
@@ -250,7 +251,6 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
             // TODO释放token
 
         }
-
         return flag == 0;
     }
 
