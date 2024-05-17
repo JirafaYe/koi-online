@@ -12,7 +12,7 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
     public UserClient create(Throwable cause) {
         return new UserClient() {
             @Override
-            public List<UserInfoResVO> getUserInfos(LongIdsVO vo) {
+            public List<UserInfoResVO> getUserInfos(Iterable<Long> ids) {
                 return null;
             }
         };

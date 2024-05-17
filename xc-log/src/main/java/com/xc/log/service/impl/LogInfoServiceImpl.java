@@ -46,10 +46,9 @@ public class LogInfoServiceImpl extends ServiceImpl<LogInfoMapper, LogInfo> impl
         if (userId == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
-        LongIdsVO vo = new LongIdsVO();
-        vo.setIds(Arrays.asList(userId));
+
         // 从用户模块获取了用户信息
-        List<UserInfoResVO> userInfos = userClient.getUserInfos(vo);
+        List<UserInfoResVO> userInfos = userClient.getUserInfos(Arrays.asList(userId));
         String method = iogInfoReqDTO.getMethod();
         String message = iogInfoReqDTO.getMessage();
         LogInfo logInfo = new LogInfo();

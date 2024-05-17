@@ -1,22 +1,14 @@
 package com.xc.user.service.Impl;
 
-import cn.hutool.core.lang.UUID;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.CommonRequest;
-import com.aliyuncs.CommonResponse;
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.IAcsClient;
-import com.aliyuncs.exceptions.ClientException;
-import com.aliyuncs.exceptions.ServerException;
-import com.aliyuncs.http.MethodType;
-import com.aliyuncs.profile.DefaultProfile;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.api.client.log.LogClient;
 import com.xc.api.dto.user.req.LongIdsVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
+import com.xc.common.constants.ErrorInfo;
 import com.xc.common.constants.JwtConstant;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
@@ -32,12 +24,8 @@ import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
 import com.xc.user.utils.MD5Utils;
 import com.xc.user.utils.RandomStringGenerator;
-import com.xc.user.vo.req.BindMobileVO;
-import com.xc.user.vo.req.ResetPwdReqVO;
-import com.xc.user.vo.req.UserLoginReqVO;
-import com.xc.user.vo.req.UserRegisterReqVO;
+import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -46,7 +34,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.xc.common.constants.ErrorInfo.Msg.*;
@@ -70,7 +57,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
      */
     private static final Integer LOGIN_TYPE_PHONE = 2;
 
-    private static   String PHONE_CODE_KEY ="";
+    private static String PHONE_CODE_KEY = "";
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -81,62 +68,62 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     private LogClient logClient;
 
     @Override
-    public UserLoginResVO login( UserLoginReqVO vo) {
+    public UserLoginResVO login(UserLoginReqVO vo) {
 
-        Integer type= vo.getLoginType();
+        Integer type = vo.getLoginType();
 //        1.账号密码登录
         UserBase user = null;
-        if(LOGIN_TYPE_USER.equals(type)){
+        if (LOGIN_TYPE_USER.equals(type)) {
             String account = vo.getAccount();
             String password = vo.getPassword();
-            if(StringUtils.isAnyBlank(account,password)){
+            if (StringUtils.isAnyBlank(account, password)) {
                 throw new CommonException("账号或密码为空");
             }
             //加密
             String newPw = MD5Utils.inputPassToFormPass(password);
             LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>().eq(UserBase::getAccount, account)
                     .eq(UserBase::getPassword, newPw);
-             user = userBaseMapper.selectOne(lqw);
-            if(user == null){
+            user = userBaseMapper.selectOne(lqw);
+            if (user == null) {
                 throw new CommonException(USER_NOT_EXISTS);
             }
 
-        }else if (LOGIN_TYPE_PHONE.equals(type)){
-          //手机号验证码登录
+        } else if (LOGIN_TYPE_PHONE.equals(type)) {
+            //手机号验证码登录
             String phone = vo.getPhone();
-            if(phone == null){
+            if (phone == null) {
                 throw new CommonException("手机号不能为空");
             }
             //redis 中获取验证码
-            String o = (String)redisTemplate.opsForValue().get(PHONE_CODE_KEY);
-            if(!vo.getCode().equals(o)){
-                throw  new CommonException(INVALID_VERIFY_CODE);
+            String o = (String) redisTemplate.opsForValue().get(PHONE_CODE_KEY);
+            if (!vo.getCode().equals(o)) {
+                throw new CommonException(INVALID_VERIFY_CODE);
             }
             LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>().eq(UserBase::getMobile, phone);
             user = userBaseMapper.selectOne(lqw);
-            if(user == null){
+            if (user == null) {
                 throw new CommonException(USER_NOT_EXISTS);
             }
         }
-        if(user.getStatus().equals(0)){
+        if (user.getStatus().equals(0)) {
             throw new UnauthorizedException("无权限");
         }
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put(JwtConstant.USER_ID,user.getUserId());
+        claims.put(JwtConstant.USER_ID, user.getUserId());
 //        2、登录成功，生成JWT返回
         String token = JwtTokenUtils.createJWT(claims);
 
         UserLoginResVO resVO = new UserLoginResVO();
-        BeanUtils.copyProperties(user,resVO);
+        BeanUtils.copyProperties(user, resVO);
         resVO.setToken(token);
         return resVO;
     }
 
-      /**
+    /**
      * 发送短信验证码
-       * TODO
+     * TODO
      */
-      @Override
+    @Override
     public void sendCode(String phone) {
 //          DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou",
 //                  "1这里填入阿里云用户的AccessKey ID", "2这里填入阿里云用户的AccessKey Secre");
@@ -167,24 +154,24 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
 //          }
 
 //          模拟验证码
-          String code = RandomUtil.randomString(4);
-          System.out.println("验证码是"+code);
-          PHONE_CODE_KEY = phone;
-          //保存验证码(60s失效）
-          redisTemplate.opsForValue().set(PHONE_CODE_KEY,code,60, TimeUnit.SECONDS);
-      }
+        String code = RandomUtil.randomString(4);
+        System.out.println("验证码是" + code);
+        PHONE_CODE_KEY = phone;
+        //保存验证码(60s失效）
+        redisTemplate.opsForValue().set(PHONE_CODE_KEY, code, 60, TimeUnit.SECONDS);
+    }
 
     @Override
     public boolean register(UserRegisterReqVO vo) {
         String account = vo.getAccount(); //账号唯一
         String password = vo.getPassword();
-        if(StringUtils.isAnyBlank(account,password)){
+        if (StringUtils.isAnyBlank(account, password)) {
             throw new CommonException("账号或者密码不能为空");
         }
         LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(UserBase::getAccount,account);
+        lqw.eq(UserBase::getAccount, account);
         UserBase user = userBaseMapper.selectOne(lqw);
-        if(user != null){
+        if (user != null) {
             throw new CommonException("账号不能重复");
         }
         //密码加密
@@ -201,35 +188,37 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
 
     @Override
     public boolean resetPwd(ResetPwdReqVO vo) {
-          //校验用户
+        //校验用户
         Long userId = UserContext.getUser();
-        if(userId == null){
+        if (userId == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
         UserBase user = userBaseMapper.selectById(userId);
         //加密匹配密码是否正确
-        if(!user.getPassword().equals(MD5Utils.inputPassToFormPass(vo.getOldPassword()))){
+        if (!user.getPassword().equals(MD5Utils.inputPassToFormPass(vo.getOldPassword()))) {
             throw new CommonException(PASSWORD_ERROR);
         }
 
         //更新新密码
         String password = MD5Utils.inputPassToFormPass(vo.getPassword());
-        boolean b = userBaseMapper.updatePassword(password,userId);
+        boolean b = userBaseMapper.updatePassword(password, userId);
         return false;
 
     }
 
     @Override
-    public List<UserInfoResVO> getUserInfos(LongIdsVO vo) {
-        List<UserBase> infos = userBaseMapper.selectBatchIds(vo.getIds());
-        List<UserInfoResVO> list = new ArrayList<>();
-        for (UserBase info : infos) {
-            UserInfoResVO userInfoResVO = new UserInfoResVO();
-            BeanUtils.copyProperties(info,userInfoResVO);
-            list.add(userInfoResVO);
+    public List<UserInfoResVO> getUserInfos(List<Long> ids) {
+        if(!CollUtil.isEmpty(ids)){
+            List<UserBase> infos = userBaseMapper.selectBatchIds(ids);
+            List<UserInfoResVO> list = new ArrayList<>();
+            for (UserBase info : infos) {
+                UserInfoResVO userInfoResVO = new UserInfoResVO();
+                BeanUtils.copyProperties(info, userInfoResVO);
+                list.add(userInfoResVO);
+            }
+            return list;
         }
-
-        return list;
+        return null;
     }
 
     @Override
@@ -245,36 +234,57 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     }
 
     @Override
-    public boolean updateUserStatus(LongIdsVO vo) {
-          return userBaseMapper.updateUserStatus(vo.getIds());
+    public boolean updateUserStatus(UpdateUserStatusVO vo) {
+        UserBase userBase = userBaseMapper.selectById(vo.getId());
+        if (userBase == null) {
+            throw new CommonException(USER_NOT_EXISTS);
+        }
+        int flag = 0;
+        //启用用户
+        if (vo.getStatus().equals(1)) {
+            userBase.setStatus(1);
+            flag = userBaseMapper.updateById(userBase);
+        } else {
+            userBase.setStatus(0);
+            flag = userBaseMapper.updateById(userBase);
+            // TODO释放token
 
+        }
+
+        return flag == 0;
     }
 
     @Override
     public int bindMobile(BindMobileVO vo) {
-        redisTemplate.opsForValue().set(PHONE_CODE_KEY,vo.getCode());
-        String code = (String)redisTemplate.opsForValue().get(PHONE_CODE_KEY);
-        if(!vo.getCode().equals(code)){
+        redisTemplate.opsForValue().set(PHONE_CODE_KEY, vo.getCode());
+        String code = (String) redisTemplate.opsForValue().get(PHONE_CODE_KEY);
+        if (!vo.getCode().equals(code)) {
             throw new CommonException(INVALID_VERIFY_CODE);
         }
         Long user = UserContext.getUser();
         UserBase userBase = userBaseMapper.selectById(user);
-        UserBase newUser = new UserBase();
-        BeanUtils.copyProperties(userBase,newUser);
         userBase.setMobile(vo.getMobile());
-        return userBaseMapper.updateById(userBase) ;
+        return userBaseMapper.updateById(userBase);
 
     }
 
-    private List<UserInfoResVO> getUserInfoVO(List<UserBase> records){
-         List<UserInfoResVO> voList = new ArrayList<>();
-         for (UserBase record : records) {
-             UserInfoResVO userInfoResVO = new UserInfoResVO();
-             BeanUtils.copyProperties(record,userInfoResVO);
-             voList.add(userInfoResVO);
-         }
-         return voList;
-     }
+    @Override
+    public int updateDefaultAddress(Integer id) {
+        Long user = UserContext.getUser();
+        UserBase userInfo = userBaseMapper.selectById(user);
+        userInfo.setDefaultAddress(id);
+        return userBaseMapper.updateById(userInfo);
+    }
+
+    private List<UserInfoResVO> getUserInfoVO(List<UserBase> records) {
+        List<UserInfoResVO> voList = new ArrayList<>();
+        for (UserBase record : records) {
+            UserInfoResVO userInfoResVO = new UserInfoResVO();
+            BeanUtils.copyProperties(record, userInfoResVO);
+            voList.add(userInfoResVO);
+        }
+        return voList;
+    }
 
 
 }

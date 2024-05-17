@@ -24,4 +24,6 @@ public interface UserBaseMapper extends BaseMapper<UserBase> {
     boolean updatePassword(@Param("password") String password, @Param("userId") Long userId);
 
     boolean updateUserStatus(@Param("ids") List<Long> ids);
+
+
 }

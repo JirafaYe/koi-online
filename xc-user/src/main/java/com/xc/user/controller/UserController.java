@@ -75,7 +75,7 @@ public class UserController {
     }
 
     /**
-     * 展示用户信息
+     * 分页展示用户信息
      */
     @PostMapping("listPageUser")
     PageDTO<UserInfoResVO> listPageUser(@RequestBody @Valid PageQuery vo){
@@ -86,9 +86,9 @@ public class UserController {
     /**
      * 获取多个用户信息
      */
-    @PostMapping("getUserInfos")
-    public List<UserInfoResVO> getUserInfos(@RequestBody @Valid LongIdsVO vo){
-        return userBaseService.getUserInfos(vo);
+    @GetMapping ("getUserInfos")
+    public List<UserInfoResVO> getUserInfos(@RequestParam("ids")  List<Long> ids){
+        return userBaseService.getUserInfos(ids);
     }
 
     /**
@@ -97,12 +97,16 @@ public class UserController {
      * @return
      */
     @PostMapping("updateUserStatus")
-    public boolean updateUserStatus(@RequestBody @Valid  LongIdsVO vo){
+    public boolean updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo){
         return userBaseService.updateUserStatus(vo);
     }
 
-    public void test(){
-        System.out.println("xxxxx");
+    /**
+     * 设置用户默认地址
+     */
+    @PostMapping("setDefaultAddress/{id}")
+    public Integer updateDefaultAddress(@RequestParam("id") Integer id ){
+        return userBaseService.updateDefaultAddress(id);
     }
 
 }

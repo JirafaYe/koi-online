@@ -40,7 +40,7 @@ public class UserBase implements Serializable {
 
     @ApiModelProperty("状态 0禁用 1启用")
     @TableField("status")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty("账号")
     @TableField("account")

@@ -7,10 +7,7 @@ import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
 import com.xc.user.entity.UserBase;
-import com.xc.user.vo.req.BindMobileVO;
-import com.xc.user.vo.req.ResetPwdReqVO;
-import com.xc.user.vo.req.UserLoginReqVO;
-import com.xc.user.vo.req.UserRegisterReqVO;
+import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
 
 import java.util.List;
@@ -53,10 +50,10 @@ public interface UserBaseService extends IService<UserBase> {
 
     /**
      * 获取多个用户信息
-     * @param vo
+     * @param ids
      * @return
      */
-    List<UserInfoResVO> getUserInfos(LongIdsVO vo);
+    List<UserInfoResVO> getUserInfos(List<Long> ids);
 
     /**
      * 分页查询用户
@@ -70,7 +67,7 @@ public interface UserBaseService extends IService<UserBase> {
      * @param vo
      * @return
      */
-    boolean updateUserStatus(LongIdsVO vo);
+    boolean updateUserStatus(UpdateUserStatusVO vo);
 
     /**
      * 绑定手机号
@@ -79,4 +76,12 @@ public interface UserBaseService extends IService<UserBase> {
      * @return
      */
     int bindMobile(BindMobileVO vo);
+
+    /**
+     * 设置用户默认地址
+     *
+     * @param id
+     * @return
+     */
+    int updateDefaultAddress(Integer id);
 }

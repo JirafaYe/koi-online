@@ -4,8 +4,10 @@ import com.xc.api.client.user.fallback.UserClientFallback;
 import com.xc.api.dto.user.req.LongIdsVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ public interface UserClient {
     /**
      * 获取用户信息
      */
-    @PostMapping("/admin/getUserInfos")
-    List<UserInfoResVO> getUserInfos(@RequestBody LongIdsVO vo);
+    @GetMapping("admin/getUserInfos")
+    List<UserInfoResVO> getUserInfos(@RequestParam("ids") Iterable<Long> ids);
+
 }
