@@ -7,27 +7,29 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class SpuVO {
+    @NotBlank
     private String spuName;
 
+    @NotNull
     private Long brandId;
 
     @NotNull
     private Long categoryId;
 
     /**
-     * 图片list,以，分隔
+     * 图片list,以，分隔,最多8个
      */
     @NotBlank
     private String  mainImagesId;
 
     /**
-     * 描述，json
+     * 描述
      */
     @NotBlank
     private String content;
 
     /**
-     * 详情图
+     * 详情图，id以，分隔,最多8个
      */
     @NotBlank
     private String  contentImagesId;
