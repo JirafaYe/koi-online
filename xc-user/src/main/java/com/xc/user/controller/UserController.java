@@ -103,10 +103,11 @@ public class UserController {
 
     /**
      * 设置用户默认地址
+     * @param addressId 要设为默认的地址ID
      */
-    @PostMapping("setDefaultAddress/{id}")
-    public Integer updateDefaultAddress(@RequestParam("id") Integer id ){
-        return userBaseService.updateDefaultAddress(id);
+    @PostMapping("setDefaultAddress")
+    public Integer updateDefaultAddress(@RequestParam("addressId") Integer addressId ){
+        return userBaseService.updateDefaultAddress(addressId);
     }
 
 }
