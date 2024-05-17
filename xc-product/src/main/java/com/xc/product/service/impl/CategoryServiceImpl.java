@@ -2,6 +2,7 @@ package com.xc.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xc.api.client.promotion.PromotionClient;
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.exceptions.CommonException;
@@ -34,6 +35,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Resource
     UserClient userClient;
 
+    @Resource
+    PromotionClient promotionClient;
+
     @Override
     public boolean createCategory(CategoryReqVO vo) {
         Category category = new Category();
@@ -59,8 +63,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     public boolean removeCategory(Long id) {
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",id);
-        if(baseMapper.selectCount(wrapper)!=0){
+        if(!baseMapper.selectCount(wrapper).equals(0)){
             throw new CommonException("there are children belong to current category");
+        }
+        if(promotionClient.judgeCouponExist(id)){
+            throw new CommonException("there are coupon belong to current category");
         }
 
         return removeById(id);
