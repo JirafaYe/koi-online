@@ -150,6 +150,12 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         return CollUtils.isEmpty(media) ? CollUtils.emptyList() : BeanUtils.copyList(media, MediaDTO.class);
     }
 
+    @Override
+    public List<Long> judgeMediaExist(List<Long> ids) {
+        List<Media> media = baseMapper.selectBatchIds(ids);
+        return media.stream().map(Media::getId).collect(Collectors.toList());
+    }
+
     private String generateNewFileName(String originalFilename) {
         // 1.获取后缀
         String suffix = StringUtils.subAfter(originalFilename, ".", true);

@@ -83,4 +83,14 @@ public class FileController {
     public List<FileDTO> getFileInfos(List<Long> ids){
         return fileService.getFileInfos(ids);
     }
+
+    /**
+     * 判断文件是否存在
+     * @param ids
+     * @return
+     */
+    @GetMapping("/exist")
+    public List<Long> judgeFileExist(@RequestBody List<Long> ids){
+        return fileService.judgeFileExist(ids);
+    }
 }

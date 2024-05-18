@@ -33,4 +33,6 @@ public interface IFileService extends IService<File> {
     List<String> queryAllUselessFile();
 
     List<FileDTO> getFileInfos(List<Long> ids);
+
+    List<Long> judgeFileExist(List<Long> ids);
 }

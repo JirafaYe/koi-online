@@ -5,6 +5,7 @@ import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -25,5 +26,22 @@ public interface MediaClient {
      * @return
      */
     @GetMapping("/medias/ids")
-    public List<MediaDTO> getFileInfos(List<Long> ids);
+    List<MediaDTO> getFileInfos(List<Long> ids);
+
+
+    /**
+     * 判断文件是否存在
+     * @param ids
+     * @return
+     */
+    @GetMapping("/files/exist")
+    List<Long> judgeFileExist(@RequestBody List<Long> ids);
+
+    /**
+     * 判断视频是否存在
+     * @param ids
+     * @return
+     */
+    @GetMapping("/medias/exist")
+    List<Long> judgeMediaExist(@RequestBody List<Long> ids);
 }

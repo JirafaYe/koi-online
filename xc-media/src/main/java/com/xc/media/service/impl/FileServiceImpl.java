@@ -31,10 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -145,6 +142,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         }
         List<File> files = baseMapper.selectBatchIds(ids);
         return CollUtils.isEmpty(files) ? CollUtils.emptyList() : BeanUtils.copyList(files, FileDTO.class);
+    }
+
+    @Override
+    public List<Long> judgeFileExist(List<Long> ids) {
+        List<File> files = baseMapper.selectBatchIds(ids);
+        return files.stream().map(File::getId).collect(Collectors.toList());
     }
 
     private String generateNewFileName(String originalFilename) {

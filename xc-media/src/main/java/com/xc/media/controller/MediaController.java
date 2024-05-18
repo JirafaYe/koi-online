@@ -84,4 +84,14 @@ public class MediaController {
     public List<MediaDTO> getFileInfos(List<Long> ids) {
         return mediaService.getMediaInfos(ids);
     }
+
+    /**
+     * 判断视频是否存在
+     * @param ids
+     * @return
+     */
+    @GetMapping("/exist")
+    public List<Long> judgeMediaExist(@RequestBody List<Long> ids){
+        return mediaService.judgeMediaExist(ids);
+    }
 }
