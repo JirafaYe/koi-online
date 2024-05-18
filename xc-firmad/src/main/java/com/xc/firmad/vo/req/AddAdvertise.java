@@ -17,26 +17,31 @@ public class AddAdvertise {
     /**
      * 广告商名称
      */
+    @NotNull
     private String adName;
 
     /**
      * 收取费用
      */
+    @NotNull
     private BigDecimal expense;
 
     /**
      * 广告开始时间
      */
+    @NotNull
     private LocalDateTime adStartDate;
 
     /**
      * 外接地址
      */
+
     private String adUri;
 
     /**
      * 广告结束时间
      */
+    @NotNull
     private LocalDateTime adEndDate;
 
     /**

@@ -5,10 +5,13 @@ import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
 import com.xc.firmad.service.AdvertiseService;
 import com.xc.firmad.vo.req.AddAdvertise;
+import com.xc.firmad.vo.req.SearchAdvertiseVO;
 import com.xc.firmad.vo.res.AdvertisePageResVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 广告 前端控制器
@@ -24,12 +27,12 @@ public class AdvertiseController {
     private AdvertiseService advertiseService;
 
     /**
-     * 分页获取广告列表
+     * 分页查询广告列表
      * @param vo
      * @return
      */
     @GetMapping("getAdvertisePage")
-    public PageDTO<AdvertisePageResVO> getAdvertisePage(PageQuery vo) {
+    public PageDTO<AdvertisePageResVO> getAdvertisePage(SearchAdvertiseVO vo) {
         return advertiseService.getAdvertisePage(vo);
     }
 
@@ -39,8 +42,18 @@ public class AdvertiseController {
      * @return
      */
     @PostMapping("addAdvertise")
-    public Integer addAdvertise(@RequestBody AddAdvertise vo){
+    public Integer addAdvertise(@RequestBody @Valid AddAdvertise vo){
         return advertiseService.addAdvertise(vo);
+    }
+
+    /**
+     * 删除广告
+     * @param ids
+     * @return
+     */
+    @DeleteMapping("deleteAdvertise")
+    public Integer deleteAdvertise(List<Long> ids){
+        return advertiseService.deleteAdvertise(ids);
     }
 }
 

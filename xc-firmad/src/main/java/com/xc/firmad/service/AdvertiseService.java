@@ -3,15 +3,15 @@ package com.xc.firmad.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.common.domain.query.PageQuery;
 import com.xc.firmad.entity.Advertise;
 import com.xc.firmad.vo.req.AddAdvertise;
+import com.xc.firmad.vo.req.SearchAdvertiseVO;
 import com.xc.firmad.vo.res.AdvertisePageResVO;
 
+import java.util.List;
+
 /**
- * <p>
  * 广告 服务类
- * </p>
  *
  * @author pengyalin
  * @since 2024年05月18日
@@ -19,11 +19,23 @@ import com.xc.firmad.vo.res.AdvertisePageResVO;
 public interface AdvertiseService extends IService<Advertise> {
 
     /**
-     * 分页获取广告列表
+     * 分页获取广告列表 +
      * @param vo
      * @return
      */
-    PageDTO<AdvertisePageResVO> getAdvertisePage(PageQuery vo);
+    PageDTO<AdvertisePageResVO> getAdvertisePage(SearchAdvertiseVO vo);
 
+    /**
+     * 增加广告
+     * @param vo
+     * @return
+     */
     Integer addAdvertise(AddAdvertise vo);
+
+    /**
+     * 删除广告
+     * @param ids
+     * @return
+     */
+    Integer deleteAdvertise(List<Long> ids);
 }

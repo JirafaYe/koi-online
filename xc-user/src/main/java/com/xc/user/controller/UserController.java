@@ -75,7 +75,7 @@ public class UserController {
     }
 
     /**
-     * 分页展示用户信息
+     * 分页查询用户信息
      */
     @GetMapping("listPageUser")
     PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo){

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 import static com.xc.common.constants.ErrorInfo.Msg.*;
@@ -226,18 +227,16 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     @Override
     public PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo) {
         Page<UserBase> page = lambdaQuery().like(StringUtils.isNotEmpty(vo.getNickName()), UserBase::getNickName, vo.getNickName())
-                .like(StringUtils.isNotEmpty(vo.getAccount()), UserBase::getNickName, vo.getNickName())
+                .like(StringUtils.isNotEmpty(vo.getAccount()), UserBase::getAccount, vo.getAccount())
                 .like(StringUtils.isNotEmpty(vo.getMobile()), UserBase::getMobile, vo.getMobile())
                 .eq(vo.getStatus() != null, UserBase::getStatus, vo.getStatus())
                 .page(vo.toMpPage());
-
-//
         List<UserBase> records = page.getRecords();
-        if(CollUtils.isEmpty(records)){
+        if (CollUtils.isEmpty(records)) {
             return PageDTO.empty(page);
         }
         List<UserInfoResVO> loginVO = getUserInfoVO(records);
-        return PageDTO.of(page,loginVO);
+        return PageDTO.of(page, loginVO);
     }
 
     // 手机号码前三后四脱敏
@@ -290,11 +289,13 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
 
     private List<UserInfoResVO> getUserInfoVO(List<UserBase> records) {
         List<UserInfoResVO> voList = new ArrayList<>();
-        for (UserBase record : records) {
-            UserInfoResVO userInfoResVO = BeanUtils.copyBean(record, UserInfoResVO.class);
-            userInfoResVO.setMobile(mobileEncrypt(record.getMobile()));
-            voList.add(userInfoResVO);
-        }
+        voList = records.stream()
+                .map(record -> {
+                    UserInfoResVO userInfoResVO = BeanUtils.copyBean(record, UserInfoResVO.class);
+                    userInfoResVO.setMobile(mobileEncrypt(record.getMobile()));
+                    return userInfoResVO;
+                })
+                .collect(Collectors.toList());
         return voList;
     }
 
