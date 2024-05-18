@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xc.firmad.mapper.AdvertiseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xc.firmad.entity.Advertise">
+        <id column="id" property="id" />
+        <result column="ad_name" property="adName" />
+        <result column="expense" property="expense" />
+        <result column="ad_start_date" property="adStartDate" />
+        <result column="ad_uri" property="adUri" />
+        <result column="ad_end_date" property="adEndDate" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="file_ids" property="fileIds" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, ad_name, expense, ad_start_date, ad_uri, ad_end_date, create_time, update_time, file_ids
+    </sql>
+
+
+</mapper>

@@ -6,15 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.api.client.log.LogClient;
-import com.xc.api.dto.user.req.LongIdsVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
-import com.xc.common.constants.ErrorInfo;
 import com.xc.common.constants.JwtConstant;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.exceptions.UnauthorizedException;
 import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.JwtTokenUtils;
 import com.xc.common.utils.UserContext;
 import com.xc.user.entity.UserBase;
@@ -28,6 +27,7 @@ import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,7 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
 import static com.xc.common.constants.ErrorInfo.Msg.*;
+import static com.xc.common.constants.JwtConstant.JWT_BLANK_LIST;
 
 /**
  * <p>
@@ -60,7 +62,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     private static String PHONE_CODE_KEY = "";
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
     @Resource
     private UserBaseMapper userBaseMapper;
 
@@ -95,7 +97,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
                 throw new CommonException("手机号不能为空");
             }
             //redis 中获取验证码
-            String o = (String) redisTemplate.opsForValue().get(PHONE_CODE_KEY);
+            String o = (String) stringRedisTemplate.opsForValue().get(PHONE_CODE_KEY);
             if (!vo.getCode().equals(o)) {
                 throw new CommonException(INVALID_VERIFY_CODE);
             }
@@ -158,7 +160,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         System.out.println("验证码是" + code);
         PHONE_CODE_KEY = phone;
         //保存验证码(60s失效）
-        redisTemplate.opsForValue().set(PHONE_CODE_KEY, code, 60, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(PHONE_CODE_KEY, code, 60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -208,7 +210,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
 
     @Override
     public List<UserInfoResVO> getUserInfos(List<Long> ids) {
-        if(!CollUtil.isEmpty(ids)){
+        if (!CollUtil.isEmpty(ids)) {
             List<UserBase> infos = userBaseMapper.selectBatchIds(ids);
             List<UserInfoResVO> list = new ArrayList<>();
             for (UserBase info : infos) {
@@ -222,42 +224,52 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     }
 
     @Override
-    public PageDTO<UserInfoResVO> listPageUser(PageQuery vo) {
-        Page<UserBase> page = new Page<>(vo.getPageNo(), vo.getPageSize());
-        LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>();
-        Page<UserBase> pageInfos = userBaseMapper.selectPage(page, lqw);
-        List<UserInfoResVO> loginVO = getUserInfoVO(pageInfos.getRecords());
-        PageDTO<UserInfoResVO> ans = new PageDTO<>();
-        ans.setList(loginVO);
-        ans.setTotal(pageInfos.getTotal());
-        return ans;
+    public PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo) {
+        Page<UserBase> page = lambdaQuery().like(StringUtils.isNotEmpty(vo.getNickName()), UserBase::getNickName, vo.getNickName())
+                .like(StringUtils.isNotEmpty(vo.getAccount()), UserBase::getNickName, vo.getNickName())
+                .like(StringUtils.isNotEmpty(vo.getMobile()), UserBase::getMobile, vo.getMobile())
+                .eq(vo.getStatus() != null, UserBase::getStatus, vo.getStatus())
+                .page(vo.toMpPage());
+
+//
+        List<UserBase> records = page.getRecords();
+        if(CollUtils.isEmpty(records)){
+            return PageDTO.empty(page);
+        }
+        List<UserInfoResVO> loginVO = getUserInfoVO(records);
+        return PageDTO.of(page,loginVO);
+    }
+
+    // 手机号码前三后四脱敏
+    public static String mobileEncrypt(String mobile) {
+        if (StringUtils.isEmpty(mobile) || (mobile.length() != 11)) {
+            return mobile;
+        }
+        return mobile.replaceAll("(\\w{3})\\w*(\\w{4})", "$1****$2");
     }
 
     @Override
-    public boolean updateUserStatus(UpdateUserStatusVO vo) {
+    public int updateUserStatus(UpdateUserStatusVO vo) {
         UserBase userBase = userBaseMapper.selectById(vo.getId());
         if (userBase == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
+        //禁用: 把用户放入黑名单
+        if (vo.getStatus().equals(0)) {
+            stringRedisTemplate.opsForSet().add(JWT_BLANK_LIST, String.valueOf(vo.getId()));
 
-        int flag = 0;
-        //启用用户
-        if (vo.getStatus().equals(1)) {
-            userBase.setStatus(1);
-            flag = userBaseMapper.updateById(userBase);
         } else {
-            userBase.setStatus(0);
-            flag = userBaseMapper.updateById(userBase);
-            // TODO释放token
-
+            userBaseMapper.updateById(userBase.setStatus(vo.getStatus()));
+            stringRedisTemplate.opsForSet().remove(JWT_BLANK_LIST, vo.getId());
         }
-        return flag == 0;
+        return 0;
+
     }
 
     @Override
     public int bindMobile(BindMobileVO vo) {
-        redisTemplate.opsForValue().set(PHONE_CODE_KEY, vo.getCode());
-        String code = (String) redisTemplate.opsForValue().get(PHONE_CODE_KEY);
+        stringRedisTemplate.opsForValue().set(PHONE_CODE_KEY, vo.getCode());
+        String code = (String) stringRedisTemplate.opsForValue().get(PHONE_CODE_KEY);
         if (!vo.getCode().equals(code)) {
             throw new CommonException(INVALID_VERIFY_CODE);
         }
@@ -279,8 +291,8 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     private List<UserInfoResVO> getUserInfoVO(List<UserBase> records) {
         List<UserInfoResVO> voList = new ArrayList<>();
         for (UserBase record : records) {
-            UserInfoResVO userInfoResVO = new UserInfoResVO();
-            BeanUtils.copyProperties(record, userInfoResVO);
+            UserInfoResVO userInfoResVO = BeanUtils.copyBean(record, UserInfoResVO.class);
+            userInfoResVO.setMobile(mobileEncrypt(record.getMobile()));
             voList.add(userInfoResVO);
         }
         return voList;

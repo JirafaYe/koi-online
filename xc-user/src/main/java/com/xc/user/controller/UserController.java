@@ -77,8 +77,8 @@ public class UserController {
     /**
      * 分页展示用户信息
      */
-    @PostMapping("listPageUser")
-    PageDTO<UserInfoResVO> listPageUser(@RequestBody @Valid PageQuery vo){
+    @GetMapping("listPageUser")
+    PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo){
         return userBaseService.listPageUser(vo);
     }
 
@@ -97,7 +97,7 @@ public class UserController {
      * @return
      */
     @PostMapping("updateUserStatus")
-    public boolean updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo){
+    public Integer updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo){
         return userBaseService.updateUserStatus(vo);
     }
 

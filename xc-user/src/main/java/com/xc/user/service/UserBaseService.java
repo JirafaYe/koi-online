@@ -2,7 +2,6 @@ package com.xc.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import com.xc.api.dto.user.req.LongIdsVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
@@ -60,14 +59,15 @@ public interface UserBaseService extends IService<UserBase> {
      * @param vo
      * @return
      */
-    PageDTO<UserInfoResVO> listPageUser(PageQuery vo);
+    PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo);
 
     /**
      * 修改用户状态
+     *
      * @param vo
      * @return
      */
-    boolean updateUserStatus(UpdateUserStatusVO vo);
+    int updateUserStatus(UpdateUserStatusVO vo);
 
     /**
      * 绑定手机号

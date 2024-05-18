@@ -11,23 +11,31 @@ import com.xc.common.utils.JwtTokenUtils;
 import com.xc.common.utils.UserContext;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwsHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @EnableConfigurationProperties(AuthProperties.class)
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     private final AuthProperties authProperties;
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -56,14 +64,23 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             Jws<Claims> claimsJws = JwtTokenUtils.parseJwt(token);
             Claims parseToken = claimsJws.getPayload();
             userId = (Long)parseToken.get(JwtConstant.USER_ID);
+//            判断用户存在或者是否在黑名单内
+            if(userId == null || stringRedisTemplate.opsForSet().isMember(JwtConstant.JWT_BLANK_LIST, userId)){
+                throw new UnauthorizedException("无权限");
+            }
+            //判断是否快要过期
+           if(JwtTokenUtils.isTokenExpired(token)){
+               //刷新token
+               String goodToken = JwtTokenUtils.getGoodToken(userId);
+               // 将新的token设置到响应头中
+               ServerHttpResponse response = exchange.getResponse();
+               response.getHeaders().add("New-Token", goodToken);
+           }
         } catch (UnauthorizedException e) {
             // 如果无效，拦截
             ServerHttpResponse response = exchange.getResponse();
             response.setRawStatusCode(401);
             return response.setComplete();
-        }
-        if(userId == null){
-          throw new CommonException("未登录");
         }
         Long finalUserId = userId;
         exchange.mutate().request(builder -> builder.header(JwtConstant.USER_HEADER, finalUserId.toString())).build();

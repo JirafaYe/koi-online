@@ -15,7 +15,9 @@ public class JwtTokenUtils {
     /**
      * jwt过期时间(毫秒)
      */
-    public static final long ACCESS_EXPIRE = 86400000L;
+    public static final long ACCESS_EXPIRE = 30000L;      //24h    86400000L
+
+    public static final long ADVANCE_EXPIRE_TIME = 1800000L; //30min
     /**
      * 加密算法
      */
@@ -59,8 +61,6 @@ public class JwtTokenUtils {
             iat: jwt的签发时间
             jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击
              */
-
-
         // 令牌id
         String uuid = UUID.randomUUID().toString();
         Date exprireDate = Date.from(Instant.now().plusMillis(ACCESS_EXPIRE));
@@ -109,15 +109,30 @@ public class JwtTokenUtils {
         return parseJwt(token).getPayload();
 
     }
-//    public String refreshToken(String token){
-//        Jws<Claims> claimsJws = parseJwt(token);
-//        Claims claims = claimsJws.getPayload();
-//
-//        //修改为当前时间
-//        claims.put(CLAIM_KEY_CREATED,new Date());
-//        return createToken(claims);
-//    }
 
+    /**
+     * 检查token是否快要过期
+     * @param token
+     * @return
+     */
+    public static boolean isTokenExpired(String token){
+        Date expiration = parseJwt(token).getPayload().getExpiration(); //过期时间
+        if(expiration.before(new Date(System.currentTimeMillis()+ADVANCE_EXPIRE_TIME))){
+            return true;
+        }
+        return false;  //true 为过期
+    }
 
-
+    /**
+     * 获取可用的token
+     *返回一个新token
+     * @param userId
+     * @return
+     */
+    public static String getGoodToken(Long userId){
+            HashMap<String, Object> map = new HashMap<>();
+            map.put(JwtConstant.USER_ID,userId);
+            String newToken = createJWT(map);
+            return newToken;
+    }
 }
