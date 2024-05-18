@@ -26,7 +26,7 @@ public class CategoryController {
      * @return
      */
     @PostMapping("/create")
-    public boolean createCategory(@Valid CategoryReqVO vo){
+    public boolean createCategory(@RequestBody @Valid CategoryReqVO vo){
         return categoryService.createCategory(vo);
     }
 
@@ -77,7 +77,7 @@ public class CategoryController {
      * @return
      */
     @PostMapping ("/update")
-    public boolean orderCategoryById(@Valid CategoryReqVO vo){
+    public boolean orderCategoryById(@RequestBody @Valid CategoryReqVO vo){
         return categoryService.update(vo);
     }
 }

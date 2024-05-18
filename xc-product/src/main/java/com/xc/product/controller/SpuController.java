@@ -3,6 +3,7 @@ package com.xc.product.controller;
 import com.xc.product.entity.vo.SpuVO;
 import com.xc.product.service.IStandardProductUnitService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +25,7 @@ public class SpuController {
      * @return
      */
     @PostMapping("/create")
-    public boolean createSpu(@Valid SpuVO vo){
+    public boolean createSpu(@RequestBody @Valid SpuVO vo){
         return spuService.createSpu(vo);
     }
 
@@ -34,7 +35,7 @@ public class SpuController {
      * @return
      */
     @PostMapping("/update")
-    public boolean updateSpu(@Valid SpuVO vo){
+    public boolean updateSpu(@RequestBody @Valid SpuVO vo){
         return spuService.updateSpu(vo);
     }
 }

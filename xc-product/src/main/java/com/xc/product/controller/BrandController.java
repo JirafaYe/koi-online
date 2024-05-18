@@ -28,7 +28,7 @@ public class BrandController {
      * @return 是否成功创建
      */
     @PostMapping("/create")
-    public Boolean createBrand(@Valid BrandVO vo){
+    public Boolean createBrand(@RequestBody @Valid BrandVO vo){
 //        UserContext.setUser(1790297174534524928L);
         return brandService.createBand(vo);
     }
@@ -46,7 +46,7 @@ public class BrandController {
     }
 
     @PostMapping("/update")
-    public boolean updateBrand(BrandVO vo){
+    public boolean updateBrand(@RequestBody BrandVO vo){
         return brandService.updateBrand(vo);
     }
 }
