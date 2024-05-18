@@ -28,7 +28,7 @@ public class StandardProductUnit implements Serializable {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
-    private String name;
+    private String spuName;
 
     private Long brandId;
 
@@ -37,7 +37,7 @@ public class StandardProductUnit implements Serializable {
     /**
      * 图片
      */
-    private Long mainImagesId;
+    private String  mainImagesId;
 
     /**
      * 描述，json
@@ -47,19 +47,19 @@ public class StandardProductUnit implements Serializable {
     /**
      * 详情图
      */
-    private Long contentImagesId;
+    private String  contentImagesId;
 
     /**
      * 视频id
      */
-    private Long mainVedioId;
+    private Long mainVideoId;
 
     /**
      * 库存
      */
     private Long num;
 
-    private Integer available;
+    private boolean available;
 
     private Integer deleted;
 

@@ -47,7 +47,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
     @Override
     public Boolean updateBrand(BrandVO vo) {
         Long brandId = vo.getBrandId();
-        if(brandId==null||brandId==0){
+        if(brandId==null||brandId.equals(0L)){
             throw new CommonException("required brandId value");
         }
         Brand brand = new Brand();
@@ -73,13 +73,12 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             throw new CommonException("required brandId value");
         }
         boolean ret=false;
-        if(spuService.countByBrand(brandId)==0){
+        if(spuService.countByBrand(brandId).equals(0)){
             ret=removeById(brandId);
         }
         return ret;
     }
 
-    //todo: convert userId to userName
     @Override
     public PageDTO<BrandPageVO> queryBrandsByPage(BrandQuery q) {
         Page<Brand> page = lambdaQuery().page(q.toMpPageDefaultSortByCreateTimeDesc());
@@ -89,8 +88,6 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             Set<Long> userIds = records.stream().map(Brand::getCreater).collect(Collectors.toSet());
             userIds.addAll(records.stream().map(Brand::getUpdater).collect(Collectors.toList()));
 
-//            LongIdsVO longIdsVO = new LongIdsVO();
-//            longIdsVO.setIds(new ArrayList<>(userIds));
             HashMap<Long, String> userMap = new HashMap<>();
             for (UserInfoResVO userInfo : userClient.getUserInfos(userIds)) {
                 userMap.put(userInfo.getUserId(),userInfo.getAccount());

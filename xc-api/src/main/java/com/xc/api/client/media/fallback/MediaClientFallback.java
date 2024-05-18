@@ -21,6 +21,16 @@ public class MediaClientFallback implements FallbackFactory<MediaClient> {
             public List<MediaDTO> getFileInfos(List<Long> ids) {
                 return CollUtils.emptyList();
             }
+
+            @Override
+            public List<Long> judgeFileExist(Iterable<Long> ids) {
+                return CollUtils.emptyList();
+            }
+
+            @Override
+            public List<Long> judgeMediaExist(Iterable<Long> ids) {
+                return CollUtils.emptyList();
+            }
         };
     }
 }

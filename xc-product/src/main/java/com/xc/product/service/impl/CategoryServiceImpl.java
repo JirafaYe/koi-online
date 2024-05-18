@@ -2,18 +2,25 @@ package com.xc.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xc.api.client.promotion.PromotionClient;
+import com.xc.api.client.user.UserClient;
+import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.exceptions.CommonException;
+import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.product.entity.Category;
 import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.CategoryResVO;
 import com.xc.product.entity.vo.OrderCategoryVO;
 import com.xc.product.mapper.CategoryMapper;
 import com.xc.product.service.ICategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xc.product.service.IStandardProductUnitService;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -25,6 +32,16 @@ import java.util.List;
  */
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements ICategoryService {
+
+    @Resource
+    UserClient userClient;
+
+    @Resource
+    PromotionClient promotionClient;
+
+    @Resource
+    IStandardProductUnitService spuService;
+
     @Override
     public boolean createCategory(CategoryReqVO vo) {
         Category category = new Category();
@@ -45,13 +62,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return names;
     }
 
-    //todo: 判断优惠券依赖
     @Override
     public boolean removeCategory(Long id) {
         QueryWrapper<Category> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",id);
-        if(baseMapper.selectCount(wrapper)!=0){
-            throw new CommonException(" there are children belong to current category");
+        if(!spuService.countByCategory(id).equals(0)){
+            throw new CommonException("there are spues belong to current category");
+        }
+        if(!baseMapper.selectCount(wrapper).equals(0)){
+            throw new CommonException("there are children belong to current category");
+        }
+        if(promotionClient.judgeCouponExist(id)){
+            throw new CommonException("there are coupon belong to current category");
         }
 
         return removeById(id);
@@ -72,5 +94,78 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             res=updateBatchById(categories);
         }
         return res;
+    }
+
+    @Override
+    public boolean update(CategoryReqVO vo) {
+        if(vo.getId()==null||vo.getId().equals(0L)){
+            throw new CommonException("required value of id");
+        }
+        if(vo.getParentId()!=null) {
+            QueryWrapper<Category> wrapper = new QueryWrapper<>();
+            wrapper.eq("id", vo.getParentId());
+            if(baseMapper.selectCount(wrapper).equals(0)){
+                throw new CommonException("parent_id does not exist");
+            }
+        }
+        return updateById(BeanUtils.copyBean(vo,Category.class));
+    }
+
+    @Override
+    public List<CategoryResVO> queryCategories() {
+        List<CategoryResVO> categoryResVOS = queryCategories(new LinkedList<>(), true);
+        Set<Long> userSet = getUserSet(categoryResVOS);
+        Map<Long, String> userMap = userClient.getUserInfos(userSet).stream().collect(Collectors.toMap(
+                UserInfoResVO::getUserId, UserInfoResVO::getAccount
+        ));
+
+        return setUserName(categoryResVOS,userMap);
+    }
+
+    public List<CategoryResVO> queryCategories(List<CategoryResVO> vos, boolean isFirst) {
+        QueryWrapper<Category> wrapper = new QueryWrapper<>();
+        if(isFirst){
+            wrapper.isNull("parent_id");
+            wrapper.orderByAsc("sequence");
+            List<Category> categories = baseMapper.selectList(wrapper);
+            vos= BeanUtils.copyList(categories,CategoryResVO.class);
+        }
+        for(CategoryResVO cat:vos){
+            wrapper = new QueryWrapper<>();
+            wrapper.eq("parent_id",cat.getId());
+            wrapper.orderByAsc("sequence");
+            List<Category> list = baseMapper.selectList(wrapper);
+            if(!CollUtils.isEmpty(list)){
+                List<CategoryResVO> intermedia = BeanUtils.copyList(list, CategoryResVO.class);
+                intermedia=queryCategories(intermedia,false);
+                cat.setChildren(intermedia);
+            }
+        }
+        return vos;
+    }
+
+    public List<CategoryResVO> setUserName(List<CategoryResVO> categoryResVOS,Map<Long,String> map){
+        for(CategoryResVO vo:categoryResVOS){
+            if(!CollUtils.isEmpty(vo.getChildren())){
+                vo.setChildren(setUserName(vo.getChildren(),map));
+            }
+        }
+        if(!CollUtils.isEmpty(categoryResVOS)){
+            categoryResVOS.forEach(obj->
+                obj.setCreaterName(map.get(obj.getCreater()))
+            );
+        }
+        return categoryResVOS;
+    }
+
+    public  Set<Long> getUserSet(List<CategoryResVO> categoryResVOS){
+        Set<Long> userSet=new HashSet<>();
+        for(CategoryResVO vo:categoryResVOS){
+            if(!CollUtils.isEmpty(vo.getChildren())){
+                userSet.addAll(getUserSet(vo.getChildren()));
+            }
+        }
+        userSet.addAll(categoryResVOS.stream().map(CategoryResVO::getCreater).collect(Collectors.toSet()));
+        return userSet;
     }
 }

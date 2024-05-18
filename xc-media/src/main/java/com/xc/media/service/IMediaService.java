@@ -33,4 +33,6 @@ public interface IMediaService extends IService<Media> {
     List<String> queryAllUselessFile();
 
     List<MediaDTO> getMediaInfos(List<Long> ids);
+
+    List<Long> judgeMediaExist(List<Long> ids);
 }

@@ -100,13 +100,16 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         if(CollUtils.isEmpty(records)){
             return PageDTO.empty(page);
         }
-        //TODO 增加创建人
-//        List<Long> createrIds = records.stream().map(Media::getCreater).collect(Collectors.toList());
-//        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
-//        Map<Long, String> userNameMap = userInfos.stream()
-//                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
-        List<MediaVO> list = BeanUtils.copyList(records, MediaVO.class);
-//        list.forEach(e -> e.setCreater(userNameMap.get(e.getId())));
+        // 增加创建人
+        List<Long> createrIds = records.stream().map(Media::getCreater).collect(Collectors.toList());
+        List<UserInfoResVO> userInfos = userClient.getUserInfos(createrIds);
+        Map<Long, String> userNameMap = userInfos.stream()
+                .collect(Collectors.toMap(UserInfoResVO::getUserId, UserInfoResVO::getAccount));
+        List<MediaVO> list = records.stream().map(c -> {
+            MediaVO vo = BeanUtils.copyBean(c, MediaVO.class);
+            vo.setCreater(userNameMap.get(c.getCreater()));
+            return vo;
+        }).collect(Collectors.toList());
         return PageDTO.of(page, list);
     }
 
@@ -145,6 +148,12 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         }
         List<Media> media = baseMapper.selectBatchIds(ids);
         return CollUtils.isEmpty(media) ? CollUtils.emptyList() : BeanUtils.copyList(media, MediaDTO.class);
+    }
+
+    @Override
+    public List<Long> judgeMediaExist(List<Long> ids) {
+        List<Media> media = baseMapper.selectBatchIds(ids);
+        return media.stream().map(Media::getId).collect(Collectors.toList());
     }
 
     private String generateNewFileName(String originalFilename) {

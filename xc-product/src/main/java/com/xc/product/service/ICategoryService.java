@@ -3,6 +3,7 @@ package com.xc.product.service;
 import com.xc.product.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.product.entity.vo.CategoryReqVO;
+import com.xc.product.entity.vo.CategoryResVO;
 import com.xc.product.entity.vo.OrderCategoryVO;
 
 import java.util.LinkedList;
@@ -24,4 +25,8 @@ public interface ICategoryService extends IService<Category> {
     boolean removeCategory(Long id);
 
     Boolean orderCategory(List<OrderCategoryVO> vos);
+
+    List<CategoryResVO> queryCategories();
+
+    boolean update(CategoryReqVO vo);
 }
