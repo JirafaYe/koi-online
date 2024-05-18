@@ -23,12 +23,12 @@ public class MediaClientFallback implements FallbackFactory<MediaClient> {
             }
 
             @Override
-            public List<Long> judgeFileExist(List<Long> ids) {
+            public List<Long> judgeFileExist(Iterable<Long> ids) {
                 return CollUtils.emptyList();
             }
 
             @Override
-            public List<Long> judgeMediaExist(List<Long> ids) {
+            public List<Long> judgeMediaExist(Iterable<Long> ids) {
                 return CollUtils.emptyList();
             }
         };

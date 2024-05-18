@@ -35,7 +35,7 @@ public interface MediaClient {
      * @return
      */
     @GetMapping("/files/exist")
-    List<Long> judgeFileExist(@RequestBody List<Long> ids);
+    List<Long> judgeFileExist(@RequestBody Iterable<Long> ids);
 
     /**
      * 判断视频是否存在
@@ -43,5 +43,5 @@ public interface MediaClient {
      * @return
      */
     @GetMapping("/medias/exist")
-    List<Long> judgeMediaExist(@RequestBody List<Long> ids);
+    List<Long> judgeMediaExist(@RequestBody Iterable<Long> ids);
 }
