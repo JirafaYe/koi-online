@@ -124,7 +124,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         HashSet<Long> ids = new HashSet<>();
         ids.addAll(main);
         ids.addAll(content);
-        List<Long> realIds = mediaClient.judgeFileExist(new ArrayList<>(ids));
+        List<Long> realIds = mediaClient.judgeFileExist(ids);
 
         main.retainAll(realIds);
         content.retainAll(realIds);
