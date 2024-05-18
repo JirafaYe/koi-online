@@ -46,45 +46,21 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
 
     @Override
     public Integer countByBrand(Long brandId) {
-        Integer integer = baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getBrandId,brandId));
-        return integer;
+        return baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getBrandId,brandId));
     }
 
     @Override
     public Integer countByCategory(Long id) {
-        Integer integer = baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getCategoryId,id));
-        return integer;
+        return baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getCategoryId,id));
     }
 
     @Override
     public boolean createSpu(SpuVO vo) {
         vo.setId(null);
-        List<Long> mainImages = splitImagesId(vo.getMainImagesId());
-        List<Long> contentImages = splitImagesId(vo.getContentImagesId());
-
         boolean res=false;
-        if(!CollUtils.isEmpty(mainImages)&&!CollUtils.isEmpty(contentImages)
-                &&ifCategoryExist(vo.getCategoryId())&&ifBrandExist(vo.getBrandId())){
-            HashSet<Long> ids = new HashSet<>();
-            ids.addAll(mainImages);
-            ids.addAll(contentImages);
-            List<Long> realIds = mediaClient.judgeFileExist(new ArrayList<>(ids));
-
-            mainImages.retainAll(realIds);
-            contentImages.retainAll(realIds);
-
-
-            vo.setMainImagesId(mainImages.stream().map(Objects::toString).collect(Collectors.joining(",")));
-            vo.setContentImagesId(contentImages.stream().map(Objects::toString).collect(Collectors.joining(",")));
-
-            if(vo.getMainVideoId()!=null){
-                List<Long> longs = mediaClient.judgeMediaExist(List.of(vo.getMainVideoId()));
-
-                vo.setMainVideoId(longs.size()>0?longs.get(0):null);
-            }
-
-            StandardProductUnit spu = BeanUtils.copyBean(vo, StandardProductUnit.class);
-            res=save(spu);
+        vo = trimSpuVO(vo);
+        if(vo!=null){
+            res=save(BeanUtils.copyBean(vo,StandardProductUnit.class));
         }
         return res;
     }
@@ -99,7 +75,12 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         if(vo.getId()==null||vo.getId().equals(0L)){
             throw new CommonException("required value of spu");
         }
-        return updateById(BeanUtils.copyBean(vo, StandardProductUnit.class));
+        boolean res=false;
+        vo = trimSpuVO(vo);
+        if(vo!=null){
+            res=updateById(BeanUtils.copyBean(vo,StandardProductUnit.class));
+        }
+        return res;
     }
 
     @Override
@@ -129,5 +110,35 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         wrapper.eq("id",id);
 
         return !brandMapper.selectCount(wrapper).equals(0);
+    }
+
+    public SpuVO trimSpuVO(SpuVO vo){
+        List<Long> main = splitImagesId(vo.getMainImagesId());
+        List<Long> content = splitImagesId(vo.getContentImagesId());
+
+        if(!CollUtils.isEmpty(main)&&!CollUtils.isEmpty(content)
+                &&!ifCategoryExist(vo.getCategoryId())&&!ifBrandExist(vo.getBrandId())){
+            return null;
+        }
+
+        HashSet<Long> ids = new HashSet<>();
+        ids.addAll(main);
+        ids.addAll(content);
+        List<Long> realIds = mediaClient.judgeFileExist(new ArrayList<>(ids));
+
+        main.retainAll(realIds);
+        content.retainAll(realIds);
+
+
+        vo.setMainImagesId(main.stream().map(Objects::toString).collect(Collectors.joining(",")));
+        vo.setContentImagesId(content.stream().map(Objects::toString).collect(Collectors.joining(",")));
+
+        if(vo.getMainVideoId()!=null){
+            List<Long> longs = mediaClient.judgeMediaExist(List.of(vo.getMainVideoId()));
+
+            vo.setMainVideoId(longs.size()>0?longs.get(0):null);
+        }
+
+        return vo;
     }
 }
