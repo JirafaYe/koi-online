@@ -258,17 +258,17 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
             stringRedisTemplate.opsForSet().add(JWT_BLANK_LIST, String.valueOf(vo.getId()));
 
         } else {
-            userBaseMapper.updateById(userBase.setStatus(vo.getStatus()));
-            stringRedisTemplate.opsForSet().remove(JWT_BLANK_LIST, vo.getId());
+            stringRedisTemplate.opsForSet().remove(JWT_BLANK_LIST, String.valueOf(vo.getId()));
         }
-        return 0;
+        return userBaseMapper.updateById(userBase.setStatus(vo.getStatus()));
+
 
     }
 
     @Override
     public int bindMobile(BindMobileVO vo) {
         stringRedisTemplate.opsForValue().set(PHONE_CODE_KEY, vo.getCode());
-        String code = (String) stringRedisTemplate.opsForValue().get(PHONE_CODE_KEY);
+        String code = stringRedisTemplate.opsForValue().get(PHONE_CODE_KEY);
         if (!vo.getCode().equals(code)) {
             throw new CommonException(INVALID_VERIFY_CODE);
         }

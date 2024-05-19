@@ -124,6 +124,18 @@ public class JwtTokenUtils {
     }
 
     /**
+     * 检查token是否已经过期
+     * @param token
+     * @return
+     */
+    public static boolean isTokenAreadyExpired(String token){
+        Date expiration = parseJwt(token).getPayload().getExpiration(); //过期时间
+        if(expiration.before(new Date())){
+            return true;
+        }
+        return false;  //true 为过期
+    }
+    /**
      * 获取可用的token
      *返回一个新token
      * @param userId

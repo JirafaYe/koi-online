@@ -2,7 +2,6 @@ package com.xc.gateway.fliter;
 
 
 import com.xc.common.constants.JwtConstant;
-import com.xc.common.exceptions.CommonException;
 import com.xc.common.exceptions.UnauthorizedException;
 import com.xc.common.utils.StringUtils;
 import com.xc.gateway.properties.AuthProperties;
@@ -10,8 +9,8 @@ import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.JwtTokenUtils;
 import com.xc.common.utils.UserContext;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwsHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -65,22 +64,28 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             Claims parseToken = claimsJws.getPayload();
             userId = (Long)parseToken.get(JwtConstant.USER_ID);
 //            判断用户存在或者是否在黑名单内
-            if(userId == null || stringRedisTemplate.opsForSet().isMember(JwtConstant.JWT_BLANK_LIST, userId)){
+            if(userId == null || stringRedisTemplate.opsForSet().isMember(JwtConstant.JWT_BLANK_LIST,String.valueOf(userId) )){
                 throw new UnauthorizedException("无权限");
             }
             //判断是否快要过期
-           if(JwtTokenUtils.isTokenExpired(token)){
-               //刷新token
-               String goodToken = JwtTokenUtils.getGoodToken(userId);
-               // 将新的token设置到响应头中
-               ServerHttpResponse response = exchange.getResponse();
-               response.getHeaders().add("New-Token", goodToken);
-           }
+//           if(JwtTokenUtils.isTokenExpired(token)){
+//               //刷新token
+//               String goodToken = JwtTokenUtils.getGoodToken(userId);
+//               // 将新的token设置到响应头中
+//               ServerHttpResponse response = exchange.getResponse();
+//               response.getHeaders().add("token", goodToken);
+//           }
+            System.out.println(claimsJws.getPayload().getExpiration());
+            if(JwtTokenUtils.isTokenAreadyExpired(token)){
+                throw new UnauthorizedException("请重新登录");
+            }
         } catch (UnauthorizedException e) {
             // 如果无效，拦截
             ServerHttpResponse response = exchange.getResponse();
             response.setRawStatusCode(401);
             return response.setComplete();
+        }catch (ExpiredJwtException e){
+            throw new UnauthorizedException("token已过期");
         }
         Long finalUserId = userId;
         exchange.mutate().request(builder -> builder.header(JwtConstant.USER_HEADER, finalUserId.toString())).build();
