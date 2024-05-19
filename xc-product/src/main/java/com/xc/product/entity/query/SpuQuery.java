@@ -2,10 +2,9 @@ package com.xc.product.entity.query;
 
 import com.xc.common.domain.query.PageQuery;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-/**
- * 必须且仅支持传一个值，传两值则默认根据brandId查询
- */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SpuQuery extends PageQuery {
     /**
