@@ -15,7 +15,7 @@ public class JwtTokenUtils {
     /**
      * jwt过期时间(毫秒)
      */
-    public static final long ACCESS_EXPIRE = 30000L;      //24h    86400000L
+    public static final long ACCESS_EXPIRE = 3000000L;    //50min
 
     public static final long ADVANCE_EXPIRE_TIME = 1800000L; //30min
     /**

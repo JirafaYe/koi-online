@@ -180,7 +180,9 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         //密码加密
         String newPass = MD5Utils.inputPassToFormPass(password);
         UserBase userBase = new UserBase();
-        userBase.setUserId(IdGeneratorSnowflake.snowflakeId());
+        //id生成
+        IdGeneratorSnowflake idWorker = new IdGeneratorSnowflake(1);
+        userBase.setUserId(idWorker.nextId());
         userBase.setAccount(account);
         userBase.setPassword(newPass);
         userBase.setSrcface(UserConstants.deSrcUrl);
@@ -190,7 +192,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     }
 
     @Override
-    public boolean resetPwd(ResetPwdReqVO vo) {
+    public Boolean resetPwd(ResetPwdReqVO vo) {
         //校验用户
         Long userId = UserContext.getUser();
         if (userId == null) {
@@ -204,8 +206,8 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
 
         //更新新密码
         String password = MD5Utils.inputPassToFormPass(vo.getPassword());
-        boolean b = userBaseMapper.updatePassword(password, userId);
-        return false;
+        return userBaseMapper.updatePassword(password, userId);
+
 
     }
 

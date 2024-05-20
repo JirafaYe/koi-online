@@ -61,7 +61,7 @@ public class UserController {
      * 重置密码
      */
     @PostMapping("resetPwd")
-    public boolean resetPwd(@RequestBody ResetPwdReqVO vo) {
+    public Boolean resetPwd(@RequestBody ResetPwdReqVO vo) {
         return userBaseService.resetPwd(vo);
     }
 

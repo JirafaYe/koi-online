@@ -45,7 +45,7 @@ public interface UserBaseService extends IService<UserBase> {
      * @param vo
      * @return
      */
-    boolean resetPwd(ResetPwdReqVO vo);
+    Boolean resetPwd(ResetPwdReqVO vo);
 
     /**
      * 获取多个用户信息
