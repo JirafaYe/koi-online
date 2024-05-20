@@ -64,16 +64,17 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
     public boolean removeSku(Long id) {
         StockKeepingUnit sku = baseMapper.selectById(id);
         if(sku!=null){
-            StandardProductUnit spu = spuMapper.selectById(sku.getSpuId());
-            spu.setNum(spu.getNum()-sku.getNum());
-            int i = spuMapper.updateById(spu);
+            boolean update=true;
+            if(sku.isAvailable()) {
+                update = spuMapper.updateNumWhenRemoveSku(sku)==1;
+            }
             boolean remove = removeById(id);
-            if(!(remove&&i==1)){
+            if(!(remove&&update)){
                 throw new CommonException("删除失败");
             }
             return true;
         }
-        return false;
+        throw new CommonException("SKU Id 不存在");
     }
 
     boolean testifyImageId(Long id){

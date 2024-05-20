@@ -17,7 +17,7 @@ public class SkuVO {
      * 单个id
      */
     @NotNull
-    private Long image;
+    private Long imageId;
 
     /**
      * 库存, 上架时同时更新spu库存
