@@ -215,6 +215,7 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
     }
 
     @Override
+    @Transactional
     public void pauseIssue(Long id) {
         Coupon coupon = getById(id);
         if(coupon == null){

@@ -1,0 +1,300 @@
+23:19:24.065-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.xc.promotion.testTime                : The following 1 profile is active: "dev"
+23:19:24.761-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+23:19:24.764-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+23:19:24.791-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+23:19:25.117-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=b2441066-c147-3c1e-ae74-2e20b3617705
+23:19:28.794-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'product-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:30.012-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config init.
+23:19:30.020-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config end.
+23:19:32.036-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+23:19:32.376-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'firmad-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.409-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'log-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.442-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'media-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.472-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'promotion-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.495-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'remark-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.515-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'search-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.528-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'trade-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.546-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'user-service' URL not provided. Will try picking an instance via load-balancing.
+23:19:32.635-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[9999] is in use.
+23:19:32.635-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[10000] is in use.
+23:19:32.670-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:19:32.671-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Environment :null
+23:19:32.671-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:19:32.825-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.alibaba.nacos.client.naming          : new ips(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatTimeOut":15000,"instanceHeartBeatInterval":5000}]
+23:19:32.853-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.alibaba.nacos.client.naming          : current ips:(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatTimeOut":15000,"instanceHeartBeatInterval":5000}]
+23:19:32.874-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] com.xc.promotion.testTime                : Started testTime in 14.231 seconds (JVM running for 15.435)
+23:19:32.880-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service-dev.yaml+DEFAULT_GROUP
+23:19:32.882-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP, cnt=1
+23:19:32.882-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP
+23:19:32.883-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service+DEFAULT_GROUP
+23:19:32.883-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service, group=DEFAULT_GROUP, cnt=1
+23:19:32.883-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service, group=DEFAULT_GROUP
+23:19:32.884-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service.yaml+DEFAULT_GROUP
+23:19:32.884-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service.yaml, group=DEFAULT_GROUP, cnt=1
+23:19:32.884-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service.yaml, group=DEFAULT_GROUP
+23:19:33.349-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 10001
+23:19:33.827-[LAPTOP-F9SO3CRP][sys]-- WARN 14156 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+23:19:33.827-[LAPTOP-F9SO3CRP][sys]-- WARN 14156 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+23:19:33.828-[LAPTOP-F9SO3CRP][sys]-- WARN 14156 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Destruction of the end
+23:19:33.828-[LAPTOP-F9SO3CRP][sys]-- WARN 14156 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Destruction of the end
+23:19:33.832-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server stop.
+23:19:33.871-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='promotion-service', registryValue='http://192.168.43.5:10001/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+23:19:33.871-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job, executor registry thread destroy.
+23:19:33.871-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server destroy success.
+23:19:33.872-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [FileCleanThread] c.x.j.core.thread.JobLogFileCleanThread  : >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+23:19:33.872-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [rCallbackThread] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor callback thread destroy.
+23:19:33.872-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [      Thread-11] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+23:19:33.872-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown begin
+23:19:33.873-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown stop
+23:19:33.873-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown begin
+23:19:33.947-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown begin
+23:19:36.963-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown stop
+23:19:36.964-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown begin
+23:19:39.985-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown stop
+23:19:39.985-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown stop
+23:19:39.985-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown begin
+23:19:39.986-[LAPTOP-F9SO3CRP][sys]-- WARN 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Start destroying NacosRestTemplate
+23:19:39.986-[LAPTOP-F9SO3CRP][sys]-- WARN 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Destruction of the end
+23:19:39.986-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] c.a.n.client.identify.CredentialWatcher  : [null] CredentialWatcher is stopped
+23:19:39.987-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] c.a.n.client.identify.CredentialService  : [null] CredentialService is freed
+23:19:39.987-[LAPTOP-F9SO3CRP][sys]-- INFO 14156 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown stop
+23:25:21.851-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.xc.promotion.testTime                : The following 1 profile is active: "dev"
+23:25:22.917-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+23:25:22.922-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+23:25:22.959-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 0 Redis repository interfaces.
+23:25:23.385-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=b2441066-c147-3c1e-ae74-2e20b3617705
+23:25:28.669-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'product-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:30.130-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config init.
+23:25:30.136-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config end.
+23:25:32.425-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+23:25:32.610-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'firmad-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.633-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'log-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.655-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'media-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.682-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'promotion-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.706-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'remark-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.728-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'search-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.751-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'trade-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.773-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'user-service' URL not provided. Will try picking an instance via load-balancing.
+23:25:32.886-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[9999] is in use.
+23:25:32.887-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[10000] is in use.
+23:25:32.947-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:25:32.948-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Environment :null
+23:25:32.949-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:25:33.198-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.alibaba.nacos.client.naming          : new ips(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000,"ipDeleteTimeout":30000}]
+23:25:33.215-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.alibaba.nacos.client.naming          : current ips:(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000,"ipDeleteTimeout":30000}]
+23:25:33.236-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] com.xc.promotion.testTime                : Started testTime in 17.837 seconds (JVM running for 19.766)
+23:25:33.242-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service-dev.yaml+DEFAULT_GROUP
+23:25:33.243-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP, cnt=1
+23:25:33.244-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP
+23:25:33.245-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service+DEFAULT_GROUP
+23:25:33.245-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service, group=DEFAULT_GROUP, cnt=1
+23:25:33.245-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service, group=DEFAULT_GROUP
+23:25:33.246-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service.yaml+DEFAULT_GROUP
+23:25:33.246-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service.yaml, group=DEFAULT_GROUP, cnt=1
+23:25:33.246-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service.yaml, group=DEFAULT_GROUP
+23:25:33.847-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 10001
+23:25:34.321-[LAPTOP-F9SO3CRP][sys]-- WARN 24564 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+23:25:34.322-[LAPTOP-F9SO3CRP][sys]-- WARN 24564 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+23:25:34.322-[LAPTOP-F9SO3CRP][sys]-- WARN 24564 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Destruction of the end
+23:25:34.323-[LAPTOP-F9SO3CRP][sys]-- WARN 24564 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Destruction of the end
+23:25:34.327-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server stop.
+23:25:34.360-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='promotion-service', registryValue='http://192.168.43.5:10001/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+23:25:34.360-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job, executor registry thread destroy.
+23:25:34.361-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server destroy success.
+23:25:34.361-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [FileCleanThread] c.x.j.core.thread.JobLogFileCleanThread  : >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+23:25:34.362-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [rCallbackThread] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor callback thread destroy.
+23:25:34.362-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [      Thread-11] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+23:25:34.363-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown begin
+23:25:34.363-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown stop
+23:25:34.363-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown begin
+23:25:37.388-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown begin
+23:25:40.404-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown stop
+23:25:40.405-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown begin
+23:25:43.010-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown stop
+23:25:43.011-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown stop
+23:25:43.011-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown begin
+23:25:43.012-[LAPTOP-F9SO3CRP][sys]-- WARN 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Start destroying NacosRestTemplate
+23:25:43.012-[LAPTOP-F9SO3CRP][sys]-- WARN 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Destruction of the end
+23:25:43.012-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] c.a.n.client.identify.CredentialWatcher  : [null] CredentialWatcher is stopped
+23:25:43.012-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] c.a.n.client.identify.CredentialService  : [null] CredentialService is freed
+23:25:43.012-[LAPTOP-F9SO3CRP][sys]-- INFO 24564 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown stop
+23:27:34.678-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.xc.promotion.testTime                : The following 1 profile is active: "dev"
+23:27:35.636-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+23:27:35.640-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+23:27:35.678-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 0 Redis repository interfaces.
+23:27:36.067-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=b2441066-c147-3c1e-ae74-2e20b3617705
+23:27:41.451-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'product-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:43.368-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config init.
+23:27:43.377-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config end.
+23:27:45.823-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+23:27:46.003-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'firmad-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.036-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'log-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.062-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'media-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.091-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'promotion-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.117-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'remark-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.142-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'search-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.166-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'trade-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.191-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'user-service' URL not provided. Will try picking an instance via load-balancing.
+23:27:46.295-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[9999] is in use.
+23:27:46.295-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[10000] is in use.
+23:27:46.327-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:27:46.328-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Environment :null
+23:27:46.329-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:27:46.503-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.alibaba.nacos.client.naming          : new ips(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000}]
+23:27:46.518-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.alibaba.nacos.client.naming          : current ips:(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000}]
+23:27:46.546-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] com.xc.promotion.testTime                : Started testTime in 18.438 seconds (JVM running for 19.966)
+23:27:46.553-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service-dev.yaml+DEFAULT_GROUP
+23:27:46.554-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP, cnt=1
+23:27:46.554-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP
+23:27:46.555-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service+DEFAULT_GROUP
+23:27:46.555-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service, group=DEFAULT_GROUP, cnt=1
+23:27:46.555-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service, group=DEFAULT_GROUP
+23:27:46.556-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service.yaml+DEFAULT_GROUP
+23:27:46.556-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service.yaml, group=DEFAULT_GROUP, cnt=1
+23:27:46.556-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service.yaml, group=DEFAULT_GROUP
+23:27:47.084-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 10001
+23:27:47.597-[LAPTOP-F9SO3CRP][sys]-- WARN 20452 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+23:27:47.597-[LAPTOP-F9SO3CRP][sys]-- WARN 20452 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+23:27:47.597-[LAPTOP-F9SO3CRP][sys]-- WARN 20452 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Destruction of the end
+23:27:47.598-[LAPTOP-F9SO3CRP][sys]-- WARN 20452 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Destruction of the end
+23:27:47.603-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server stop.
+23:27:47.655-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='promotion-service', registryValue='http://192.168.43.5:10001/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+23:27:47.655-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job, executor registry thread destroy.
+23:27:47.656-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server destroy success.
+23:27:47.656-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [FileCleanThread] c.x.j.core.thread.JobLogFileCleanThread  : >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+23:27:47.656-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [rCallbackThread] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor callback thread destroy.
+23:27:47.657-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [      Thread-11] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+23:27:47.657-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown begin
+23:27:47.657-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown stop
+23:27:47.657-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown begin
+23:27:50.688-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown begin
+23:27:53.718-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown stop
+23:27:53.718-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown begin
+23:27:56.360-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown stop
+23:27:56.360-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown stop
+23:27:56.360-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown begin
+23:27:56.361-[LAPTOP-F9SO3CRP][sys]-- WARN 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Start destroying NacosRestTemplate
+23:27:56.362-[LAPTOP-F9SO3CRP][sys]-- WARN 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Destruction of the end
+23:27:56.362-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] c.a.n.client.identify.CredentialWatcher  : [null] CredentialWatcher is stopped
+23:27:56.362-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] c.a.n.client.identify.CredentialService  : [null] CredentialService is freed
+23:27:56.362-[LAPTOP-F9SO3CRP][sys]-- INFO 20452 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown stop
+23:36:10.859-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.xc.promotion.testTime                : The following 1 profile is active: "dev"
+23:36:11.514-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+23:36:11.516-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+23:36:11.546-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 0 Redis repository interfaces.
+23:36:12.015-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=b2441066-c147-3c1e-ae74-2e20b3617705
+23:36:16.208-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'product-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:17.404-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config init.
+23:36:17.409-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config end.
+23:36:19.365-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+23:36:19.599-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'firmad-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.655-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'log-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.681-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'media-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.736-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'promotion-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.782-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'remark-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.802-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'search-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.823-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'trade-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.840-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'user-service' URL not provided. Will try picking an instance via load-balancing.
+23:36:19.905-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[9999] is in use.
+23:36:19.905-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[10000] is in use.
+23:36:19.935-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:36:19.936-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Environment :null
+23:36:19.936-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:36:20.127-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.alibaba.nacos.client.naming          : new ips(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000}]
+23:36:20.141-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.alibaba.nacos.client.naming          : current ips:(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000}]
+23:36:20.167-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] com.xc.promotion.testTime                : Started testTime in 14.643 seconds (JVM running for 15.865)
+23:36:20.174-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service-dev.yaml+DEFAULT_GROUP
+23:36:20.178-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP, cnt=1
+23:36:20.179-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP
+23:36:20.180-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service+DEFAULT_GROUP
+23:36:20.180-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service, group=DEFAULT_GROUP, cnt=1
+23:36:20.180-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service, group=DEFAULT_GROUP
+23:36:20.180-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service.yaml+DEFAULT_GROUP
+23:36:20.181-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service.yaml, group=DEFAULT_GROUP, cnt=1
+23:36:20.181-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service.yaml, group=DEFAULT_GROUP
+23:36:20.745-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 10001
+23:36:21.510-[LAPTOP-F9SO3CRP][sys]-- WARN 20944 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+23:36:21.512-[LAPTOP-F9SO3CRP][sys]-- WARN 20944 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Destruction of the end
+23:36:21.512-[LAPTOP-F9SO3CRP][sys]-- WARN 20944 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+23:36:21.512-[LAPTOP-F9SO3CRP][sys]-- WARN 20944 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Destruction of the end
+23:36:21.517-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server stop.
+23:36:21.551-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='promotion-service', registryValue='http://192.168.43.5:10001/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+23:36:21.551-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job, executor registry thread destroy.
+23:36:21.551-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server destroy success.
+23:36:21.552-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [FileCleanThread] c.x.j.core.thread.JobLogFileCleanThread  : >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+23:36:21.552-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [rCallbackThread] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor callback thread destroy.
+23:36:21.552-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [      Thread-11] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+23:36:21.553-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown begin
+23:36:21.553-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown stop
+23:36:21.553-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown begin
+23:36:24.565-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown begin
+23:36:27.590-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown stop
+23:36:27.590-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown begin
+23:36:29.954-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown stop
+23:36:29.954-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown stop
+23:36:29.955-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown begin
+23:36:29.955-[LAPTOP-F9SO3CRP][sys]-- WARN 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Start destroying NacosRestTemplate
+23:36:29.955-[LAPTOP-F9SO3CRP][sys]-- WARN 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Destruction of the end
+23:36:29.955-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] c.a.n.client.identify.CredentialWatcher  : [null] CredentialWatcher is stopped
+23:36:29.955-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] c.a.n.client.identify.CredentialService  : [null] CredentialService is freed
+23:36:29.955-[LAPTOP-F9SO3CRP][sys]-- INFO 20944 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown stop
+23:38:00.447-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.xc.promotion.testTime                : The following 1 profile is active: "dev"
+23:38:01.733-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+23:38:01.739-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+23:38:01.772-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 0 Redis repository interfaces.
+23:38:02.088-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=b2441066-c147-3c1e-ae74-2e20b3617705
+23:38:06.882-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'product-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:08.508-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config init.
+23:38:08.516-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.x.c.autoconfigure.xxljob.XxlJobConfig  : >>>>>>>>>>> xxl-job config end.
+23:38:10.711-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+23:38:10.877-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'firmad-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:10.893-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'log-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:10.906-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'media-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:10.929-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'promotion-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:10.957-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'remark-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:10.975-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'search-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:10.994-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'trade-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:11.010-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'user-service' URL not provided. Will try picking an instance via load-balancing.
+23:38:11.082-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[9999] is in use.
+23:38:11.082-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.xxl.job.core.util.NetUtil            : >>>>>>>>>>> xxl-job, port[10000] is in use.
+23:38:11.106-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:38:11.107-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Environment :null
+23:38:11.107-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.alibaba.nacos.client.naming          : initializer namespace from System Property :null
+23:38:11.264-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.alibaba.nacos.client.naming          : new ips(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatTimeOut":15000,"instanceHeartBeatInterval":5000}]
+23:38:11.278-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.alibaba.nacos.client.naming          : current ips:(1) service: DEFAULT_GROUP@@promotion-service@@DEFAULT -> [{"instanceId":"47.108.192.109#8092#DEFAULT#DEFAULT_GROUP@@promotion-service","ip":"47.108.192.109","port":8092,"weight":1.0,"healthy":true,"enabled":true,"ephemeral":true,"clusterName":"DEFAULT","serviceName":"DEFAULT_GROUP@@promotion-service","metadata":{"preserved.register.source":"SPRING_CLOUD"},"ipDeleteTimeout":30000,"instanceHeartBeatTimeOut":15000,"instanceHeartBeatInterval":5000}]
+23:38:11.298-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] com.xc.promotion.testTime                : Started testTime in 16.434 seconds (JVM running for 17.724)
+23:38:11.303-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service-dev.yaml+DEFAULT_GROUP
+23:38:11.304-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP, cnt=1
+23:38:11.304-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service-dev.yaml, group=DEFAULT_GROUP
+23:38:11.305-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service+DEFAULT_GROUP
+23:38:11.305-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service, group=DEFAULT_GROUP, cnt=1
+23:38:11.305-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service, group=DEFAULT_GROUP
+23:38:11.307-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.n.client.config.impl.ClientWorker    : [fixed-47.108.192.109_8848] [subscribe] promotion-service.yaml+DEFAULT_GROUP
+23:38:11.307-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.nacos.client.config.impl.CacheData   : [fixed-47.108.192.109_8848] [add-listener] ok, tenant=, dataId=promotion-service.yaml, group=DEFAULT_GROUP, cnt=1
+23:38:11.307-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [           main] c.a.c.n.refresh.NacosContextRefresher    : listening config: dataId=promotion-service.yaml, group=DEFAULT_GROUP
+23:38:11.717-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 10001
+23:38:12.115-[LAPTOP-F9SO3CRP][sys]-- WARN 28680 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Start destroying Publisher
+23:38:12.116-[LAPTOP-F9SO3CRP][sys]-- WARN 28680 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Start destroying common HttpClient
+23:38:12.116-[LAPTOP-F9SO3CRP][sys]-- WARN 28680 --- [      Thread-18] c.a.nacos.common.notify.NotifyCenter     : [NotifyCenter] Destruction of the end
+23:38:12.117-[LAPTOP-F9SO3CRP][sys]-- WARN 28680 --- [       Thread-1] c.a.n.common.http.HttpClientBeanHolder   : [HttpClientBeanHolder] Destruction of the end
+23:38:12.120-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [      Thread-12] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server stop.
+23:38:12.161-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='promotion-service', registryValue='http://192.168.43.5:10001/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+23:38:12.161-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [rRegistryThread] c.x.j.c.thread.ExecutorRegistryThread    : >>>>>>>>>>> xxl-job, executor registry thread destroy.
+23:38:12.161-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.xxl.job.core.server.EmbedServer      : >>>>>>>>>>> xxl-job remoting server destroy success.
+23:38:12.161-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [FileCleanThread] c.x.j.core.thread.JobLogFileCleanThread  : >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+23:38:12.161-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [rCallbackThread] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor callback thread destroy.
+23:38:12.162-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [      Thread-11] c.x.j.core.thread.TriggerCallbackThread  : >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+23:38:12.162-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown begin
+23:38:12.162-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.beat.BeatReactor do shutdown stop
+23:38:12.162-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown begin
+23:38:12.344-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown begin
+23:38:15.367-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.PushReceiver do shutdown stop
+23:38:15.367-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown begin
+23:38:18.381-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.backups.FailoverReactor do shutdown stop
+23:38:18.381-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.core.HostReactor do shutdown stop
+23:38:18.381-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown begin
+23:38:18.382-[LAPTOP-F9SO3CRP][sys]-- WARN 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Start destroying NacosRestTemplate
+23:38:18.382-[LAPTOP-F9SO3CRP][sys]-- WARN 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : [NamingHttpClientManager] Destruction of the end
+23:38:18.382-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] c.a.n.client.identify.CredentialWatcher  : [null] CredentialWatcher is stopped
+23:38:18.382-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] c.a.n.client.identify.CredentialService  : [null] CredentialService is freed
+23:38:18.383-[LAPTOP-F9SO3CRP][sys]-- INFO 28680 --- [ionShutdownHook] com.alibaba.nacos.client.naming          : com.alibaba.nacos.client.naming.net.NamingProxy do shutdown stop

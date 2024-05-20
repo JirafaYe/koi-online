@@ -20,4 +20,8 @@ public interface IExchangeCodeService extends IService<ExchangeCode> {
     void asyncGenerateCode(Coupon coupon);
 
     PageDTO<ExchangeCodeVo> queryCodePage(CodeQuery query);
+
+    boolean updateExchangeMark(long serialNum, boolean mark);
+
+    Long exchangeTargetId(long serialNum);
 }
