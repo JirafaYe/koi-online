@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.xc.api.client.media.MediaClient;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.JsonUtils;
 import com.xc.product.entity.StandardProductUnit;
 import com.xc.product.entity.StockKeepingUnit;
 import com.xc.product.entity.vo.SkuVO;
@@ -39,9 +40,12 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
     @Override
     @Transactional
     public boolean createSku(SkuVO vo) {
-//        if(!testifyImageId(vo.getImage())){
-//            throw new CommonException("非法imageId");
-//        }
+        if(!testifyImageId(vo.getImageId())){
+            throw new CommonException("非法imageId");
+        }
+        if(!JsonUtils.isJson(vo.getAttributes())){
+            throw new CommonException("attributes 需要为json格式");
+        }
         Integer spuNum = spuMapper.selectCount(new LambdaQueryWrapper<StandardProductUnit>().eq(StandardProductUnit::getId, vo.getSpuId()));
         if(spuNum.equals(0)){
             throw new CommonException("非法spuId");
