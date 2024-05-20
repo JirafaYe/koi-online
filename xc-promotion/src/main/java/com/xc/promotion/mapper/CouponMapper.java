@@ -2,7 +2,10 @@ package com.xc.promotion.mapper;
 
 import com.xc.promotion.domain.po.Coupon;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +19,6 @@ public interface CouponMapper extends BaseMapper<Coupon> {
 
     @Update("UPDATE coupon SET issue_num = issue_num + 1 WHERE id = #{couponId} AND issue_num < total_num")
     int incrIssueNum(Long couponId);
+
+    int incrUsedNum(@Param("couponIds") List<Long> couponIds, @Param("amount") int amount);
 }

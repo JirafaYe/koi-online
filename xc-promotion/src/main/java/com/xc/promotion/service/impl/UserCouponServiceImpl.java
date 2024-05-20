@@ -6,11 +6,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.BadRequestException;
 import com.xc.common.exceptions.BizIllegalException;
+import com.xc.common.exceptions.DbException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.UserContext;
 import com.xc.promotion.constants.PromotionConstants;
+import com.xc.promotion.domain.dto.CouponDiscountDTO;
+import com.xc.promotion.domain.dto.OrderProductDTO;
 import com.xc.promotion.domain.enums.ExchangeCodeStatus;
+import com.xc.promotion.domain.enums.UserCouponStatus;
 import com.xc.promotion.domain.po.Coupon;
 import com.xc.promotion.domain.po.ExchangeCode;
 import com.xc.promotion.domain.po.UserCoupon;
@@ -22,8 +26,10 @@ import com.xc.promotion.service.ICouponService;
 import com.xc.promotion.service.IExchangeCodeService;
 import com.xc.promotion.service.IUserCouponService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xc.promotion.strategy.discount.DiscountStrategy;
 import com.xc.promotion.utils.CodeUtil;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -124,6 +130,91 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
             throw e;
         }
     }
+
+    @Override
+    @Transactional
+    public void writeOffCoupon(List<Long> userCouponIds) {
+        List<UserCoupon> userCoupons = listByCouponIds(userCouponIds);
+        if(CollUtils.isEmpty(userCoupons)){
+            throw new BadRequestException("不存在优惠券");
+        }
+        List<UserCoupon> list = userCoupons.stream()
+                .filter(coupon -> {
+                    if (coupon == null) {
+                        return false;
+                    }
+                    if (UserCouponStatus.UNUSED != coupon.getStatus()) {
+                        return false;
+                    }
+                    LocalDateTime now = LocalDateTime.now();
+                    return !now.isBefore(coupon.getTermBeginTime()) && !now.isAfter(coupon.getTermEndTime());
+                })
+                .map(coupon -> {
+                    UserCoupon uc = new UserCoupon();
+                    uc.setId(coupon.getId());
+                    uc.setStatus(UserCouponStatus.USED);
+                    return uc;
+                })
+                .collect(Collectors.toList());
+        boolean success = updateBatchById(list);
+        if(!success){
+            throw new BizIllegalException("使用优惠券失败");
+        }
+        List<Long> couponIds = userCoupons.stream().map(UserCoupon::getCouponId).collect(Collectors.toList());
+        int res = couponMapper.incrUsedNum(couponIds, 1);
+        if(res < 1){
+            throw new DbException("更新优惠券使用数量失败！");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void refundCoupon(List<Long> userCouponIds) {
+        List<UserCoupon> userCoupons = listByCouponIds(userCouponIds);
+        if(CollUtils.isEmpty(userCoupons)){
+            return;
+        }
+        List<UserCoupon> list = userCoupons.stream()
+                .filter(coupon -> coupon != null && UserCouponStatus.USED == coupon.getStatus())
+                .map(coupon -> {
+                    UserCoupon c = new UserCoupon();
+                    c.setId(coupon.getId());
+                    LocalDateTime now = LocalDateTime.now();
+                    UserCouponStatus status = now.isAfter(coupon.getTermEndTime()) ?
+                            UserCouponStatus.EXPIRED : UserCouponStatus.UNUSED;
+                    c.setStatus(status);
+                    return c;
+                })
+                .collect(Collectors.toList());
+        boolean success = updateBatchById(list);
+        if(!success){
+            throw new BizIllegalException("退还优惠券失败");
+        }
+        List<Long> couponIds = userCoupons.stream().map(UserCoupon::getCouponId).collect(Collectors.toList());
+        int res = couponMapper.incrUsedNum(couponIds, -1);
+        if (res < 1) {
+            throw new DbException("更新优惠券使用数量失败！");
+        }
+    }
+
+    @Override
+    public List<String> queryDiscountRules(List<Long> userCouponIds) {
+        List<Coupon> coupons = baseMapper.queryCouponByUserCouponIds(userCouponIds, UserCouponStatus.USED);
+        if(CollUtils.isEmpty(coupons)){
+            return CollUtils.emptyList();
+        }
+        return coupons.stream()
+                .map(c -> DiscountStrategy.getDiscount(c.getDiscountType()).getRule(c))
+                .collect(Collectors.toList());
+    }
+
+    private List<UserCoupon> listByCouponIds(List<Long> userCouponIds) {
+        return lambdaQuery()
+                .eq(UserCoupon::getUserId, UserContext.getUser())
+                .in(UserCoupon::getCouponId, userCouponIds)
+                .list();
+    }
+
 
     @Transactional
     @Override
