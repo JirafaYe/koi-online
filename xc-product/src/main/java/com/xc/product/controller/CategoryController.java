@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     /**
-     * 根据id查询
+     * 根据id查询 内部api
      * @param id 目录id
      * @return
      */
@@ -40,6 +40,23 @@ public class CategoryController {
         LinkedList<String> names = new LinkedList<>();
         names=categoryService.queryCategoryById(id,names);
         return String.join("/",names);
+    }
+
+    /**
+     * 根据id list查询 内部api
+     * @param ids 目录idList
+     * @return
+     */
+    @GetMapping("/ids")
+    public List<String> queryCategoryByIdList(@RequestBody List<Long> ids){
+        LinkedList<String> names = new LinkedList<>();
+        LinkedList<String> res = new LinkedList<>();
+        for(Long id:ids){
+            names=(categoryService.queryCategoryById(id,names));
+            res.add(String.join("/",names));
+        }
+
+        return res;
     }
 
     /**

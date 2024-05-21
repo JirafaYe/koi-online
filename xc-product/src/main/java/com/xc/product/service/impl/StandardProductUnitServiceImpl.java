@@ -140,6 +140,21 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     }
 
     @Override
+    public List<SpuPageVO> queryById(List<Long> ids) {
+        List<SpuPageVO> res=List.of();
+        List<StandardProductUnit> units = baseMapper.selectBatchIds(ids);
+        if(!CollUtils.isEmpty(units)){
+            res=units.stream().map(obj->{
+                SpuPageVO spuPageVO = new SpuPageVO();
+                spuPageVO.setId(obj.getId());
+                spuPageVO.setSpuName(obj.getSpuName());
+                return spuPageVO;
+            }).collect(Collectors.toList());
+        }
+        return res;
+    }
+
+    @Override
     public PageDTO<SpuPageVO> queryByPage(SpuQuery query) {
         LambdaQueryChainWrapper<StandardProductUnit> wrapper= lambdaQuery();
         if(query.getBrandId()!=null){

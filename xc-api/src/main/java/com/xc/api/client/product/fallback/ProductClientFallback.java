@@ -21,6 +21,16 @@ public class ProductClientFallback implements FallbackFactory<ProductClient> {
             public List<SpuPageVO> queryByName(String name) {
                 return List.of();
             }
+
+            @Override
+            public List<SpuPageVO> queryById(Iterable<Long> ids) {
+                return List.of();
+            }
+
+            @Override
+            public List<String> queryCategoryByIdList(Iterable<Long> ids) {
+                return List.of();
+            }
         };
     }
 }

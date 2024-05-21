@@ -70,4 +70,14 @@ public class SpuController {
     public List<SpuPageVO> queryByName(@Param("name") String name){
         return spuService.queryByName(name);
     }
+
+    /**
+     * 内部暴露的api接口 根据id查询，返回id和spuName
+     * @param ids spu id list
+     * @return
+     */
+    @GetMapping("/ids")
+    public List<SpuPageVO> queryById(@RequestBody List<Long> ids){
+        return spuService.queryById(ids);
+    }
 }

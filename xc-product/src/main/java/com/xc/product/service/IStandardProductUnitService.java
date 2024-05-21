@@ -31,4 +31,6 @@ public interface IStandardProductUnitService extends IService<StandardProductUni
     PageDTO<SpuPageVO> queryByPage(SpuQuery query);
 
     List<SpuPageVO> queryByName(String name);
+
+    List<SpuPageVO> queryById(List<Long> ids);
 }
