@@ -1,5 +1,6 @@
 package com.xc.user.service.Impl;
 
+
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -9,7 +10,6 @@ import com.xc.api.client.log.LogClient;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.constants.JwtConstant;
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.common.domain.query.PageQuery;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.exceptions.UnauthorizedException;
 import com.xc.common.utils.BeanUtils;
@@ -18,7 +18,7 @@ import com.xc.common.utils.JwtTokenUtils;
 import com.xc.common.utils.UserContext;
 import com.xc.user.entity.UserBase;
 import com.xc.user.enums.UserConstants;
-import com.xc.user.mapper.UserBaseMapper;
+import com.xc.user.service.Impl.mapper.UserBaseMapper;
 import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
 import com.xc.user.utils.MD5Utils;
@@ -26,7 +26,7 @@ import com.xc.user.utils.RandomStringGenerator;
 import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -192,7 +192,19 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     }
 
     @Override
-    public Boolean resetPwd(ResetPwdReqVO vo) {
+    public Boolean resetPwd(List<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return null;
+        }
+        userBaseMapper.selectBatchIds(ids).stream().map(userBase -> {
+            userBase.setPassword(MD5Utils.inputPassToFormPass("123456"));
+            return userBase;
+        }).forEach(userBaseMapper::updateById);
+        return true;
+    }
+
+    @Override
+    public Boolean updatePwd(ResetPwdReqVO vo) {
         //校验用户
         Long userId = UserContext.getUser();
         if (userId == null) {
@@ -203,12 +215,41 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         if (!user.getPassword().equals(MD5Utils.inputPassToFormPass(vo.getOldPassword()))) {
             throw new CommonException(PASSWORD_ERROR);
         }
-
         //更新新密码
         String password = MD5Utils.inputPassToFormPass(vo.getPassword());
         return userBaseMapper.updatePassword(password, userId);
+    }
 
+    @Override
+    public Integer updateUserInfo(UpdateUserInfoVO vo) {
+        Long user = UserContext.getUser();
+        if(user == null){
+            throw new CommonException(USER_NOT_EXISTS);
+        }
+        UserBase userBase = userBaseMapper.selectById(user);
+        if(userBase == null){
+            throw new CommonException(USER_NOT_EXISTS);
+        }
+         userBase.setNickName(vo.getNickName());
+         userBase.setSrcface(vo.getSrcface());
+         userBase.setGender(vo.getGender());
+        return userBaseMapper.updateById(userBase);
 
+    }
+
+    @Override
+    public UserInfoResVO getUserInfo() {
+        Long user = UserContext.getUser();
+        if (user == null) {
+            throw new CommonException(USER_NOT_EXISTS);
+        }
+        UserBase userBase = userBaseMapper.selectById(user);
+        if(userBase == null){
+            throw new CommonException(USER_NOT_EXISTS);
+        }
+        UserInfoResVO ans = new UserInfoResVO();
+        BeanUtils.copyProperties(userBase, ans);
+        return ans;
     }
 
     @Override
@@ -288,6 +329,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         userInfo.setDefaultAddress(id);
         return userBaseMapper.updateById(userInfo);
     }
+
 
     private List<UserInfoResVO> getUserInfoVO(List<UserBase> records) {
         List<UserInfoResVO> voList = new ArrayList<>();

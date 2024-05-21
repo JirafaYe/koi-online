@@ -17,7 +17,7 @@ public class JwtTokenUtils {
      */
     public static final long ACCESS_EXPIRE = 3000000L;    //50min
 
-    public static final long ADVANCE_EXPIRE_TIME = 1800000L; //30min
+    public static final long ADVANCE_EXPIRE_TIME = 600000L; //10min
     /**
      * 加密算法
      */

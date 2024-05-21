@@ -8,8 +8,11 @@
         <artifactId>xc</artifactId>
         <version>1.0.0</version>
     </parent>
-
+    <groupId>cn.xc</groupId>
     <artifactId>xc-log</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

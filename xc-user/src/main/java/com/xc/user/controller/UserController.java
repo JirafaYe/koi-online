@@ -1,10 +1,9 @@
 package com.xc.user.controller;
 
 
-import com.xc.api.dto.user.req.LongIdsVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.common.domain.query.PageQuery;
+import com.xc.log.aspect.Log;
 import com.xc.user.service.UserBaseService;
 import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
@@ -37,6 +36,7 @@ public class UserController {
      * 登录
      */
     @PostMapping("login")
+    @Log(title = "用户登录")
     public UserLoginResVO login(@Valid @RequestBody UserLoginReqVO vo) {
         return userBaseService.login(vo);
     }
@@ -53,18 +53,25 @@ public class UserController {
      * 注册
      */
     @PostMapping("register")
-    public boolean login(@Valid @RequestBody UserRegisterReqVO vo) {
+    public boolean register(@Valid @RequestBody UserRegisterReqVO vo) {
         return userBaseService.register(vo);
     }
 
     /**
-     * 重置密码
+     * 管理员重置密码
      */
     @PostMapping("resetPwd")
-    public Boolean resetPwd(@RequestBody ResetPwdReqVO vo) {
-        return userBaseService.resetPwd(vo);
+    public Boolean resetPwd(@RequestParam("ids") List<Long> ids) {
+        return userBaseService.resetPwd(ids);
     }
 
+    /**
+     * 用户修改密码
+     */
+    @PostMapping("updatePwd")
+    public Boolean updatePwd(@RequestBody ResetPwdReqVO vo) {
+        return userBaseService.updatePwd(vo);
+    }
 
     /**
      * 手机号绑定
@@ -78,7 +85,7 @@ public class UserController {
      * 分页查询用户信息
      */
     @GetMapping("listPageUser")
-    PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo){
+    PageDTO<UserInfoResVO> listPageUser(SearchUserVO vo) {
         return userBaseService.listPageUser(vo);
     }
 
@@ -86,28 +93,48 @@ public class UserController {
     /**
      * 获取多个用户信息
      */
-    @GetMapping ("getUserInfos")
-    public List<UserInfoResVO> getUserInfos(@RequestParam("ids")  List<Long> ids){
+    @GetMapping("getUserInfos")
+    public List<UserInfoResVO> getUserInfos(@RequestParam("ids") List<Long> ids) {
         return userBaseService.getUserInfos(ids);
     }
 
     /**
      * 管理员修改用户状态
+     *
      * @param vo
      * @return
      */
     @PostMapping("updateUserStatus")
-    public Integer updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo){
+    public Integer updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo) {
         return userBaseService.updateUserStatus(vo);
     }
 
     /**
      * 设置用户默认地址
+     *
      * @param addressId 要设为默认的地址ID
      */
     @PostMapping("setDefaultAddress")
-    public Integer updateDefaultAddress(@RequestParam("addressId") Integer addressId ){
+    public Integer updateDefaultAddress(@RequestParam("addressId") Integer addressId) {
         return userBaseService.updateDefaultAddress(addressId);
+    }
+
+    /**
+     * 更新用户信息  TODO
+     * @param vo
+     * @return
+     */
+    @PostMapping("updateUserInfo")
+    public Integer updateUserInfo(@RequestBody UpdateUserInfoVO vo) {
+        return userBaseService.updateUserInfo(vo);
+    }
+    /**
+     * 获取用户信息
+     * @return
+     */
+    @GetMapping("getUserInfo")
+    public UserInfoResVO getUserInfo(){
+        return userBaseService.getUserInfo();
     }
 
 }

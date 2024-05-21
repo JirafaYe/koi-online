@@ -29,4 +29,10 @@ public interface UserAddressService extends IService<UserAddress> {
      * @return
      */
     List<UserAddress> listUserAddress();
+/**
+     * 删除地址
+     * @param addressId
+     * @return
+     */
+    Boolean deleteAddress(List<Integer> addressId);
 }

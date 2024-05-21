@@ -22,6 +22,7 @@ import java.util.List;
 public interface UserBaseService extends IService<UserBase> {
     /**
      * 用户登录
+     *
      * @param vo
      * @return
      */
@@ -29,12 +30,14 @@ public interface UserBaseService extends IService<UserBase> {
 
     /**
      * 发送手机验证码
+     *
      * @param phone
      */
     void sendCode(String phone);
 
     /**
      * 用户注册
+     *
      * @param vo
      * @return
      */
@@ -42,13 +45,15 @@ public interface UserBaseService extends IService<UserBase> {
 
     /**
      * 重置密码
-     * @param vo
+     *
+     * @param ids
      * @return
      */
-    Boolean resetPwd(ResetPwdReqVO vo);
+    Boolean resetPwd(List<Long> ids);
 
     /**
      * 获取多个用户信息
+     *
      * @param ids
      * @return
      */
@@ -56,6 +61,7 @@ public interface UserBaseService extends IService<UserBase> {
 
     /**
      * 分页查询用户
+     *
      * @param vo
      * @return
      */
@@ -84,4 +90,27 @@ public interface UserBaseService extends IService<UserBase> {
      * @return
      */
     int updateDefaultAddress(Integer id);
+
+    /**
+     * 修改密码
+     *
+     * @param vo
+     * @return
+     */
+    Boolean updatePwd(ResetPwdReqVO vo);
+
+    /**
+     * 修改用户信息
+     *
+     * @param vo
+     * @return
+     */
+    Integer updateUserInfo(UpdateUserInfoVO vo);
+
+    /**
+     * 获取用户信息
+     *
+     * @return
+     */
+    UserInfoResVO getUserInfo();
 }

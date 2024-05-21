@@ -11,9 +11,10 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author pengyalin
- * @since 2024年05月15日
+ * @since 2024年05月20日
  */
 @Mapper
 public interface LogInfoMapper extends BaseMapper<LogInfo> {
+
 
 }

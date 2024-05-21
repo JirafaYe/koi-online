@@ -4,10 +4,7 @@ package com.xc.user.controller;
 import com.xc.user.entity.UserAddress;
 import com.xc.user.service.UserAddressService;
 import com.xc.user.vo.req.AddDeliveryAddressReqVO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -41,6 +38,17 @@ public class UserAddressController {
     @PostMapping("listUserAddress")
     public List<UserAddress> listUserAddress(){
         return userAddressService.listUserAddress();
+    }
+
+    /**
+     * 删除收货地址
+     *
+     * @param addressId
+     * @return
+     */
+    @DeleteMapping("deleteAddress")
+    public Boolean deleteAddress(List<Integer> addressId){
+        return userAddressService.deleteAddress(addressId);
     }
 }
 
