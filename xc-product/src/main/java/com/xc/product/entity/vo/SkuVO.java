@@ -10,6 +10,8 @@ import java.io.Serializable;
 
 @Data
 public class SkuVO implements Serializable {
+    private Long id;
+
     /**
      * 所属spu id
      */
