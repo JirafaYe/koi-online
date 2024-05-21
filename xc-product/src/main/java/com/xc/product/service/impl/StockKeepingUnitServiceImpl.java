@@ -143,13 +143,13 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                     UserInfoResVO::getUserId,
                     UserInfoResVO::getAccount
             ));
-//            Map<Long, String> imageMap = mediaClient.getFileInfos(ids).stream().collect(Collectors.toMap(
-//                    FileDTO::getId,
-//                    FileDTO::getPath
-//            ));
+            Map<Long, String> imageMap = mediaClient.getFileInfos(ids).stream().collect(Collectors.toMap(
+                    FileDTO::getId,
+                    FileDTO::getFileUrl
+            ));
             List<SkuPageVO> list = records.stream().map(obj -> {
                 SkuPageVO pageVO = BeanUtils.copyBean(obj, SkuPageVO.class);
-//                pageVO.setImage(imageMap.get(obj.getImageId()));
+                pageVO.setImage(imageMap.get(obj.getImageId()));
                 pageVO.setCreaterName(userMap.get(obj.getCreater()));
                 return pageVO;
             }).collect(Collectors.toList());
