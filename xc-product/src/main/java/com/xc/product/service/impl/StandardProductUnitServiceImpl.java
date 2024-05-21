@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.media.MediaClient;
 import com.xc.api.client.user.UserClient;
+import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.StringUtils;
+import com.xc.product.controller.SpuController;
 import com.xc.product.entity.Brand;
 import com.xc.product.entity.Category;
 import com.xc.product.entity.StandardProductUnit;
@@ -26,6 +28,7 @@ import com.xc.product.mapper.StandardProductUnitMapper;
 import com.xc.product.mapper.StockKeepingUnitMapper;
 import com.xc.product.service.IStandardProductUnitService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -102,6 +105,41 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     }
 
     @Override
+    public List<SpuPageVO> queryByName(String name) {
+        List<SpuPageVO> res=CollUtils.emptyList();
+        List<StandardProductUnit> spu = baseMapper.selectList(new LambdaQueryWrapper<StandardProductUnit>().like(StandardProductUnit::getSpuName, name));
+        if(!CollUtils.isEmpty(spu)){
+            Set<Long> users = spu.stream().map(StandardProductUnit::getUpdater).collect(Collectors.toSet());
+            users.addAll(spu.stream().map(StandardProductUnit::getCreater).collect(Collectors.toSet()));
+            HashSet<Long> images = new HashSet<>();
+            HashMap<Long, List<Long>> imagesMapMain = new HashMap<>();
+            HashMap<Long, List<Long>> imagesMapContents = new HashMap<>();
+
+            for (StandardProductUnit unit : spu) {
+                List<Long> mains = splitImagesId(unit.getMainImagesId());
+                imagesMapMain.put(unit.getId(), mains);
+                List<Long> contents = splitImagesId(unit.getContentImagesId());
+                imagesMapContents.put(unit.getId(), contents);
+                images.addAll(mains);
+                images.addAll(contents);
+            }
+
+            Map<Long, String> imageMap = mediaClient.getFileInfos(images).stream().collect(Collectors.toMap(
+                    FileDTO::getId,
+                    FileDTO::getFileUrl
+            ));
+
+            res = spu.stream().map(obj -> {
+                SpuPageVO spuPageVO = BeanUtils.copyBean(obj, SpuPageVO.class);
+                spuPageVO.setContentImagesUrl(getUrlList(imagesMapContents.get(obj.getId()), imageMap));
+                spuPageVO.setMainImagesUrl(getUrlList(imagesMapMain.get(obj.getId()), imageMap));
+                return spuPageVO;
+            }).collect(Collectors.toList());
+        }
+        return res;
+    }
+
+    @Override
     public PageDTO<SpuPageVO> queryByPage(SpuQuery query) {
         LambdaQueryChainWrapper<StandardProductUnit> wrapper= lambdaQuery();
         if(query.getBrandId()!=null){
@@ -143,6 +181,14 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
             idList.add(Long.valueOf(strings[i]));
         }
         return idList;
+    }
+
+    public String getUrlList(List<Long> ids,Map<Long, String> urlMap){
+        List<String> urlResult = new ArrayList<>();
+        for(Long id:ids){
+            urlResult.add(urlMap.get(id));
+        }
+        return String.join(",",urlResult);
     }
 
     public boolean ifCategoryExist(Long id) {

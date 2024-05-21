@@ -7,6 +7,8 @@ import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -27,4 +29,6 @@ public interface IStandardProductUnitService extends IService<StandardProductUni
     boolean updateSpu(SpuVO vo);
 
     PageDTO<SpuPageVO> queryByPage(SpuQuery query);
+
+    List<SpuPageVO> queryByName(String name);
 }
