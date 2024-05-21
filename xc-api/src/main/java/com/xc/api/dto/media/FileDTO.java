@@ -24,9 +24,9 @@ public class FileDTO {
     /**
      * 文件访问路径
      */
-    private String path;
+    private String fileUrl;
 
-    public static FileDTO of(Long id, String filename, String path){
-        return new FileDTO(id, filename, path);
+    public static FileDTO of(Long id, String filename, String fileUrl){
+        return new FileDTO(id, filename, fileUrl);
     }
 }

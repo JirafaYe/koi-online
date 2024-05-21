@@ -14,34 +14,34 @@ public interface MediaClient {
 
     /**
      * 暴露给其他服务调用，用于返回文件的信息
-     * @param ids
+     * @param images
      * @return
      */
-    @GetMapping("/files/ids")
-    List<FileDTO> getFileInfos(Iterable<Long> ids);
+    @GetMapping("/files/images")
+    List<FileDTO> getFileInfos(@RequestBody Iterable<Long> images);
 
     /**
      * 暴露给其他服务调用，用于返回视频的信息
-     * @param ids
+     * @param videos
      * @return
      */
-    @GetMapping("/medias/ids")
-    List<MediaDTO> getFileInfos(List<Long> ids);
+    @GetMapping("/medias/videos")
+    List<MediaDTO> getMediaInfos(@RequestBody Iterable<Long> videos);
 
 
     /**
      * 判断文件是否存在
-     * @param ids
+     * @param images
      * @return
      */
     @GetMapping("/files/exist")
-    List<Long> judgeFileExist(@RequestBody Iterable<Long> ids);
+    List<Long> judgeFileExist(@RequestBody Iterable<Long> images);
 
     /**
      * 判断视频是否存在
-     * @param ids
+     * @param videos
      * @return
      */
     @GetMapping("/medias/exist")
-    List<Long> judgeMediaExist(@RequestBody Iterable<Long> ids);
+    List<Long> judgeMediaExist(@RequestBody Iterable<Long> videos);
 }

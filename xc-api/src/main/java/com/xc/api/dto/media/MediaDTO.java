@@ -32,7 +32,12 @@ public class MediaDTO {
      */
     private Long size;
 
-    public static MediaDTO of(Long id, String filename, Float duration, Long size){
-        return new MediaDTO(id, filename, duration, size);
+    /**
+     * 视频路径
+     */
+    private String mediaUrl;
+
+    public static MediaDTO of(Long id, String filename, Float duration, Long size, String mediaUrl){
+        return new MediaDTO(id, filename, duration, size, mediaUrl);
     }
 }

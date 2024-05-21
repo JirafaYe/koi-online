@@ -116,7 +116,7 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
     @Override
     public MediaDTO getMediaInfo(Long id) {
         Media media = getById(id);
-        return media == null ? null : MediaDTO.of(media.getId(), media.getFilename(), media.getDuration(), media.getSize());
+        return media == null ? null : MediaDTO.of(media.getId(), media.getFilename(), media.getDuration(), media.getSize(), media.getMediaUrl());
     }
 
     @Override

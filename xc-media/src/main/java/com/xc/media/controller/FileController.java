@@ -76,21 +76,21 @@ public class FileController {
 
     /**
      * 暴露给其他服务调用，用于返回图片的信息
-     * @param ids
+     * @param images
      * @return
      */
-    @GetMapping("/ids")
-    public List<FileDTO> getFileInfos(List<Long> ids){
-        return fileService.getFileInfos(ids);
+    @GetMapping("/images")
+    public List<FileDTO> getFileInfos(@RequestBody List<Long> images){
+        return fileService.getFileInfos(images);
     }
 
     /**
      * 判断文件是否存在
-     * @param ids
+     * @param images
      * @return
      */
     @GetMapping("/exist")
-    public List<Long> judgeFileExist(@RequestBody List<Long> ids){
-        return fileService.judgeFileExist(ids);
+    public List<Long> judgeFileExist(@RequestBody List<Long> images){
+        return fileService.judgeFileExist(images);
     }
 }

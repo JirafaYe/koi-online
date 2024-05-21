@@ -77,21 +77,21 @@ public class MediaController {
 
     /**
      * 暴露给其他服务调用，用于返回视频的信息
-     * @param ids
+     * @param videos
      * @return
      */
-    @GetMapping("/ids")
-    public List<MediaDTO> getFileInfos(List<Long> ids) {
-        return mediaService.getMediaInfos(ids);
+    @GetMapping("/videos")
+    public List<MediaDTO> getMediaInfos(@RequestBody List<Long> videos) {
+        return mediaService.getMediaInfos(videos);
     }
 
     /**
      * 判断视频是否存在
-     * @param ids
+     * @param videos
      * @return
      */
     @GetMapping("/exist")
-    public List<Long> judgeMediaExist(@RequestBody List<Long> ids){
-        return mediaService.judgeMediaExist(ids);
+    public List<Long> judgeMediaExist(@RequestBody List<Long> videos){
+        return mediaService.judgeMediaExist(videos);
     }
 }
