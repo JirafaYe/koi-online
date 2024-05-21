@@ -49,9 +49,9 @@ public class CategoryController {
      */
     @GetMapping("/ids")
     public List<String> queryCategoryByIdList(@RequestBody List<Long> ids){
-        LinkedList<String> names = new LinkedList<>();
         LinkedList<String> res = new LinkedList<>();
         for(Long id:ids){
+            LinkedList<String> names = new LinkedList<>();
             names=(categoryService.queryCategoryById(id,names));
             res.add(String.join("/",names));
         }
