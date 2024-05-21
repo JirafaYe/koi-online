@@ -7,6 +7,7 @@ import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.BadRequestException;
 import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.utils.*;
+import com.xc.promotion.constants.PromotionConstants;
 import com.xc.promotion.domain.dto.CouponFormDTO;
 import com.xc.promotion.domain.dto.CouponIssueFormDTO;
 import com.xc.promotion.domain.enums.CouponStatus;
@@ -28,6 +29,8 @@ import com.xc.promotion.service.IExchangeCodeService;
 import com.xc.promotion.service.IUserCouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.StringRedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,6 +218,7 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
     }
 
     @Override
+    @Transactional
     public void pauseIssue(Long id) {
         Coupon coupon = getById(id);
         if(coupon == null){
@@ -265,5 +269,42 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
             list.add(vo);
         }
         return list;
+    }
+
+    @Override
+    @Transactional
+    public void beginIssueBatch(List<Coupon> coupons) {
+        for (Coupon coupon : coupons) {
+            coupon.setStatus(CouponStatus.ISSUING);
+        }
+        updateBatchById(coupons);
+
+        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            StringRedisConnection src = (StringRedisConnection) connection;
+            for (Coupon coupon : coupons) {
+                // 2.1.组织数据
+                Map<String, String> map = new HashMap<>(4);
+                map.put("issueBeginTime", String.valueOf(DateUtils.toEpochMilli(coupon.getIssueBeginTime())));
+                map.put("issueEndTime", String.valueOf(DateUtils.toEpochMilli(coupon.getIssueEndTime())));
+                map.put("totalNum", String.valueOf(coupon.getTotalNum()));
+                map.put("userLimit", String.valueOf(coupon.getUserLimit()));
+                // 2.2.写缓存
+                src.hMSet(PromotionConstants.COUPON_CACHE_KEY_PREFIX + coupon.getId(), map);
+            }
+            return null;
+        } );
+    }
+
+    @Override
+    @Transactional
+    public void couponOverBatch(List<Coupon> coupons) {
+        for (Coupon coupon : coupons) {
+            coupon.setStatus(CouponStatus.FINISHED);
+        }
+        List<String> couponIds = coupons.stream().map(c -> {
+            return COUPON_CACHE_KEY_PREFIX + c.getId();
+        }).collect(Collectors.toList());
+        redisTemplate.delete(couponIds);
+        updateBatchById(coupons);
     }
 }

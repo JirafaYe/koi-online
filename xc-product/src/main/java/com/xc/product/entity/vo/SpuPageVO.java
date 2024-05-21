@@ -30,6 +30,11 @@ public class SpuPageVO {
     private String  mainImagesId;
 
     /**
+     * 图片url list,以，分隔,最多8个
+     */
+    private String  mainImagesUrl;
+
+    /**
      * 描述
      */
     private String content;
@@ -38,6 +43,11 @@ public class SpuPageVO {
      * 详情图，id以，分隔,最多8个
      */
     private String  contentImagesId;
+
+    /**
+     * 详情图，url以，分隔,最多8个
+     */
+    private String  contentImagesUrl;
 
     /**
      * 视频id

@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import static com.xc.promotion.constants.PromotionConstants.COUPON_CODE_MAP_KEY;
 import static com.xc.promotion.constants.PromotionConstants.COUPON_RANGE_KEY;
 
 /**
@@ -82,5 +84,21 @@ public class ExchangeCodeServiceImpl extends ServiceImpl<ExchangeCodeMapper, Exc
                 .eq(ExchangeCode::getStatus, query.getStatus())
                 .page(query.toMpPage());
         return PageDTO.of(page, c -> new ExchangeCodeVo(c.getId(), c.getCode()));
+    }
+
+    @Override
+    public boolean updateExchangeMark(long serialNum, boolean mark) {
+        Boolean success = redisTemplate.opsForValue().setBit(COUPON_CODE_MAP_KEY, serialNum, mark);
+        return success != null && success;
+    }
+
+    @Override
+    public Long exchangeTargetId(long serialNum) {
+        Set<String> range = redisTemplate.opsForZSet().rangeByScore(COUPON_RANGE_KEY, serialNum, serialNum + 5000, 0L, 1L);
+        if(CollUtils.isEmpty(range)){
+            return null;
+        }
+        String next = range.iterator().next();
+        return Long.parseLong(next);
     }
 }

@@ -1,10 +1,34 @@
 package com.xc.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xc.api.client.media.MediaClient;
+import com.xc.api.client.user.UserClient;
+import com.xc.api.dto.media.FileDTO;
+import com.xc.api.dto.user.res.UserInfoResVO;
+import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.exceptions.CommonException;
+import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.CollUtils;
+import com.xc.common.utils.JsonUtils;
+import com.xc.product.entity.StandardProductUnit;
 import com.xc.product.entity.StockKeepingUnit;
+import com.xc.product.entity.query.SkuQuery;
+import com.xc.product.entity.vo.SkuPageVO;
+import com.xc.product.entity.vo.SkuVO;
+import com.xc.product.entity.vo.SpuPageVO;
+import com.xc.product.mapper.StandardProductUnitMapper;
 import com.xc.product.mapper.StockKeepingUnitMapper;
 import com.xc.product.service.IStockKeepingUnitService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -16,5 +40,132 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMapper, StockKeepingUnit> implements IStockKeepingUnitService {
+    @Resource
+    MediaClient mediaClient;
 
+    @Resource
+    UserClient userClient;
+
+    @Resource
+    StandardProductUnitMapper spuMapper;
+
+    @Override
+    @Transactional
+    public boolean createSku(SkuVO vo) {
+        if(!testifyImageId(vo.getImageId())){
+            throw new CommonException("非法imageId");
+        }
+        if(!JsonUtils.isJson(vo.getAttributes())){
+            throw new CommonException("attributes 需要为json格式");
+        }
+        Integer spuNum = spuMapper.selectCount(new LambdaQueryWrapper<StandardProductUnit>().eq(StandardProductUnit::getId, vo.getSpuId()));
+        if(spuNum.equals(0)){
+            throw new CommonException("非法spuId");
+        }
+        boolean save = save(BeanUtils.copyBean(vo, StockKeepingUnit.class));
+        boolean update=true;
+        if(save&&vo.getAvailable()){
+            Integer i = spuMapper.updateNumWhenCreateSku(vo);
+            update=i==1;
+        }
+
+        if(!(save&&update)){
+            throw new CommonException("创建sku异常");
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean removeSku(Long id) {
+        StockKeepingUnit sku = baseMapper.selectById(id);
+        if(sku!=null){
+            boolean update=true;
+            if(sku.isAvailable()) {
+                update = spuMapper.updateNumWhenRemoveSku(sku)==1;
+            }
+            boolean remove = removeById(id);
+            if(!(remove&&update)){
+                throw new CommonException("删除失败");
+            }
+            return true;
+        }
+        throw new CommonException("SKU Id 不存在");
+    }
+
+    @Override
+    @Transactional
+    public boolean updateSku(SkuVO vo) {
+        if(vo.getId()==null){
+            throw new CommonException("SKuId不得为空");
+        }
+        if(!testifyImageId(vo.getImageId())){
+            throw new CommonException("非法imageId");
+        }
+        StockKeepingUnit sku = baseMapper.selectById(vo.getId());
+        if(sku==null){
+            throw new CommonException("skuId不正确");
+        }
+        if(!JsonUtils.isJson(vo.getAttributes())){
+            throw new CommonException("attributes 需要为json格式");
+        }
+        boolean updateNum=true;
+        SkuVO template = BeanUtils.copyBean(vo, SkuVO.class);
+        if(vo.getAvailable()){
+            if(sku.isAvailable()){
+                template.setNum(vo.getNum()-sku.getNum());
+            }
+            updateNum=spuMapper.updateNumWhenCreateSku(template)==1;
+        }else{
+            if(sku.isAvailable()){
+                updateNum=spuMapper.updateNumWhenRemoveSku(sku)==1;
+            }
+        }
+        boolean updateSku = updateById(BeanUtils.copyBean(vo, StockKeepingUnit.class));
+        if(!(updateNum&&updateSku)){
+            throw new CommonException("更新sku错误");
+        }
+        return true;
+    }
+
+    @Override
+    public PageDTO<SkuPageVO> queryPageBySpuId(SkuQuery query) {
+        Page<StockKeepingUnit> page = lambdaQuery()
+                .eq(StockKeepingUnit::getSpuId, query.getSpuId())
+                .eq(StockKeepingUnit::isAvailable, query.isAvailable())
+                .page(query.toMpPageDefaultSortByCreateTimeDesc());
+        List<StockKeepingUnit> records = page.getRecords();
+        PageDTO<SkuPageVO> res = new PageDTO<>();
+        if(!CollUtils.isEmpty(records)){
+            Set<Long> ids = records.stream().map(StockKeepingUnit::getImageId).collect(Collectors.toSet());
+            Set<Long> creaters = records.stream().map(StockKeepingUnit::getCreater).collect(Collectors.toSet());
+            Map<Long, String> userMap = userClient.getUserInfos(creaters).stream().collect(Collectors.toMap(
+                    UserInfoResVO::getUserId,
+                    UserInfoResVO::getAccount
+            ));
+            Map<Long, String> imageMap = mediaClient.getFileInfos(ids).stream().collect(Collectors.toMap(
+                    FileDTO::getId,
+                    FileDTO::getFileUrl
+            ));
+            List<SkuPageVO> list = records.stream().map(obj -> {
+                SkuPageVO pageVO = BeanUtils.copyBean(obj, SkuPageVO.class);
+                pageVO.setImage(imageMap.get(obj.getImageId()));
+                pageVO.setCreaterName(userMap.get(obj.getCreater()));
+                return pageVO;
+            }).collect(Collectors.toList());
+
+            res=PageDTO.of(page,list);
+        }
+        return res;
+    }
+
+    @Override
+    public Map<String, List<String>> getAttributes(Long skuId) {
+        return Map.of();
+    }
+
+    boolean testifyImageId(Long id){
+        List<Long> realId = mediaClient.judgeFileExist(Collections.singletonList(id));
+        return realId.contains(id);
+    }
 }

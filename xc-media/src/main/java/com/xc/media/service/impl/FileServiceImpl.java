@@ -80,7 +80,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         // 6.返回
         FileDTO fileDTO = new FileDTO();
         fileDTO.setId(fileInfo.getId());
-        fileDTO.setPath(path);
+        fileDTO.setFileUrl(path);
         fileDTO.setFilename(originalFilename);
         return fileDTO;
     }

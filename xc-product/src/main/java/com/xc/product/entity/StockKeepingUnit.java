@@ -33,7 +33,7 @@ public class StockKeepingUnit implements Serializable {
      */
     private Long spuId;
 
-    private String image;
+    private Long imageId;
 
     /**
      * 库存
@@ -45,7 +45,7 @@ public class StockKeepingUnit implements Serializable {
      */
     private String attributes;
 
-    private Integer available;
+    private boolean available;
 
     private Integer deleted;
 
