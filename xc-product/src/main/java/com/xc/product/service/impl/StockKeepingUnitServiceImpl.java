@@ -51,7 +51,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             throw new CommonException("非法spuId");
         }
         boolean save = save(BeanUtils.copyBean(vo, StockKeepingUnit.class));
-        boolean update=false;
+        boolean update=true;
         if(save&&vo.getAvailable()){
             Integer i = spuMapper.updateNumWhenCreateSku(vo);
             update=i==1;

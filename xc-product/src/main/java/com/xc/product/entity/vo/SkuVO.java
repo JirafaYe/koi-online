@@ -1,5 +1,7 @@
 package com.xc.product.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
