@@ -1,5 +1,6 @@
 package com.xc.product.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -160,8 +161,41 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
     }
 
     @Override
-    public Map<String, List<String>> getAttributes(Long skuId) {
-        return Map.of();
+    public Map<String, Set<String>> getAttributes(Long spuId) {
+        List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
+                .eq(StockKeepingUnit::isAvailable,true).list();
+        Map<String, Set<String>> attributes= new HashMap<>();
+        if(!CollUtils.isEmpty(sku)){
+            List<HashMap> maps = sku.stream().map(obj
+                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
+            for (HashMap map : maps) {
+                map.keySet().forEach(obj->{
+                    if(!attributes.containsKey(obj)){
+                        attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
+                    }else {
+                        Set<String> set = attributes.get(obj);
+                        set.add((String) map.get(obj));
+                        attributes.put((String) obj,set);
+                    }
+                });
+            }
+        }
+        return attributes;
+    }
+
+    @Override
+    public SkuPageVO getSkuByAttributes(String attributes, Long spuId) {
+        if(!JsonUtils.isJson(attributes)){
+            throw new CommonException("attributes 需要为json格式");
+        }
+        StockKeepingUnit match = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
+                .eq(StockKeepingUnit::isAvailable, true).eq(StockKeepingUnit::getAttributes, attributes).one();
+        SkuPageVO vo=BeanUtils.copyBean(match,SkuPageVO.class);
+        if(vo!=null){
+            mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
+                    .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
+        }
+        return vo;
     }
 
     boolean testifyImageId(Long id){

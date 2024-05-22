@@ -2,13 +2,17 @@ package com.xc.product.controller;
 
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.product.entity.query.SkuQuery;
+import com.xc.product.entity.vo.SkuAttributesVO;
 import com.xc.product.entity.vo.SkuPageVO;
 import com.xc.product.entity.vo.SkuVO;
 import com.xc.product.service.IStockKeepingUnitService;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 商品sku
@@ -57,5 +61,26 @@ public class SkuController {
     @GetMapping("/query")
     public PageDTO<SkuPageVO> queryByPage(@Valid SkuQuery query){
         return skuService.queryPageBySpuId(query);
+    }
+
+    /**
+     * 根据spuId获取sku配置map
+     * @param id spuId
+     * @return
+     */
+    @GetMapping("/{id}")
+    public SkuAttributesVO getAttributes(@PathVariable Long id){
+        return new SkuAttributesVO(id,skuService.getAttributes(id));
+    }
+
+    /**
+     * 根据配置获取详细sku信息
+     * @param attributes 配置，json格式的字符串
+     * @param spuId spuId
+     * @return
+     */
+    @GetMapping("/detail")
+    public SkuPageVO getSkuByAttributes(@Param("attributes") String attributes,@Param("spu") Long spuId){
+        return skuService.getSkuByAttributes(attributes,spuId);
     }
 }

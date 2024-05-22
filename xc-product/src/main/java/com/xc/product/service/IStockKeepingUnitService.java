@@ -12,6 +12,7 @@ import com.xc.product.entity.vo.SpuVO;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -31,5 +32,7 @@ public interface IStockKeepingUnitService extends IService<StockKeepingUnit> {
 
     PageDTO<SkuPageVO> queryPageBySpuId(SkuQuery query);
 
-    Map<String , List<String>> getAttributes(Long skuId);
+    Map<String , Set<String>> getAttributes(Long spuID);
+
+    SkuPageVO getSkuByAttributes(String attributes, Long spuID);
 }
