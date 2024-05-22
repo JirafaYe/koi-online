@@ -2,7 +2,9 @@ package com.xc.log.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xc.common.domain.dto.PageDTO;
 import com.xc.log.entity.LogInfo;
+import com.xc.log.vo.ListPageLogVO;
 
 
 /**
@@ -15,10 +17,5 @@ import com.xc.log.entity.LogInfo;
  */
 public interface LogInfoService extends IService<LogInfo> {
 
-    /**
-     *
-     * @param logInfo
-     * @return
-     */
-    Boolean saveLog(LogInfo logInfo);
+    PageDTO<LogInfo> listPageLog(ListPageLogVO vo);
 }
