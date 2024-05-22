@@ -66,46 +66,22 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     @Resource
     private UserBaseMapper userBaseMapper;
 
-    @Resource
-    private LogClient logClient;
 
     @Override
     public UserLoginResVO login(UserLoginReqVO vo) {
-
-        Integer type = vo.getLoginType();
-//        1.账号密码登录
         UserBase user = null;
-        if (LOGIN_TYPE_USER.equals(type)) {
-            String account = vo.getAccount();
-            String password = vo.getPassword();
-            if (StringUtils.isAnyBlank(account, password)) {
-                throw new CommonException("账号或密码为空");
-            }
-            //加密
-            String newPw = MD5Utils.inputPassToFormPass(password);
-            LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>().eq(UserBase::getAccount, account)
-                    .eq(UserBase::getPassword, newPw);
-            user = userBaseMapper.selectOne(lqw);
-            if (user == null) {
-                throw new CommonException(USER_NOT_EXISTS);
-            }
-
-        } else if (LOGIN_TYPE_PHONE.equals(type)) {
-            //手机号验证码登录
-            String phone = vo.getPhone();
-            if (phone == null) {
-                throw new CommonException("手机号不能为空");
-            }
-            //redis 中获取验证码
-            String o = (String) stringRedisTemplate.opsForValue().get(PHONE_CODE_KEY);
-            if (!vo.getCode().equals(o)) {
-                throw new CommonException(INVALID_VERIFY_CODE);
-            }
-            LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>().eq(UserBase::getMobile, phone);
-            user = userBaseMapper.selectOne(lqw);
-            if (user == null) {
-                throw new CommonException(USER_NOT_EXISTS);
-            }
+        String account = vo.getAccount();
+        String password = vo.getPassword();
+        if (StringUtils.isAnyBlank(account, password)) {
+            throw new CommonException("账号或密码为空");
+        }
+        //加密
+        String newPw = MD5Utils.inputPassToFormPass(password);
+        LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>().eq(UserBase::getAccount, account)
+                .eq(UserBase::getPassword, newPw);
+        user = userBaseMapper.selectOne(lqw);
+        if (user == null) {
+            throw new CommonException(USER_NOT_EXISTS);
         }
         if (user.getStatus().equals(0)) {
             throw new UnauthorizedException("无权限");
@@ -114,7 +90,6 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         claims.put(JwtConstant.USER_ID, user.getUserId());
 //        2、登录成功，生成JWT返回
         String token = JwtTokenUtils.createJWT(claims);
-
         UserLoginResVO resVO = new UserLoginResVO();
         BeanUtils.copyProperties(user, resVO);
         resVO.setToken(token);
@@ -127,34 +102,6 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
      */
     @Override
     public void sendCode(String phone) {
-//          DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou",
-//                  "1这里填入阿里云用户的AccessKey ID", "2这里填入阿里云用户的AccessKey Secre");
-//          IAcsClient client = new DefaultAcsClient(profile);
-//
-//          CommonRequest request = new CommonRequest();
-//          request.setMethod(MethodType.POST);
-//          request.setDomain("dysmsapi.aliyuncs.com");
-//          request.setVersion("2017-05-25");
-//          request.setAction("SendSms");
-//          request.putQueryParameter("PhoneNumbers", phone);
-//          request.putQueryParameter("SignName", "4短信签名");
-//          request.putQueryParameter("TemplateCode", "5短信模版CODE");
-//
-//          /*生成随机4位验证码*/
-//          String code = UUID.randomUUID().toString().substring(0, 4);
-//          Map<String, Object> map = new HashMap<>();
-//          map.put("code", code);
-//          request.putQueryParameter("TemplateParam", JSONObject.toJSONString(map));
-//
-//          try {
-//              CommonResponse response = client.getCommonResponse(request);
-//              System.out.println(response.getData());
-//          } catch (ServerException e) {
-//              e.printStackTrace();
-//          } catch (ClientException e) {
-//              e.printStackTrace();
-//          }
-
 //          模拟验证码
         String code = RandomUtil.randomString(4);
         System.out.println("验证码是" + code);
@@ -222,16 +169,16 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     @Override
     public Integer updateUserInfo(UpdateUserInfoVO vo) {
         Long user = UserContext.getUser();
-        if(user == null){
+        if (user == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
         UserBase userBase = userBaseMapper.selectById(user);
-        if(userBase == null){
+        if (userBase == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
-         userBase.setNickName(vo.getNickName());
-         userBase.setSrcface(vo.getSrcface());
-         userBase.setGender(vo.getGender());
+        userBase.setNickName(vo.getNickName());
+        userBase.setSrcface(vo.getSrcface());
+        userBase.setGender(vo.getGender());
         return userBaseMapper.updateById(userBase);
 
     }
@@ -243,7 +190,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
             throw new CommonException(USER_NOT_EXISTS);
         }
         UserBase userBase = userBaseMapper.selectById(user);
-        if(userBase == null){
+        if (userBase == null) {
             throw new CommonException(USER_NOT_EXISTS);
         }
         UserInfoResVO ans = new UserInfoResVO();
@@ -312,7 +259,11 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     public int bindMobile(BindMobileVO vo) {
         stringRedisTemplate.opsForValue().set(PHONE_CODE_KEY, vo.getCode());
         String code = stringRedisTemplate.opsForValue().get(PHONE_CODE_KEY);
-        if (!vo.getCode().equals(code)) {
+//        if (!vo.getCode().equals(code)) {
+//            throw new CommonException(INVALID_VERIFY_CODE);
+//        }
+        //模拟验证码
+        if (!vo.getCode().equals("1234")) {
             throw new CommonException(INVALID_VERIFY_CODE);
         }
         Long user = UserContext.getUser();
@@ -347,7 +298,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
     public List<UserInfoResVO> getUserListByName(String name) {
         LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>()
                 .like(UserBase::getAccount, name);  //
-       return  userBaseMapper.selectList(lqw).stream().map(userBase -> {
+        return userBaseMapper.selectList(lqw).stream().map(userBase -> {
             UserInfoResVO userInfoResVO = new UserInfoResVO();
             BeanUtils.copyProperties(userBase, userInfoResVO);
             return userInfoResVO;

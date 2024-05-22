@@ -20,19 +20,4 @@ public class UserLoginReqVO {
      */
     private String password;
 
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 验证码
-     */
-    private String code;
-
-    /**
-     * 登录类型 1账号 2手机号
-     */
-    @NotNull(message = "类型不能为空")
-    private Integer loginType;
 }
