@@ -1,4 +1,4 @@
-package com.xc.user.service.Impl.mapper;
+package com.xc.user.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

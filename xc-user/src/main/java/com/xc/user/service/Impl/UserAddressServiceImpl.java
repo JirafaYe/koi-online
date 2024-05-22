@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.common.utils.UserContext;
 import com.xc.user.entity.UserAddress;
-import com.xc.user.service.Impl.mapper.UserAddressMapper;
+import com.xc.user.mapper.UserAddressMapper;
 import com.xc.user.service.UserAddressService;
 import com.xc.user.vo.req.AddDeliveryAddressReqVO;
 import org.springframework.stereotype.Service;

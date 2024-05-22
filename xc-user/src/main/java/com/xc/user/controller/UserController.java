@@ -4,6 +4,7 @@ package com.xc.user.controller;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.log.aspect.Log;
+import com.xc.log.enums.BusinessType;
 import com.xc.user.service.UserBaseService;
 import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
@@ -105,6 +106,7 @@ public class UserController {
      * @return
      */
     @PostMapping("updateUserStatus")
+    @Log(title = "修改用户状态", businessType = BusinessType.UPDATE)
     public Integer updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo) {
         return userBaseService.updateUserStatus(vo);
     }

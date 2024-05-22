@@ -18,7 +18,7 @@ import com.xc.common.utils.JwtTokenUtils;
 import com.xc.common.utils.UserContext;
 import com.xc.user.entity.UserBase;
 import com.xc.user.enums.UserConstants;
-import com.xc.user.service.Impl.mapper.UserBaseMapper;
+import com.xc.user.mapper.UserBaseMapper;
 import com.xc.user.service.UserBaseService;
 import com.xc.user.utils.IdGeneratorSnowflake;
 import com.xc.user.utils.MD5Utils;
@@ -26,7 +26,6 @@ import com.xc.user.utils.RandomStringGenerator;
 import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 

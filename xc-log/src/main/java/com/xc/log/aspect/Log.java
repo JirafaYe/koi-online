@@ -1,6 +1,6 @@
 package com.xc.log.aspect;
 
-import com.xc.log.eunm.BusinessType;
+import com.xc.log.enums.BusinessType;
 
 import java.lang.annotation.*;
 
@@ -31,4 +31,5 @@ public @interface Log {
      * 是否保存响应的参数
      */
      boolean isSaveResponseData() default true;
+
 }

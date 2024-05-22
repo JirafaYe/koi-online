@@ -8,7 +8,9 @@ import com.xc.common.utils.StringUtils;
 import com.xc.log.service.LogInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,65 +38,32 @@ public class LogAspect {
     @Resource
     private LogClient logClient;
 
-    @Pointcut("@annotation(com.xc.log.aspect.Log)")
-    public void pointcut() {
-    }
-
     /**
-     * 处理完请求后执行
-     *
+     * 环绕通知
      * @param joinPoint 切点
+     * @param log 日志注解
+     * @return 方法返回值
+     * @throws Throwable 异常信息
      */
-    @AfterReturning(pointcut = "execution(* *(..)) && @annotation(log)", returning = "jsonResult")
-    public void doAfterReturnibng(JoinPoint joinPoint, Log log, Object jsonResult) {
-        System.out.println("============后置通知=============");
-        Exception e = null;
-//        handleLog(joinPoint, log, null, jsonResult);
+    @Around(value = "execution(* *(..)) && @annotation(log)")
+    public Object doAround(ProceedingJoinPoint joinPoint, Log log) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        Object result = null;
+        Exception exception = null;
         try {
-            // 获取当前的用户
-//            Long user = UserContext.getUser();
-            Long user = 8285536116768L;
-            // 日志记录
-            LogInfo logInfo = new LogInfo();
-            logInfo.setStatus(0);
-            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest request = requestAttributes.getRequest();
-
-            // 请求的IP地址
-            String iP = ServletUtil.getClientIP(request);
-            if ("0:0:0:0:0:0:0:1".equals(iP)) {
-                iP = "127.0.0.1";
-            }
-            logInfo.setOperIp(iP);
-            logInfo.setOperUrl(request.getRequestURI());
-            if (user != null) {
-                logInfo.setUserId(user);
-            }
-            if (e != null) {
-                logInfo.setStatus(1);
-                logInfo.setErrorMsg(e.getMessage().substring(0, 2000));
-            }
-            // 设置方法名称
-            String className = joinPoint.getTarget().getClass().getName();
-            String methodName = joinPoint.getSignature().getName();
-            logInfo.setMethod(className + "." + methodName + "()");
-            logInfo.setRequestMethod(request.getMethod());
-            // 处理设置注解上的参数
-            getControllerMethodDescription(joinPoint, log, logInfo, jsonResult);
-            // 保存数据库
-            logClient.saveLog(logInfo);
-
-        } catch (Exception exp) {
-            LogAspect.log.error("异常信息:{}", exp.getMessage());
-            exp.printStackTrace();
+            result = joinPoint.proceed();   // 执行切点
+        } catch (Exception e) {
+            exception = e;
+            throw e; // 让异常继续向上抛，以便于Spring的异常处理器处理
+        } finally {
+            handleLog(joinPoint, log, exception, result);
         }
+        return result;
     }
-
     protected void handleLog(final JoinPoint joinPoint, Log log, final Exception e, Object jsonResult) {
         try {
             // 获取当前的用户
-//            Long user = UserContext.getUser();
-            Long user = 8285536116768L;
+            Long user = UserContext.getUser();
             // 日志记录
             LogInfo logInfo = new LogInfo();
             logInfo.setStatus(0);
@@ -113,7 +82,7 @@ public class LogAspect {
             }
             if (e != null) {
                 logInfo.setStatus(1);
-                logInfo.setErrorMsg(e.getMessage().substring(0, 2000));
+                logInfo.setErrorMsg(e.getMessage());
             }
             // 设置方法名称
             String className = joinPoint.getTarget().getClass().getName();
@@ -124,7 +93,6 @@ public class LogAspect {
             getControllerMethodDescription(joinPoint, log, logInfo, jsonResult);
             // 保存数据库
             logClient.saveLog(logInfo);
-//            logInfoService.save(logInfo);
         } catch (Exception exp) {
             LogAspect.log.error("异常信息:{}", exp.getMessage());
             exp.printStackTrace();
@@ -164,12 +132,12 @@ public class LogAspect {
         String requsetMethod = logInfo.getRequestMethod();
         if (HttpMethod.PUT.name().equals(requsetMethod) || HttpMethod.POST.name().equals(requsetMethod)) {
             String parsams = argsArrayToString(joinPoint.getArgs());
-            logInfo.setOperParam(StringUtils.sub(parsams, 0, 2000));
+            logInfo.setOperParam(parsams);
         } else {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = requestAttributes.getRequest();
             Map<?, ?> paramsMap = (Map<?, ?>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-            logInfo.setOperParam(StringUtils.sub(paramsMap.toString(), 0, 2000));
+            logInfo.setOperParam(paramsMap.toString());
         }
     }
 
