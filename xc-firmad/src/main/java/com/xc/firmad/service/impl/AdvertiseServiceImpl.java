@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.page.PageMethod;
 import com.xc.api.client.media.MediaClient;
+import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
@@ -65,8 +66,8 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
                     .map(String::trim)
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
-            List<MediaDTO> fileInfos = mediaClient.getFileInfos(longIds);
-            List<Long> collect = fileInfos.stream().map(MediaDTO::getId).collect(Collectors.toList());
+            List<FileDTO> fileInfos = mediaClient.getFileInfos(longIds);
+            List<Long> collect = fileInfos.stream().map(FileDTO::getId).collect(Collectors.toList());
             BeanUtils.copyProperties(record, resVO);
             resVO.setFileIds(collect);
             list.add(resVO);

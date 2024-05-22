@@ -23,6 +23,10 @@ public @interface Log {
      BusinessType businessType() default BusinessType.OTHER;
 
     /**
+     * 额外备注
+     */
+     String remark() default "";
+    /**
      * 是否保存请求的参数
      */
      boolean isSaveRequestData() default true;

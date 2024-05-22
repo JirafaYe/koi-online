@@ -5,7 +5,7 @@ public enum BusinessType {
     /**
      * 新增
      */
-    INSERT(1, "增加"),
+    INSERT(1, "新增"),
 
     /**
      * 修改
@@ -17,47 +17,12 @@ public enum BusinessType {
      */
     DELETE(3, "删除"),
 
+    QUERY(4, "查询"),
     /**
      * 其它
      */
-    OTHER(4, "其他"),
+    OTHER(5, "其他");
 
-    /**
-     * 查询
-     */
-    QUERY(5, "查询"),
-
-    RESET(6, "重置"),
-
-    /**
-     * 授权
-     */
-    GRANT,
-
-    /**
-     * 导出
-     */
-    EXPORT,
-
-    /**
-     * 导入
-     */
-    IMPORT,
-
-    /**
-     * 强退
-     */
-    FORCE,
-
-    /**
-     * 生成代码
-     */
-    GENCODE,
-
-    /**
-     * 清空数据
-     */
-    CLEAN;
 
     private Integer value;
     private String msg;
@@ -70,9 +35,13 @@ public enum BusinessType {
         this.value = value;
         this.msg = msg;
     }
-
-    public String getValue(BusinessType type) {
-
+//根据value获取msg
+    public static String getValue(String type) {
+        for (BusinessType businessType : BusinessType.values()) {
+            if (businessType.value.equals(type)) {
+                return businessType.msg;
+            }
+        }
         return null;
     }
 }

@@ -20,4 +20,13 @@ public interface UserClient {
     @GetMapping("user/getUserInfos")
     List<UserInfoResVO> getUserInfos(@RequestParam("ids") Iterable<Long> ids);
 
+
+    /**
+     * 根据姓名进行模糊搜索
+     * @return
+     */
+    @GetMapping("getUserListByName")
+    List<UserInfoResVO> getUserListByName(String name);
+
+
 }

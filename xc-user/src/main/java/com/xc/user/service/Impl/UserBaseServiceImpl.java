@@ -251,6 +251,7 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         return ans;
     }
 
+
     @Override
     public List<UserInfoResVO> getUserInfos(List<Long> ids) {
         if (!CollUtil.isEmpty(ids)) {
@@ -342,5 +343,15 @@ public class UserBaseServiceImpl extends ServiceImpl<UserBaseMapper, UserBase> i
         return voList;
     }
 
+    @Override
+    public List<UserInfoResVO> getUserListByName(String name) {
+        LambdaQueryWrapper<UserBase> lqw = new LambdaQueryWrapper<UserBase>()
+                .like(UserBase::getAccount, name);  //
+       return  userBaseMapper.selectList(lqw).stream().map(userBase -> {
+            UserInfoResVO userInfoResVO = new UserInfoResVO();
+            BeanUtils.copyProperties(userBase, userInfoResVO);
+            return userInfoResVO;
+        }).collect(Collectors.toList());
+    }
 
 }

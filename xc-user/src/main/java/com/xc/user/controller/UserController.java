@@ -3,8 +3,7 @@ package com.xc.user.controller;
 
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.log.aspect.Log;
-import com.xc.log.enums.BusinessType;
+
 import com.xc.user.service.UserBaseService;
 import com.xc.user.vo.req.*;
 import com.xc.user.vo.res.UserLoginResVO;
@@ -37,7 +36,6 @@ public class UserController {
      * 登录
      */
     @PostMapping("login")
-    @Log(title = "用户登录")
     public UserLoginResVO login(@Valid @RequestBody UserLoginReqVO vo) {
         return userBaseService.login(vo);
     }
@@ -106,7 +104,6 @@ public class UserController {
      * @return
      */
     @PostMapping("updateUserStatus")
-    @Log(title = "修改用户状态", businessType = BusinessType.UPDATE)
     public Integer updateUserStatus(@RequestBody @Valid UpdateUserStatusVO vo) {
         return userBaseService.updateUserStatus(vo);
     }
@@ -122,7 +119,7 @@ public class UserController {
     }
 
     /**
-     * 更新用户信息  TODO
+     * 更新用户信息
      * @param vo
      * @return
      */
@@ -137,6 +134,15 @@ public class UserController {
     @GetMapping("getUserInfo")
     public UserInfoResVO getUserInfo(){
         return userBaseService.getUserInfo();
+    }
+
+    /**
+     * 根据姓名进行模糊搜索
+     * @return
+     */
+    @GetMapping("getUserListByName")
+    public List<UserInfoResVO> getUserListByName(String name){
+        return userBaseService.getUserListByName(name);
     }
 
 }

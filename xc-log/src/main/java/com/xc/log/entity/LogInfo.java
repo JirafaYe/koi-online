@@ -116,4 +116,10 @@ public class LogInfo implements Serializable {
      */
     @TableField("oper_param")
     private String operParam;
+
+    /**
+     * 备注
+     */
+    @TableField("remark")
+    private String remark;
 }

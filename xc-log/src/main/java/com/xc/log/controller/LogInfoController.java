@@ -9,6 +9,7 @@ import com.xc.log.entity.LogInfo;
 import com.xc.log.enums.BusinessType;
 import com.xc.log.service.LogInfoService;
 import com.xc.log.vo.ListPageLogVO;
+import com.xc.log.vo.LogInfoResVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -42,7 +43,7 @@ public class LogInfoController {
      * 展示日志
      */
     @GetMapping("/listPageLog")
-    public PageDTO<LogInfo> listPageLog(ListPageLogVO vo){
+    public PageDTO<LogInfoResVO> listPageLog(ListPageLogVO vo){
         return logInfoService.listPageLog(vo);
     }
 

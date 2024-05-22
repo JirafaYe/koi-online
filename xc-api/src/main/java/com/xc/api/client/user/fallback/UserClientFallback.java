@@ -15,6 +15,11 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
             public List<UserInfoResVO> getUserInfos(Iterable<Long> ids) {
                 return null;
             }
+
+            @Override
+            public List<UserInfoResVO> getUserListByName(String name) {
+                return null;
+            }
         };
     }
 }

@@ -96,4 +96,9 @@ public class LogInfo implements Serializable {
      * 请求参数
      */
     private String operParam;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

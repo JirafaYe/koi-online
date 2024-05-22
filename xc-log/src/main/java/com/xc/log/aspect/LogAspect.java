@@ -5,15 +5,12 @@ import cn.hutool.json.JSONUtil;
 import com.xc.api.client.log.LogClient;
 import com.xc.api.dto.log.req.LogInfo;
 import com.xc.common.utils.StringUtils;
-import com.xc.log.service.LogInfoService;
+import com.xc.common.utils.UserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -21,6 +18,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,9 +29,6 @@ import java.util.Map;
 @Component
 @Slf4j
 public class LogAspect {
-
-    @Autowired
-    private LogInfoService logInfoService;
 
     @Resource
     private LogClient logClient;
@@ -111,6 +106,7 @@ public class LogAspect {
         logInfo.setBusinessType(log.businessType().ordinal());
         // 设置标题
         logInfo.setTitle(log.title());
+        logInfo.setRemark(log.remark());
         // 是否需要保存request，参数和值
         if (log.isSaveRequestData()) {
             // 设置参数的信息

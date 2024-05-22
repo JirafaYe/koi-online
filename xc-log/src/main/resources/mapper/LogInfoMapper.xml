@@ -19,10 +19,12 @@
         <result column="error_msg" property="errorMsg" />
         <result column="oper_time" property="operTime" />
         <result column="oper_param" property="operParam" />
+        <result column="remark" property="remark" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, method, title, business_type, request_method, operatoe_type, oper_url, oper_ip, oper_location, json_result, status, error_msg, oper_time, oper_param
+        id, user_id, method, title, business_type, request_method, operatoe_type, oper_url, oper_ip, oper_location, json_result,
+            status, error_msg, oper_time, oper_param, remark
     </sql>
 </mapper>

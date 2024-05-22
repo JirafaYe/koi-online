@@ -113,4 +113,6 @@ public interface UserBaseService extends IService<UserBase> {
      * @return
      */
     UserInfoResVO getUserInfo();
+
+    List<UserInfoResVO> getUserListByName(String name);
 }
