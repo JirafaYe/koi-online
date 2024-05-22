@@ -6,7 +6,9 @@ import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @FeignClient(value = "product-service", fallbackFactory = ProductClientFallback.class)
@@ -26,4 +28,20 @@ public interface ProductClient {
      */
     @GetMapping("/spu/name")
     List<SpuPageVO> queryByName(@Param("name") String name);
+
+    /**
+     * 内部暴露的api接口 根据id查询，返回id和spuName
+     * @param ids spu id list
+     * @return
+     */
+    @GetMapping("/spu/ids")
+    List<SpuPageVO> queryById(@RequestBody Iterable<Long> ids);
+
+    /**
+     * 根据id list查询
+     * @param ids 目录idList
+     * @return
+     */
+    @GetMapping("/category/ids")
+    List<String> queryCategoryByIdList(@RequestBody Iterable<Long> ids);
 }
