@@ -27,3 +27,6 @@ spring:
 xc:
   jdbc:
     database: xc_remark
+  auth:
+    resource:
+      enable: true
