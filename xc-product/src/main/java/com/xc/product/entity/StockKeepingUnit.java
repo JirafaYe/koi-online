@@ -36,6 +36,11 @@ public class StockKeepingUnit implements Serializable {
     private Long imageId;
 
     /**
+     * 价格
+     */
+    private double price;
+
+    /**
      * 库存
      */
     private Long num;

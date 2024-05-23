@@ -20,4 +20,7 @@ public interface StandardProductUnitMapper extends BaseMapper<StandardProductUni
 
     @Update("update standard_product_unit set num=num-#{num} where id = #{spuId}")
     Integer updateNumWhenRemoveSku(StockKeepingUnit sku);
+
+    @Update("update standard_product_unit set min_price=COALESCE((select min(price) from stock_keeping_unit  where spu_id = #{spuId} and available=1 and deleted=0),0) where id = #{spuId}")
+    Integer updateMinPriceWhenUpdateSku(Long spiId);
 }

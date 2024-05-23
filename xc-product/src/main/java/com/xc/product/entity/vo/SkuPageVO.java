@@ -18,6 +18,11 @@ public class SkuPageVO {
     private String image;
 
     /**
+     * 价格
+     */
+    private double price;
+
+    /**
      * 库存, 上架时同时更新spu库存
      */
     private Long num;

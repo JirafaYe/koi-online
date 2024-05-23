@@ -25,6 +25,12 @@ public class SkuVO implements Serializable {
     private Long imageId;
 
     /**
+     * 价格
+     */
+    @NotNull
+    private Double price;
+
+    /**
      * 库存, 上架时同时更新spu库存
      */
     @NotNull

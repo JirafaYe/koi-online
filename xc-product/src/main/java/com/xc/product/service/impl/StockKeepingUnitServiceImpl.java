@@ -66,8 +66,13 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         boolean save = save(BeanUtils.copyBean(vo, StockKeepingUnit.class));
         boolean update=true;
         if(save&&vo.getAvailable()){
-            Integer i = spuMapper.updateNumWhenCreateSku(vo);
-            update=i==1;
+//            Integer i = spuMapper.updateNumWhenCreateSku(vo);
+//            update=i==1;
+//            update=1==spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId());
+            if(!(spuMapper.updateNumWhenCreateSku(vo)==1
+                    &&spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())==1)){
+                update=false;
+            }
         }
 
         if(!(save&&update)){
@@ -83,10 +88,18 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(sku!=null){
             boolean update=true;
             if(sku.isAvailable()) {
-                update = spuMapper.updateNumWhenRemoveSku(sku)==1;
+//                update = spuMapper.updateNumWhenRemoveSku(sku)==1;
+                if(!(spuMapper.updateNumWhenRemoveSku(sku)==1)){
+                    update=false;
+                }
             }
             boolean remove = removeById(id);
-            if(!(remove&&update)){
+            boolean updatePrice=true;
+            if(sku.isAvailable()){
+                updatePrice=spuMapper.updateMinPriceWhenUpdateSku(sku.getSpuId())==1;
+            }
+
+            if(!(remove&&update&&updatePrice)){
                 throw new CommonException("删除失败");
             }
             return true;
@@ -123,7 +136,8 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             }
         }
         boolean updateSku = updateById(BeanUtils.copyBean(vo, StockKeepingUnit.class));
-        if(!(updateNum&&updateSku)){
+        boolean updatePrice=spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())==1;
+        if(!(updateNum&&updateSku&&updatePrice)){
             throw new CommonException("更新sku错误");
         }
         return true;
