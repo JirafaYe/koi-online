@@ -47,14 +47,14 @@ public class Order implements Serializable {
     private Long paymentId;
 
     /**
-     * 原始金额
+     * 原始金额 *100
      */
-    private BigDecimal rawPrice;
+    private Integer rawPrice;
 
     /**
-     * 优惠后金额
+     * 优惠后金额 *100
      */
-    private BigDecimal finalPrice;
+    private Integer finalPrice;
 
     /**
      * 优惠券id

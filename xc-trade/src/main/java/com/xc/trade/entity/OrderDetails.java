@@ -50,9 +50,9 @@ public class OrderDetails implements Serializable {
     private Integer quantity;
 
     /**
-     * 金额
+     * 金额*100
      */
-    private BigDecimal totalPrice;
+    private Integer totalPrice;
 
     private LocalDateTime updateTime;
 
