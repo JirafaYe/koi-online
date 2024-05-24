@@ -217,10 +217,12 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         StockKeepingUnit match = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
                 .eq(StockKeepingUnit::isAvailable, true).eq(StockKeepingUnit::getAttributes, attributes).one();
         SkuPageVO vo=BeanUtils.copyBean(match,SkuPageVO.class);
-        vo.setPrice((double) match.getPrice() /100);
-        vo.setSpuName(spuMapper.selectById(vo.getSpuId()).getSpuName());
-        mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
-                .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
+        if(vo!=null) {
+            vo.setPrice((double) match.getPrice() / 100);
+            vo.setSpuName(spuMapper.selectById(vo.getSpuId()).getSpuName());
+            mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
+                    .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
+        }
         return vo;
     }
 
