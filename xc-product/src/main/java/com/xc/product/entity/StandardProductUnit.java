@@ -50,6 +50,11 @@ public class StandardProductUnit implements Serializable {
     private String  contentImagesId;
 
     /**
+     * 商品最低价*100
+     */
+    private Integer minPrice;
+
+    /**
      * 视频id
      */
     private Long mainVideoId;

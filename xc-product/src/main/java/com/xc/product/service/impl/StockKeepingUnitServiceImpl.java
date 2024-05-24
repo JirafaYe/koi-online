@@ -63,7 +63,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(spuNum.equals(0)){
             throw new CommonException("非法spuId");
         }
-        boolean save = save(BeanUtils.copyBean(vo, StockKeepingUnit.class));
+        StockKeepingUnit stockKeepingUnit = BeanUtils.copyBean(vo, StockKeepingUnit.class);
+        stockKeepingUnit.setPrice((int) (vo.getPrice()*100));
+        boolean save = save(stockKeepingUnit);
         boolean update=true;
         if(save&&vo.getAvailable()){
 //            Integer i = spuMapper.updateNumWhenCreateSku(vo);
@@ -135,7 +137,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                 updateNum=spuMapper.updateNumWhenRemoveSku(sku)==1;
             }
         }
-        boolean updateSku = updateById(BeanUtils.copyBean(vo, StockKeepingUnit.class));
+        StockKeepingUnit stockKeepingUnit = BeanUtils.copyBean(vo, StockKeepingUnit.class);
+        stockKeepingUnit.setPrice((int) (vo.getPrice()*100));
+        boolean updateSku = updateById(stockKeepingUnit);
         boolean updatePrice=spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())==1;
         if(!(updateNum&&updateSku&&updatePrice)){
             throw new CommonException("更新sku错误");
@@ -164,6 +168,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             ));
             List<SkuPageVO> list = records.stream().map(obj -> {
                 SkuPageVO pageVO = BeanUtils.copyBean(obj, SkuPageVO.class);
+                pageVO.setPrice((double) obj.getPrice() /100);
                 pageVO.setImage(imageMap.get(obj.getImageId()));
                 pageVO.setCreaterName(userMap.get(obj.getCreater()));
                 return pageVO;
@@ -205,6 +210,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         StockKeepingUnit match = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
                 .eq(StockKeepingUnit::isAvailable, true).eq(StockKeepingUnit::getAttributes, attributes).one();
         SkuPageVO vo=BeanUtils.copyBean(match,SkuPageVO.class);
+        vo.setPrice((double) match.getPrice() /100);
         if(vo!=null){
             mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
                     .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
