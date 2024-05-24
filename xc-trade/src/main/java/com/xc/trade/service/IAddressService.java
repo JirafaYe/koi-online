@@ -18,7 +18,10 @@ import java.util.List;
  */
 public interface IAddressService extends IService<Address> {
     boolean create(AddressVO vo);
+
     boolean update(AddressVO vo);
+
     boolean remove(List<Long> ids);
+
     PageDTO<AddressVO> pageQueryAddress(AddressQuery query);
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -82,5 +83,15 @@ public class SkuController {
     @GetMapping("/detail")
     public SkuPageVO getSkuByAttributes(@Param("attributes") String attributes,@Param("spu") Long spuId){
         return skuService.getSkuByAttributes(attributes,spuId);
+    }
+
+    /**
+     * 内部api，根据id获取sku
+     * @param ids
+     * @return
+     */
+    @GetMapping("/details")
+    public List<SkuPageVO> getSkuById(@RequestBody List<Long> ids){
+        return skuService.getSkuById(ids);
     }
 }

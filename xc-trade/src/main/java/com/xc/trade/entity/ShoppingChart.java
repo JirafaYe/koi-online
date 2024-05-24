@@ -51,7 +51,7 @@ public class ShoppingChart implements Serializable {
     /**
      * 总金额
      */
-    private Integer total;
+    private Integer price;
 
     private LocalDateTime updateTime;
 

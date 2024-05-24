@@ -1,6 +1,7 @@
 package com.xc.api.client.product.fallback;
 
 import com.xc.api.client.product.ProductClient;
+import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.product.SpuPageVO;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,11 @@ public class ProductClientFallback implements FallbackFactory<ProductClient> {
 
             @Override
             public List<String> queryCategoryByIdList(Iterable<Long> ids) {
+                return List.of();
+            }
+
+            @Override
+            public List<SkuPageVO> getSkuById(Iterable<Long> skuID) {
                 return List.of();
             }
         };

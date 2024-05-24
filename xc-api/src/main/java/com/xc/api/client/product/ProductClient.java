@@ -1,6 +1,7 @@
 package com.xc.api.client.product;
 
 import com.xc.api.client.product.fallback.ProductClientFallback;
+import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.product.SpuPageVO;
 import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -44,4 +45,7 @@ public interface ProductClient {
      */
     @GetMapping("/category/ids")
     List<String> queryCategoryByIdList(@RequestBody Iterable<Long> ids);
+
+    @GetMapping("/sku/details")
+    List<SkuPageVO> getSkuById(Iterable<Long> skuID);
 }

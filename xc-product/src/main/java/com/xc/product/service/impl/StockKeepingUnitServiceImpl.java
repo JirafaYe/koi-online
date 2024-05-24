@@ -158,6 +158,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(!CollUtils.isEmpty(records)){
             Set<Long> ids = records.stream().map(StockKeepingUnit::getImageId).collect(Collectors.toSet());
             Set<Long> creaters = records.stream().map(StockKeepingUnit::getCreater).collect(Collectors.toSet());
+            Set<Long> spuIds = records.stream().map(StockKeepingUnit::getSpuId).collect(Collectors.toSet());
             Map<Long, String> userMap = userClient.getUserInfos(creaters).stream().collect(Collectors.toMap(
                     UserInfoResVO::getUserId,
                     UserInfoResVO::getAccount
@@ -166,11 +167,17 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                     FileDTO::getId,
                     FileDTO::getFileUrl
             ));
+
+            Map<Long, String> spuMap=spuMapper.selectBatchIds(spuIds).stream().collect(Collectors.toMap(
+               StandardProductUnit::getId,
+               StandardProductUnit::getSpuName
+            ));
             List<SkuPageVO> list = records.stream().map(obj -> {
                 SkuPageVO pageVO = BeanUtils.copyBean(obj, SkuPageVO.class);
                 pageVO.setPrice((double) obj.getPrice() /100);
                 pageVO.setImage(imageMap.get(obj.getImageId()));
                 pageVO.setCreaterName(userMap.get(obj.getCreater()));
+                pageVO.setSpuName(spuMap.get(pageVO.getSpuId()));
                 return pageVO;
             }).collect(Collectors.toList());
 
@@ -211,11 +218,35 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                 .eq(StockKeepingUnit::isAvailable, true).eq(StockKeepingUnit::getAttributes, attributes).one();
         SkuPageVO vo=BeanUtils.copyBean(match,SkuPageVO.class);
         vo.setPrice((double) match.getPrice() /100);
-        if(vo!=null){
-            mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
-                    .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
-        }
+        vo.setSpuName(spuMapper.selectById(vo.getSpuId()).getSpuName());
+        mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
+                .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
         return vo;
+    }
+
+    @Override
+    public List<SkuPageVO> getSkuById(List<Long> skuID) {
+        List<StockKeepingUnit> stockKeepingUnits = baseMapper.selectList(
+                new LambdaQueryWrapper<StockKeepingUnit>()
+                        .in(StockKeepingUnit::getId, skuID)
+        );
+        List<SkuPageVO> res=null;
+        if(!CollUtils.isEmpty(stockKeepingUnits)) {
+            Set<Long> images = stockKeepingUnits.stream().map(StockKeepingUnit::getImageId).collect(Collectors.toSet());
+            Map<Long, String> map = mediaClient.getFileInfos(images).stream().collect(Collectors.toMap(
+                    FileDTO::getId,
+                    FileDTO::getFileUrl
+            ));
+            res = stockKeepingUnits.stream().map(obj -> {
+                SkuPageVO pageVO = BeanUtils.copyBean(obj, SkuPageVO.class);
+                pageVO.setPrice((double) obj.getPrice() / 100);
+                pageVO.setSpuName(spuMapper.selectById(pageVO.getSpuId()).getSpuName());
+                pageVO.setImage(map.get(obj.getImageId()));
+                return pageVO;
+            }).collect(Collectors.toList());
+        }
+
+        return res;
     }
 
     boolean testifyImageId(Long id){

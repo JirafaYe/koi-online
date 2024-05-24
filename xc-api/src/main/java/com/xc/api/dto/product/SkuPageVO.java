@@ -1,4 +1,4 @@
-package com.xc.product.entity.vo;
+package com.xc.api.dto.product;
 
 import lombok.Data;
 
