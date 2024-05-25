@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,7 +59,6 @@ public class ShoppingChartServiceImpl extends ServiceImpl<ShoppingChartMapper, S
 
         return updateById(getShoppingChart(vo));
     }
-
     ShoppingChart getShoppingChart(ShoppingChartVO vo){
         List<SkuPageVO> skuById = productClient.getSkuById(List.of(vo.getSkuId()));
         if(CollUtils.isEmpty(skuById)){

@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -235,6 +236,12 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         List<SkuPageVO> res=null;
         if(!CollUtils.isEmpty(stockKeepingUnits)) {
             Set<Long> images = stockKeepingUnits.stream().map(StockKeepingUnit::getImageId).collect(Collectors.toSet());
+            Set<Long> spu = stockKeepingUnits.stream().map(StockKeepingUnit::getSpuId).collect(Collectors.toSet());
+            List<StandardProductUnit> units = spuMapper.selectBatchIds(spu);
+            Map<Long, StandardProductUnit> spuMap = units.stream().collect(Collectors.toMap(
+                    StandardProductUnit::getId,
+                    Function.identity()
+            ));
             Map<Long, String> map = mediaClient.getFileInfos(images).stream().collect(Collectors.toMap(
                     FileDTO::getId,
                     FileDTO::getFileUrl
@@ -242,7 +249,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             res = stockKeepingUnits.stream().map(obj -> {
                 SkuPageVO pageVO = BeanUtils.copyBean(obj, SkuPageVO.class);
                 pageVO.setPrice((double) obj.getPrice() / 100);
-                pageVO.setSpuName(spuMapper.selectById(pageVO.getSpuId()).getSpuName());
+                StandardProductUnit temp = spuMap.get(obj.getSpuId());
+                pageVO.setSpuName(temp.getSpuName());
+                pageVO.setCategoryId(temp.getCategoryId());
                 pageVO.setImage(map.get(obj.getImageId()));
                 return pageVO;
             }).collect(Collectors.toList());

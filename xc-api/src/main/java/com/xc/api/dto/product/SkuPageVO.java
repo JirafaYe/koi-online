@@ -12,6 +12,12 @@ public class SkuPageVO {
      */
     private Long spuId;
 
+
+    /**
+     * 所属分类 id
+     */
+    private Long categoryId;
+
     /**
      * 所属spu name
      */
@@ -30,7 +36,7 @@ public class SkuPageVO {
     /**
      * 库存, 上架时同时更新spu库存
      */
-    private Long num;
+    private Integer num;
 
     /**
      * json储存的特征描述

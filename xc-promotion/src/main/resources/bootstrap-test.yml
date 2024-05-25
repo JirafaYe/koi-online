@@ -10,4 +10,5 @@ spring:
       discovery:
         namespace: 18af9f91-4879-4123-98d2-7352dc8dc8e7
         group: DEFAULT_GROUP
-        ip: 192.168.43.5
+#        ip: 192.168.43.5
+        ip: localhost
