@@ -13,6 +13,7 @@ import com.xc.common.utils.UserContext;
 import com.xc.trade.entity.Order;
 import com.xc.trade.entity.ShoppingChart;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.OrderVO;
 import com.xc.trade.entity.vo.ShoppingChartVO;
 import com.xc.trade.mapper.OrderMapper;
@@ -39,6 +40,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Resource
     ShoppingChartMapper chartMapper;
+
+    @Resource
+    private OrderMapper orderMapper;
 
     @Resource
     PromotionClient promotionClient;
@@ -95,5 +99,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         }
         return res;
+    }
+
+    @Override
+    public List<FlowReportsVO> flowReports() {
+        return orderMapper.getflowReports();
     }
 }

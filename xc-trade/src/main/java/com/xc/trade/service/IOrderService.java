@@ -3,6 +3,7 @@ package com.xc.trade.service;
 import com.xc.trade.entity.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.OrderVO;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface IOrderService extends IService<Order> {
 
     PreviewOrderDTO preViewFromChart(List<Long> shoppingCharts);
 
+    List<FlowReportsVO> flowReports();
 }

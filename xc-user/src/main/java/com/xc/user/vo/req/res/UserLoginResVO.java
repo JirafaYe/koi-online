@@ -1,4 +1,4 @@
-package com.xc.user.vo.res;
+package com.xc.user.vo.req.res;
 
 
 import lombok.Data;

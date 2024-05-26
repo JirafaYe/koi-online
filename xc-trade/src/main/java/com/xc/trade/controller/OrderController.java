@@ -1,6 +1,7 @@
 package com.xc.trade.controller;
 
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.service.IOrderService;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,4 +31,15 @@ public class OrderController {
     public PreviewOrderDTO preViewFromChart(@RequestParam List<Long> ids){
         return orderService.preViewFromChart(ids);
     }
+
+    /**
+     * 流量报表
+     * @return
+     */
+    @GetMapping("/flowReports")
+    public List<FlowReportsVO> flowReports(){
+        return orderService.flowReports();
+    }
+
+
 }

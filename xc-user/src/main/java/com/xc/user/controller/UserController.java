@@ -6,7 +6,7 @@ import com.xc.common.domain.dto.PageDTO;
 
 import com.xc.user.service.UserBaseService;
 import com.xc.user.vo.req.*;
-import com.xc.user.vo.res.UserLoginResVO;
+import com.xc.user.vo.req.res.UserLoginResVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

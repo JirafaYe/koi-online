@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.common.domain.query.PageQuery;
 import com.xc.user.entity.UserBase;
 import com.xc.user.vo.req.*;
-import com.xc.user.vo.res.UserLoginResVO;
+import com.xc.user.vo.req.res.UserLoginResVO;
 
 import java.util.List;
 

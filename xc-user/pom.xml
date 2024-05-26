@@ -100,12 +100,7 @@
             <artifactId>velocity-engine-core</artifactId>
             <version>2.0</version>
         </dependency>
-<!--        knif4j-->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
-            <version>3.0.3</version>
-        </dependency>
+
         <!--短信验证码(阿里云)-->
         <dependency>
             <groupId>com.aliyun</groupId>

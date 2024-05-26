@@ -29,7 +29,7 @@ public class CodeGeneration {
 
 
         DataSourceConfig dsc = new DataSourceConfig.Builder(
-                "jdbc:mysql://47.108.192.109:3306/xc_log?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true",
+                "jdbc:mysql://47.108.192.109:3306/xc_user?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true",
                 "root",
                 "Root123321@")
                 .dbQuery(mySqlQuery).build();
@@ -107,7 +107,7 @@ public class CodeGeneration {
                 .enableCapitalMode()
                 //.likeTable()模糊表匹配
                 //添加表匹配，指定要生成的数据表名，不写默认选定数据库所有表
-                .addInclude("log_info")
+                .addInclude("user_base")
                 //.disableSqlFilter()禁用sql过滤:默认(不使用该方法）true
                 //.enableSchema()启用schema:默认false
                 //实体策略配置
