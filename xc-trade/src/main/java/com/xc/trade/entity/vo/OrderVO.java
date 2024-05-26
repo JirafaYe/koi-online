@@ -19,4 +19,10 @@ public class OrderVO {
      */
     @NotNull
     private Long addressId;
+
+    /**
+     * 优惠券选择
+     */
+    @NotNull
+    private List<Long> coupons;
 }

@@ -9,14 +9,18 @@ import java.util.Set;
  @Data
 public class PreviewOrderDTO {
      /**
+      * 购物车id列表
+      */
+     private List<Long> shoppingCharts;
+     /**
      * 原始价格
      */
-    private Double raw_price;
+    private Double rawPrice;
 
     /**
      * 最终价格
      */
-    private Double final_price;
+    private Double finalPrice;
 
     /**
      * 最佳折扣金额
@@ -26,6 +30,11 @@ public class PreviewOrderDTO {
       * 最佳优惠规则
       */
     private List<String> rules;
+
+     /**
+      * 最佳优惠券组合
+      */
+     private List<Long> coupons;
 
      /**
       * 可选优惠券

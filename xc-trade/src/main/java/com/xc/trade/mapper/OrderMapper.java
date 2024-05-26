@@ -1,6 +1,6 @@
 package com.xc.trade.mapper;
 
-import com.xc.trade.entity.Order;
+import com.xc.trade.entity.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xc.trade.entity.vo.FlowReportsVO;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * @author jirafa
  * @since 2024-05-24
  */
-public interface OrderMapper extends BaseMapper<Order> {
+public interface OrderMapper extends BaseMapper<Orders> {
 
     List<FlowReportsVO> getflowReports();
 }

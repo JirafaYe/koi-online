@@ -1,13 +1,10 @@
 package com.xc.trade.controller;
 
 import com.xc.trade.entity.dto.PreviewOrderDTO;
-import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.service.IOrderService;
-import io.lettuce.core.dynamic.annotation.Param;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.xc.trade.entity.vo.OrderVO;
+import com.xc.trade.entity.vo.FlowReportsVO;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,6 +28,15 @@ public class OrderController {
     public PreviewOrderDTO preViewFromChart(@RequestParam List<Long> ids){
         return orderService.preViewFromChart(ids);
     }
+    /**
+     * 创建订单
+     * @param vo
+     * @return
+     */
+    @PostMapping("/create")
+    public boolean create(OrderVO vo){
+        return orderService.createOrder(vo);
+    }
 
     /**
      * 流量报表
@@ -40,6 +46,5 @@ public class OrderController {
     public List<FlowReportsVO> flowReports(){
         return orderService.flowReports();
     }
-
 
 }

@@ -1,6 +1,6 @@
 package com.xc.trade.service;
 
-import com.xc.trade.entity.Order;
+import com.xc.trade.entity.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.vo.FlowReportsVO;
@@ -16,9 +16,11 @@ import java.util.List;
  * @author jirafa
  * @since 2024-05-24
  */
-public interface IOrderService extends IService<Order> {
+public interface IOrderService extends IService<Orders> {
 
     PreviewOrderDTO preViewFromChart(List<Long> shoppingCharts);
+
+    boolean createOrder(OrderVO vo);
 
     List<FlowReportsVO> flowReports();
 }

@@ -52,7 +52,13 @@ public class OrderDetails implements Serializable {
     /**
      * 金额*100
      */
-    private Integer totalPrice;
+    private Integer price;
+
+
+    /**
+     * 最终金额
+     */
+    private Integer finalPrice;
 
     private LocalDateTime updateTime;
 

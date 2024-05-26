@@ -1,6 +1,5 @@
 package com.xc.trade.entity;
 
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
@@ -21,8 +20,8 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("order")
-public class Order implements Serializable {
+@TableName("orders")
+public class Orders implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,9 +56,9 @@ public class Order implements Serializable {
     private Integer finalPrice;
 
     /**
-     * 优惠券id
+     * 优惠券id list
      */
-    private Long couponId;
+    private String  couponId;
 
     /**
      * 收货地址
