@@ -30,4 +30,20 @@ public interface IOrderService extends IService<Orders> {
 
     List<GoodsCategroyReportsVO> marketingReports();
 
+    /**
+     * 管理员发货
+     * @param orderId
+     * @return
+     */
+    boolean delivery(Long orderId);
+
+    /**
+     * 收货
+     * @param orderId
+     * @return
+     */
+    boolean finishOrder(Long orderId);
+
+    boolean deleteOrder(Long orderId);
+
 }
