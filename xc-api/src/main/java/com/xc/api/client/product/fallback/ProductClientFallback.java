@@ -1,12 +1,16 @@
 package com.xc.api.client.product.fallback;
 
 import com.xc.api.client.product.ProductClient;
+import com.xc.api.dto.IdAndNumDTO;
+import com.xc.api.dto.product.SkuNumVO;
 import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.product.SpuPageVO;
 import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Map;
 
 public class ProductClientFallback implements FallbackFactory<ProductClient> {
     @Override
@@ -36,6 +40,11 @@ public class ProductClientFallback implements FallbackFactory<ProductClient> {
             @Override
             public List<SkuPageVO> getSkuById(Iterable<Long> skuID) {
                 return List.of();
+            }
+
+            @Override
+            public boolean updateSkuNum(List<IdAndNumDTO> list) {
+                return false;
             }
         };
     }

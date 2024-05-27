@@ -1,16 +1,17 @@
 package com.xc.api.client.product;
 
 import com.xc.api.client.product.fallback.ProductClientFallback;
+import com.xc.api.dto.IdAndNumDTO;
 import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.product.SpuPageVO;
 import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @FeignClient(value = "product-service", fallbackFactory = ProductClientFallback.class)
 public interface ProductClient {
@@ -48,4 +49,7 @@ public interface ProductClient {
 
     @GetMapping("/sku/details")
     List<SkuPageVO> getSkuById(Iterable<Long> skuID);
+
+    @PostMapping("/sku/num")
+    boolean updateSkuNum(List<IdAndNumDTO> list);
 }

@@ -28,7 +28,7 @@ public class SkuVO implements Serializable {
      * 价格
      */
     @NotNull
-    private Double price;
+    private Integer price;
 
     /**
      * 库存, 上架时同时更新spu库存

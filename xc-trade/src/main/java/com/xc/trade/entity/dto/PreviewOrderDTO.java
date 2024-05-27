@@ -15,17 +15,17 @@ public class PreviewOrderDTO {
      /**
      * 原始价格
      */
-    private Double rawPrice;
+    private Integer rawPrice;
 
     /**
      * 最终价格
      */
-    private Double finalPrice;
+    private Integer finalPrice;
 
     /**
      * 最佳折扣金额
      */
-    private Double discountAmount;
+    private Integer discountAmount;
      /**
       * 最佳优惠规则
       */

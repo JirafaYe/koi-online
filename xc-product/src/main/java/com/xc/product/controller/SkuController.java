@@ -1,16 +1,25 @@
 package com.xc.product.controller;
 
+import cn.hutool.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xc.api.dto.IdAndNumDTO;
+import com.xc.api.dto.product.SkuNumVO;
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.utils.JsonUtils;
 import com.xc.product.entity.query.SkuQuery;
 import com.xc.product.entity.vo.SkuAttributesVO;
 import com.xc.product.entity.vo.SkuPageVO;
 import com.xc.product.entity.vo.SkuVO;
 import com.xc.product.service.IStockKeepingUnitService;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,5 +102,16 @@ public class SkuController {
     @GetMapping("/details")
     public List<SkuPageVO> getSkuById(@RequestBody List<Long> ids){
         return skuService.getSkuById(ids);
+    }
+
+    /**
+     * 内部api，修改sku数量
+     * @return
+     */
+    @PostMapping("/num")
+    public boolean updateSkuNum(@RequestBody List<IdAndNumDTO> list) throws JsonProcessingException {
+        Map<Long, Integer> map = IdAndNumDTO.toMap(list);
+        skuService.updateSkuNum(map);
+        return true;
     }
 }

@@ -53,6 +53,8 @@ public class ShoppingChart implements Serializable {
      */
     private Integer price;
 
+    private Integer deleted;
+
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;
