@@ -4,6 +4,8 @@ import com.xc.trade.entity.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.vo.FlowReportsVO;
+import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
+import com.xc.trade.entity.vo.GoodsSpuReportsVO;
 import com.xc.trade.entity.vo.OrderVO;
 
 import java.util.List;
@@ -23,4 +25,9 @@ public interface IOrderService extends IService<Orders> {
     boolean createOrder(OrderVO vo);
 
     List<FlowReportsVO> flowReports();
+
+    List<GoodsSpuReportsVO> achieveReports();
+
+    List<GoodsCategroyReportsVO> marketingReports();
+
 }

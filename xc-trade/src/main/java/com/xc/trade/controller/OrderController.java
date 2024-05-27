@@ -1,9 +1,9 @@
 package com.xc.trade.controller;
 
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.service.IOrderService;
 import com.xc.trade.entity.vo.OrderVO;
-import com.xc.trade.entity.vo.FlowReportsVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

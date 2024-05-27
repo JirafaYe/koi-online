@@ -15,6 +15,9 @@ import com.xc.trade.entity.Orders;
 import com.xc.trade.entity.OrderDetails;
 import com.xc.trade.entity.ShoppingChart;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.vo.FlowReportsVO;
+import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
+import com.xc.trade.entity.vo.GoodsSpuReportsVO;
 import com.xc.trade.entity.vo.OrderVO;
 import com.xc.trade.mapper.AddressMapper;
 import com.xc.trade.mapper.OrderDetailsMapper;
@@ -26,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.xc.trade.entity.vo.FlowReportsVO;
 
 import javax.annotation.Resource;
 import java.time.Duration;
@@ -203,6 +205,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Override
     public List<FlowReportsVO> flowReports() {
         return orderMapper.getflowReports();
+    }
+    @Override
+    public List<GoodsSpuReportsVO> achieveReports() {
+        return orderMapper.getAchieveReports();
+    }
+
+    @Override
+    public List<GoodsCategroyReportsVO> marketingReports() {
+        return orderMapper.getMarketingReports();
     }
 
 }

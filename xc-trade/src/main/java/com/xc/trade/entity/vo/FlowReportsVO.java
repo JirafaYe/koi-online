@@ -1,20 +1,32 @@
 package com.xc.trade.entity.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+import lombok.Builder;
 import lombok.Data;
-import org.apache.tomcat.jni.Local;
-import org.springframework.context.annotation.Primary;
 
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class FlowReportsVO {
+@Builder
+public class FlowReportsVO extends BaseRowModel {
     /**
      * 日期
      */
+    @ExcelProperty(value = "日期", index = 0)
     private LocalDateTime time;
 
     /**
      * 流量
      */
+    @ExcelProperty(value = "销售数量", index = 1)
     private Long flow;
+
+    /**
+     * 销售额
+     */
+    @ExcelProperty(value = "销售金额", index = 2)
+    private BigDecimal amount;
 }
