@@ -62,6 +62,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         try {
             // 调用SDK生成表单
             form = alipayClient.pageExecute(request).getBody();
+            System.out.println(form);
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
@@ -69,7 +70,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         // 直接将完整的表单html输出到页面
         try {
             httpResponse.getWriter().write(form);
-            System.out.println("====" + "支付成功" + "====");
+//            System.out.println("====" + "支付成功" + "====");
             log.info("====" + "支付成功" + "====");
             httpResponse.getWriter().flush();
             httpResponse.getWriter().close();
@@ -148,7 +149,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         JSONObject bizContent = new JSONObject();
         bizContent.set("trade_no", refund.getAlipayTraceNo());  // 支付宝回调的订单流水号
         bizContent.set("refund_amount", refund.getTotalAmount());  // 订单的总金额
-        bizContent.set("out_trace_no", refund.getOutTraceNo());   //  商户订单编号
+        bizContent.set("out_trace_no", refund.getMerchantId());   //  商户订单编号
 
         // 返回参数选项，按需传入
         //JSONArray queryOptions = new JSONArray();
