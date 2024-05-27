@@ -37,4 +37,6 @@ public interface IStockKeepingUnitService extends IService<StockKeepingUnit> {
     SkuPageVO getSkuByAttributes(String attributes, Long spuID);
 
     List<SkuPageVO> getSkuById(List<Long> skuID);
+
+    void updateSkuNum(Map<Long,Integer> numMap);
 }

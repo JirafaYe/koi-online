@@ -31,7 +31,7 @@ public class Orders implements Serializable {
     private Long userId;
 
     /**
-     * 订单有效or取消
+     * 订单有效or关闭or退款中or订单已完成（收货）
      */
     private Integer status;
 
@@ -64,6 +64,13 @@ public class Orders implements Serializable {
      * 收货地址
      */
     private Long addressId;
+
+    private Integer deleted;
+
+    /**
+     * 支付时间
+     */
+    private LocalDateTime payTime;
 
     private LocalDateTime updateTime;
 

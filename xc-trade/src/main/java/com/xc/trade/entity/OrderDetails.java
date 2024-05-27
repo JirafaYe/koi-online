@@ -34,6 +34,8 @@ public class OrderDetails implements Serializable {
      */
     private Long orderId;
 
+    private String spuName;
+
     /**
      * spuId
      */
@@ -45,6 +47,16 @@ public class OrderDetails implements Serializable {
     private Long skuId;
 
     /**
+     * sku属性
+     */
+    private String attributes;
+
+    /**
+     * sku图片url
+     */
+    private String image;
+
+    /**
      * 数量
      */
     private Integer quantity;
@@ -53,6 +65,13 @@ public class OrderDetails implements Serializable {
      * 金额*100
      */
     private Integer price;
+
+    /**
+     * 不为空则退款，退款申请中0，退款申请成功1，已退款2
+     */
+    private Integer refundStatus;
+
+    private Integer deleted;
 
 
     /**

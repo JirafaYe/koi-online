@@ -30,7 +30,7 @@ public class SkuPageVO {
     /**
      * 价格
      */
-    private double price;
+    private Integer price;
 
     /**
      * 库存, 上架时同时更新spu库存
