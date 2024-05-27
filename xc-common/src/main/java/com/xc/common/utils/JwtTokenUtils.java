@@ -128,7 +128,7 @@ public class JwtTokenUtils {
      * @param token
      * @return
      */
-    public static boolean isTokenAreadyExpired(String token){
+    public static boolean isTokenAreadyExpired(String token) throws Exception{
         Date expiration = parseJwt(token).getPayload().getExpiration(); //过期时间
         if(expiration.before(new Date())){
             return true;

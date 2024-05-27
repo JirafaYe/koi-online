@@ -61,32 +61,28 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         }
         // 4.校验并解析token
         Long userId = null;
-//        try {
-            Jws<Claims> claimsJws = JwtTokenUtils.parseJwt(token);
-            Claims parseToken = claimsJws.getPayload();
-            userId = (Long) parseToken.get(JwtConstant.USER_ID);
+        //token已经过期
+        try {
+            JwtTokenUtils.isTokenAreadyExpired(token);
+        } catch (Exception e) {
+            throw new UnauthorizedException("请重新登陆");
+        }
+
+        Jws<Claims> claimsJws = JwtTokenUtils.parseJwt(token);
+        Claims parseToken = claimsJws.getPayload();
+        userId = (Long) parseToken.get(JwtConstant.USER_ID);
 //            判断用户存在或者是否在黑名单内
-            if (userId == null || Boolean.TRUE.equals(stringRedisTemplate.opsForSet().isMember(JwtConstant.JWT_BLANK_LIST, String.valueOf(userId)))) {
-                throw new UnauthorizedException("无权限");
-            }
+        if (userId == null || Boolean.TRUE.equals(stringRedisTemplate.opsForSet().isMember(JwtConstant.JWT_BLANK_LIST, String.valueOf(userId)))) {
+            throw new UnauthorizedException("无权限");
+        }
 //            判断是否快要过期
-            if (JwtTokenUtils.isTokenExpired(token)) {
-                //刷新token
-                String goodToken = JwtTokenUtils.getGoodToken(userId);
-                // 将新的token设置到响应头中
-                ServerHttpResponse response = exchange.getResponse();
-                response.getHeaders().add("token", goodToken);
-            }
-            //token已经过期
-            if (JwtTokenUtils.isTokenAreadyExpired(token)) {
-                throw new UnauthorizedException("token过期，请重新登录");
-            }
-//        } catch (UnauthorizedException e) {
-//            // 如果无效，拦截
-//            ServerHttpResponse response = exchange.getResponse();
-//            response.setRawStatusCode(401);
-//            return response.setComplete();
-//        }
+        if (JwtTokenUtils.isTokenExpired(token)) {
+            //刷新token
+            String goodToken = JwtTokenUtils.getGoodToken(userId);
+            // 将新的token设置到响应头中
+            ServerHttpResponse response = exchange.getResponse();
+            response.getHeaders().add("token", goodToken);
+        }
         Long finalUserId = userId;
         exchange.mutate().request(builder -> builder.header(JwtConstant.USER_HEADER, finalUserId.toString())).build();
         //  5.如果有效，传递用户信息
