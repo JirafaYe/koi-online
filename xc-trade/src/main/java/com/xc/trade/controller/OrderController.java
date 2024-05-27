@@ -38,13 +38,6 @@ public class OrderController {
         return orderService.createOrder(vo);
     }
 
-    /**
-     * 流量报表
-     * @return
-     */
-    @GetMapping("/flowReports")
-    public List<FlowReportsVO> flowReports(){
-        return orderService.flowReports();
-    }
+
 
 }
