@@ -63,12 +63,12 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
 
     @Override
     public Integer countByBrand(Long brandId) {
-        return baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getBrandId,brandId));
+        return lambdaQuery().eq(StandardProductUnit::getBrandId,brandId).count();
     }
 
     @Override
     public Integer countByCategory(Long id) {
-        return baseMapper.selectCount(lambdaQuery().eq(StandardProductUnit::getCategoryId,id));
+        return lambdaQuery().eq(StandardProductUnit::getCategoryId,id).count();
     }
 
     @Override

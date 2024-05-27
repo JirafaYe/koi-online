@@ -1,21 +1,14 @@
 package com.xc.product.entity.vo;
 
 import com.xc.product.entity.Brand;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
+@AllArgsConstructor
 public class BrandPageVO {
-    public BrandPageVO(Brand brand, String creater, String updater) {
-        log.info("creater->{},updater->{}",creater,updater);
-        this.brandName=brand.getBrandName();
-        this.id=brand.getId();
-        this.imageId=brand.getImageId();
-        this.creater = creater;
-        this.updater = updater;
-    }
-
     /**
      * 商品id
      */
@@ -26,7 +19,7 @@ public class BrandPageVO {
     /**
      * 图片链接
      */
-    private Long  imageId;
+    private String  fileUrl;
 
     /**
      * 创建人用户名

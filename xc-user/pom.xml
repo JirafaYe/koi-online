@@ -101,24 +101,6 @@
             <version>2.0</version>
         </dependency>
 
-        <!--短信验证码(阿里云)-->
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.1.0</version>
-        </dependency>
-        <!--JSON-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.45</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.xc</groupId>
-            <artifactId>xc-log</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
 
 
     </dependencies>
