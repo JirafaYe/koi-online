@@ -1,10 +1,12 @@
 package com.xc.trade.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xc.trade.entity.dto.RefundApplyDTO;
 import com.xc.trade.entity.po.Payment;
 
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
+import com.xc.trade.entity.po.RefundApply;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,6 @@ public interface IAliPayService extends IService<Payment> {
 
     String payNotify(HttpServletRequest request);
 
-    String refund(Refund refund);
+    String refund(RefundApplyDTO refund);
 
 }

@@ -10,6 +10,8 @@ import com.alipay.easysdk.factory.Factory;
 import com.xc.trade.config.AliPayConfig;
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
+import com.xc.trade.entity.dto.RefundApplyDTO;
+import com.xc.trade.entity.po.RefundApply;
 import com.xc.trade.service.IAliPayService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +70,7 @@ public class AliPayController {
      * @return
      */
     @GetMapping("/refund")
-    public String returnPay(Refund refund){
+    public String returnPay(RefundApplyDTO refund){
         return aliPayService.refund(refund);
     }
 }

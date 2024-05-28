@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.common.utils.UserContext;
 import com.xc.trade.config.AliPayConfig;
+import com.xc.trade.entity.dto.RefundApplyDTO;
 import com.xc.trade.entity.po.Payment;
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
+import com.xc.trade.entity.po.RefundApply;
 import com.xc.trade.mapper.OrderMapper;
 import com.xc.trade.mapper.PaymentMapper;
 import com.xc.trade.service.IAliPayService;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -79,7 +82,9 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
              * 支付成功后将此支付信息写入数据库
              */
             Payment payment = new Payment();
+            UserContext.setUser(1792188141227216896L);
             payment.setOrderId(Long.valueOf(aliPay.getTraceNo()));
+//            payment.setUserId(UserContext.getUser());
             payment.setUserId(UserContext.getUser());
             payment.setTotalAmount(aliPay.getTotalAmount());
             paymentMapper.insert(payment);
@@ -134,7 +139,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
                     Payment payment = paymentMapper.selectOne(lqw);
                     payment.setPayStatus(1);
                     payment.setContent(String.valueOf(params.get("trade_status")));
-                    payment.setPaymentId(Long.valueOf(params.get("trade_no")));
+                    payment.setPaymentId(String.valueOf(params.get("trade_no")));
                     paymentMapper.updateById(payment);
 
                 }
@@ -147,7 +152,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
     }
 
     @Override
-    public String refund(Refund refund) {
+    public String refund(RefundApplyDTO refund) {
 
         // 1. 创建Client，通用SDK提供的Client，负责调用支付宝的API
         AlipayClient alipayClient = new DefaultAlipayClient(GATEWAY_URL,
@@ -156,9 +161,25 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         // 2. 创建 Request，设置参数
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         JSONObject bizContent = new JSONObject();
-        bizContent.set("trade_no", refund.getAlipayTraceNo());  // 支付宝回调的订单流水号
-        bizContent.set("refund_amount", refund.getTotalAmount());  // 订单的总金额
-        bizContent.set("out_trace_no", refund.getOrderId());   //  商户订单编号
+        Long orderId = refund.getOrderId();
+        LambdaQueryWrapper<Payment> lqw = new LambdaQueryWrapper<Payment>();
+        lqw.eq(Payment::getOrderId, orderId);
+        Payment payment = paymentMapper.selectOne(lqw);
+
+        double left = payment.getTotalAmount()-Double.valueOf(refund.getRefundAmount());
+        if (left == 0){
+            payment.setPayStatus(0);
+        }
+        paymentMapper.updateById(payment);
+        Double refundMoney =  Double.valueOf(refund.getRefundAmount()/100);
+
+//        bizContent.set("trade_no", refund.getAlipayTraceNo());  // 支付宝回调的订单流水号
+        bizContent.set("trade_no", payment.getPaymentId());  // 支付宝回调的订单流水号
+        bizContent.set("refund_amount", refundMoney);  // 订单的总金额
+        bizContent.set("out_trace_no", orderId);   //  商户订单编号
+        //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传
+        String out_request_no = new String(UUID.randomUUID().toString());
+        bizContent.set("out_request_no", out_request_no);
 
         // 返回参数选项，按需传入
         //JSONArray queryOptions = new JSONArray();

@@ -18,7 +18,7 @@ public class Payment implements Serializable {
     /**
      * 支付成功生成的订单号，作为支付的唯一凭证
      */
-    @TableId(value = "id", type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -34,7 +34,7 @@ public class Payment implements Serializable {
     /**
      * 支付总金额
      */
-    private double totalAmount;
+    private Double totalAmount;
 
     /**
      * 支付状态
@@ -49,7 +49,7 @@ public class Payment implements Serializable {
     /**
      * 支付成功后生成的支付凭证
      */
-    private Long paymentId;
+    private String paymentId;
 
     private LocalDateTime updateTime;
 
