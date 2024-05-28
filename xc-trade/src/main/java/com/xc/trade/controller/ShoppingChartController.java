@@ -2,7 +2,6 @@ package com.xc.trade.controller;
 
 
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.trade.entity.ShoppingChart;
 import com.xc.trade.entity.dto.ShoppingChartDTO;
 import com.xc.trade.entity.query.ShoppingChartQuery;
 import com.xc.trade.entity.vo.ShoppingChartVO;

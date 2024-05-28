@@ -5,7 +5,7 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.trade.config.AliPayConfig;
-import com.xc.trade.entity.Payment;
+import com.xc.trade.entity.po.Payment;
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
 import com.xc.trade.mapper.OrderMapper;

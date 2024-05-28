@@ -3,12 +3,13 @@ package com.xc.trade.entity.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.xc.common.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum OrdersStatus {
+public enum OrdersStatus implements BaseEnum {
     AVAILABLE(1, "生效"),
     /**
      * 成功（收货后）

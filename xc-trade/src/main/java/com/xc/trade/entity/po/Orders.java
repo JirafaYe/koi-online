@@ -1,4 +1,4 @@
-package com.xc.trade.entity;
+package com.xc.trade.entity.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;

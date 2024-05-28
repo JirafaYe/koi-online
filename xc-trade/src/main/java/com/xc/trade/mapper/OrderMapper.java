@@ -1,12 +1,10 @@
 package com.xc.trade.mapper;
 
-import com.xc.trade.entity.Orders;
+import com.xc.trade.entity.po.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xc.trade.entity.enums.OrdersStatus;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
 import com.xc.trade.entity.vo.GoodsSpuReportsVO;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;

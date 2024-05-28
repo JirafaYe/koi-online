@@ -1,11 +1,9 @@
 package com.xc.trade.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xc.api.client.product.ProductClient;
 import com.xc.api.client.promotion.PromotionClient;
 import com.xc.api.dto.IdAndNumDTO;
-import com.xc.api.dto.product.SkuNumVO;
 import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.promotion.CouponDiscountDTO;
 import com.xc.api.dto.promotion.OrderCouponDTO;
@@ -14,10 +12,10 @@ import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.*;
 import com.xc.trade.constants.RedisConstants;
-import com.xc.trade.entity.Address;
-import com.xc.trade.entity.Orders;
-import com.xc.trade.entity.OrderDetails;
-import com.xc.trade.entity.ShoppingChart;
+import com.xc.trade.entity.po.Address;
+import com.xc.trade.entity.po.Orders;
+import com.xc.trade.entity.po.OrderDetails;
+import com.xc.trade.entity.po.ShoppingChart;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.enums.OrdersStatus;
 import com.xc.trade.entity.vo.FlowReportsVO;

@@ -1,6 +1,6 @@
 package com.xc.trade.service;
 
-import com.xc.trade.entity.OrderDetails;
+import com.xc.trade.entity.po.OrderDetails;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

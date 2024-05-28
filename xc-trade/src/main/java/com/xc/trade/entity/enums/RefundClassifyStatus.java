@@ -9,16 +9,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum RefundStatus implements BaseEnum {
-    UN_APPROVE(1, "待审批"),
-    CANCEL(2, "取消申请"),
-    AGREE(3, "同意退款"),
-    AGREE_RG(3, "同意退货"),
-    WAIT_SENT_B(4, "待买家寄出"),
-    WAIT_M_RECEIVE(5, "待商家收货"),
-    REJECT(6, "拒绝退款"),
-    SUCCESS(7, "退款成功"),
-    FAILED(8, "退款失败");
+public enum RefundClassifyStatus implements BaseEnum {
+    REFUND_ONLY(1, "仅退款"),
+    RETURN_GOODS_REFUND(2, "退货退款");
 
     @JsonValue
     @EnumValue
@@ -26,11 +19,11 @@ public enum RefundStatus implements BaseEnum {
     private final String desc;
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static RefundStatus of(Integer value) {
+    public static RefundClassifyStatus of(Integer value) {
         if (value == null) {
             return null;
         }
-        for (RefundStatus status : values()) {
+        for (RefundClassifyStatus status : values()) {
             if (status.value == value) {
                 return status;
             }
@@ -39,7 +32,7 @@ public enum RefundStatus implements BaseEnum {
     }
 
     public static String desc(Integer value) {
-        RefundStatus status = of(value);
+        RefundClassifyStatus status = of(value);
         return status == null ? "" : status.desc;
     }
 }

@@ -6,13 +6,12 @@ import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.UserContext;
-import com.xc.trade.entity.Address;
+import com.xc.trade.entity.po.Address;
 import com.xc.trade.entity.query.AddressQuery;
 import com.xc.trade.entity.vo.AddressVO;
 import com.xc.trade.mapper.AddressMapper;
 import com.xc.trade.service.IAddressService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

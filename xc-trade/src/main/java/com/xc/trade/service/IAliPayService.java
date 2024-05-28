@@ -1,7 +1,7 @@
 package com.xc.trade.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xc.trade.entity.Payment;
+import com.xc.trade.entity.po.Payment;
 
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;

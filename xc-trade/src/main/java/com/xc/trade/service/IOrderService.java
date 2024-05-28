@@ -1,6 +1,6 @@
 package com.xc.trade.service;
 
-import com.xc.trade.entity.Orders;
+import com.xc.trade.entity.po.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.vo.FlowReportsVO;
