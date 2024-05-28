@@ -11,6 +11,7 @@ import com.xc.trade.config.AliPayConfig;
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
 import com.xc.trade.entity.dto.RefundApplyDTO;
+import com.xc.trade.entity.dto.RefundResultDTO;
 import com.xc.trade.entity.po.RefundApply;
 import com.xc.trade.service.IAliPayService;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public class AliPayController {
      * @return
      */
     @GetMapping("/refund")
-    public String returnPay(RefundApplyDTO refund){
+    public RefundResultDTO returnPay(RefundApplyDTO refund){
         return aliPayService.refund(refund);
     }
 }

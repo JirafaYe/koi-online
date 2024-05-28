@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.common.utils.UserContext;
 import com.xc.trade.config.AliPayConfig;
 import com.xc.trade.entity.dto.RefundApplyDTO;
+import com.xc.trade.entity.dto.RefundResultDTO;
 import com.xc.trade.entity.po.Payment;
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
@@ -152,7 +153,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
     }
 
     @Override
-    public String refund(RefundApplyDTO refund) {
+    public RefundResultDTO refund(RefundApplyDTO refund) {
 
         // 1. 创建Client，通用SDK提供的Client，负责调用支付宝的API
         AlipayClient alipayClient = new DefaultAlipayClient(GATEWAY_URL,
@@ -166,11 +167,6 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         lqw.eq(Payment::getOrderId, orderId);
         Payment payment = paymentMapper.selectOne(lqw);
 
-        double left = payment.getTotalAmount()-Double.valueOf(refund.getRefundAmount());
-        if (left == 0){
-            payment.setPayStatus(0);
-        }
-        paymentMapper.updateById(payment);
         Double refundMoney =  Double.valueOf(refund.getRefundAmount()/100);
 
 //        bizContent.set("trade_no", refund.getAlipayTraceNo());  // 支付宝回调的订单流水号
@@ -186,24 +182,38 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         //queryOptions.add("refund_detail_item_list");
         //bizContent.put("query_options", queryOptions);
 
+        RefundResultDTO refundResultDTO = new RefundResultDTO();
+        refundResultDTO.setPayOrderId(refund.getOrderId());
+        refundResultDTO.setRefundOrderId(refund.getOrderDetailId());
+
         request.setBizContent(bizContent.toString());
 
         // 3. 执行请求
         try {
             AlipayTradeRefundResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {  // 退款成功，isSuccess 为true
-                System.out.println("调用成功");
+                log.info("调用成功");
+                refundResultDTO.setStatus(3);
 
-                // 4. 更新数据库状态
+
 //            ordersMapper.updatePayState(aliPay.getTraceNo(), "已退款", now);
-                return "退款成功";
+                return refundResultDTO;
             } else {   // 退款失败，isSuccess 为false
-                System.out.println(response.getBody());
-                return response.getBody();
+                // 4. 更新数据库状态，设置数据库中支付状态为0
+                payment.setPayStatus(0);
+                paymentMapper.updateById(payment);
+
+                log.info(response.getBody());
+                refundResultDTO.setStatus(2);
+                refundResultDTO.setMsg(response.getBody());
+
+                return refundResultDTO;
             }
         }catch (AlipayApiException e){
             e.printStackTrace();
         }
-        return "退款失败";
+
+        refundResultDTO.setStatus(2);
+        return refundResultDTO;
     }
 }
