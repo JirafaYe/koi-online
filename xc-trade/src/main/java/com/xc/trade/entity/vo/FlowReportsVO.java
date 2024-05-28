@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class FlowReportsVO extends BaseRowModel {
+public class FlowReportsVO {
     /**
      * 日期
      */
