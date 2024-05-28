@@ -2,21 +2,23 @@ package com.xc.trade.service.impl;
 
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.user.res.UserInfoResVO;
+import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.enums.UserType;
 import com.xc.common.exceptions.BadRequestException;
 import com.xc.common.exceptions.DbException;
 import com.xc.common.utils.AssertUtils;
 import com.xc.common.utils.UserContext;
 import com.xc.trade.config.ThreadPoolConfig;
-import com.xc.trade.entity.dto.RefundApplyDTO;
-import com.xc.trade.entity.dto.RefundFormDTO;
-import com.xc.trade.entity.dto.RefundResultDTO;
+import com.xc.trade.entity.dto.*;
 import com.xc.trade.entity.enums.OrdersStatus;
 import com.xc.trade.entity.enums.RefundClassifyStatus;
 import com.xc.trade.entity.enums.RefundStatus;
 import com.xc.trade.entity.po.OrderDetails;
 import com.xc.trade.entity.po.Orders;
 import com.xc.trade.entity.po.RefundApply;
+import com.xc.trade.entity.query.RefundApplyPageQuery;
+import com.xc.trade.entity.vo.RefundApplyPageVO;
+import com.xc.trade.entity.vo.RefundApplyVO;
 import com.xc.trade.mapper.OrderMapper;
 import com.xc.trade.mapper.RefundApplyMapper;
 import com.xc.trade.service.IAliPayService;
@@ -112,9 +114,9 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
                 .orderDetailId(refundApply.getOrderDetailId())
                 .orderId(refundApply.getOrderId())
                 .build();
-//        RefundResultDTO result = payService.refund(refundApplyDTO);
-//
-//        handleRefundResult(result);
+        RefundResultDTO result = payService.refund(refundApplyDTO);
+
+        handleRefundResult(result);
     }
 
     @Override
@@ -151,6 +153,74 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
                 .eq(OrderDetails::getId, refundApply.getOrderDetailId())
                 .set(OrderDetails::getRefundStatus, r.getStatus())
                 .update();
+    }
+
+    @Override
+    @Transactional
+    public void approveRefundApply(ApproveFormDTO approveDTO) {
+        RefundApply refundApply = getById(approveDTO.getId());
+        if(refundApply == null){
+            throw new BadRequestException("退款记录不存在");
+        }
+        RefundStatus status = refundApply.getStatus();
+
+        if(!RefundStatus.UN_APPROVE.equals(status)
+                && !RefundStatus.AGREE_RG.equals(status)
+                && !RefundStatus.WAIT_M_RECEIVE.equals(status)){
+            throw new BadRequestException("退款申请无法处理");
+        }
+        boolean agree = approveDTO.getApproveType() == 1;
+
+        RefundApply r = new RefundApply();
+        r.setId(refundApply.getId());
+        r.setApprover(UserContext.getUser());
+        r.setApproveTime(LocalDateTime.now());
+        r.setApproveOpinion(approveDTO.getApproveOpinion());
+        r.setRemark(approveDTO.getRemark());
+        if(refundApply.getRefundClassify().equals(RefundClassifyStatus.RETURN_GOODS_REFUND)){
+            if(status.equals(RefundStatus.UN_APPROVE)){
+                r.setStatus(RefundStatus.AGREE_RG);
+                r.setMessage(RefundStatus.desc(r.getStatus().getValue()));
+            } else if(status.equals(RefundStatus.AGREE_RG)){
+                r.setStatus(RefundStatus.WAIT_SENT_B);
+                r.setMessage(RefundStatus.desc(r.getStatus().getValue()));
+            }
+        }
+
+        if(!agree){
+            r.setStatus(RefundStatus.REJECT);
+            r.setMessage(RefundStatus.desc(r.getStatus().getValue()));
+        }
+        updateById(r);
+        //仅退款 + 同意
+        if(agree && (RefundClassifyStatus.REFUND_ONLY.equals(refundApply.getRefundClassify()) || status.equals(RefundStatus.WAIT_M_RECEIVE))){
+            refundRequestAsync(refundApply);
+        }
+    }
+
+    @Override
+    public PageDTO<RefundApplyPageVO> RefundApplyPageQuery(RefundApplyPageQuery pageQuery) {
+        return null;
+    }
+
+    @Override
+    public void cancelRefundApply(RefundCancelDTO cancelDTO) {
+
+    }
+
+    @Override
+    public void userDelivery(Long id) {
+
+    }
+
+    @Override
+    public RefundApplyVO queryRefundDetailById(Long id) {
+        return null;
+    }
+
+    @Override
+    public RefundApplyVO queryRefundDetailByDetailId(Long detailId) {
+        return null;
     }
 
     private void refundRequestAsync(RefundApply refundApply) {
