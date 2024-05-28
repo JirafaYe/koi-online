@@ -1,5 +1,7 @@
 package com.xc.trade.service;
 
+import com.xc.trade.entity.dto.RefundFormDTO;
+import com.xc.trade.entity.dto.RefundResultDTO;
 import com.xc.trade.entity.po.RefundApply;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +15,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IRefundApplyService extends IService<RefundApply> {
 
+    void applyRefund(RefundFormDTO refundFormDTO);
+
+    void sendRefundRequest(RefundApply refundApply);
+
+    void handleRefundResult(RefundResultDTO result);
 }
