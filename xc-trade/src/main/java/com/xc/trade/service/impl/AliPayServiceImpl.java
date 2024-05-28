@@ -3,7 +3,9 @@ package com.xc.trade.service.impl;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xc.common.utils.UserContext;
 import com.xc.trade.config.AliPayConfig;
 import com.xc.trade.entity.po.Payment;
 import com.xc.trade.entity.dto.AliPay;
@@ -62,7 +64,6 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         try {
             // 调用SDK生成表单
             form = alipayClient.pageExecute(request).getBody();
-            System.out.println(form);
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
@@ -70,10 +71,19 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         // 直接将完整的表单html输出到页面
         try {
             httpResponse.getWriter().write(form);
-//            System.out.println("====" + "支付成功" + "====");
-            log.info("====" + "支付成功" + "====");
+            log.info("支付成功");
             httpResponse.getWriter().flush();
             httpResponse.getWriter().close();
+
+            /**
+             * 支付成功后将此支付信息写入数据库
+             */
+            Payment payment = new Payment();
+            payment.setOrderId(Long.valueOf(aliPay.getTraceNo()));
+            payment.setUserId(UserContext.getUser());
+            payment.setTotalAmount(aliPay.getTotalAmount());
+            paymentMapper.insert(payment);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,13 +93,14 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
     @Override
     public String payNotify(HttpServletRequest request) {
         if (request.getParameter("trade_status").equals("TRADE_SUCCESS")) {
-            System.out.println("=========支付宝异步回调========");
+//            System.out.println("=========支付宝异步回调========");
+            log.info("支付宝异步回调");
 
             Map<String, String> params = new HashMap<>();
             Map<String, String[]> requestParams = request.getParameterMap();
             for (String name : requestParams.keySet()) {
                 params.put(name, request.getParameter(name));
-                System.out.println(name + " = " + request.getParameter(name));
+//                System.out.println(name + " = " + request.getParameter(name));
             }
 
 //            String tradeNo = params.get("out_trade_no");
@@ -99,23 +110,32 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
             // 支付宝验签
             try {
                 if (Factory.Payment.Common().verifyNotify(params)) {
-                    // 验签通过
-                    System.out.println("交易名称: " + params.get("subject"));
-                    System.out.println("交易状态: " + params.get("trade_status"));
-                    System.out.println("支付宝交易凭证号: " + params.get("trade_no"));
-                    System.out.println("商户订单号: " + params.get("out_trade_no"));
-                    System.out.println("交易金额: " + params.get("total_amount"));
-                    System.out.println("买家在支付宝唯一id: " + params.get("buyer_id"));
-                    System.out.println("买家付款时间: " + params.get("gmt_payment"));
-                    System.out.println("买家付款金额: " + params.get("buyer_pay_amount"));
-                    // 更新订单未已支付
-//                ShopOrder order = new ShopOrder();
-//                order.setId(tradeNo);
-//                order.setStatus("1");
-//                Date payTime = DateUtil.parse(gmtPayment, "yyyy-MM-dd HH:mm:ss");
-//                order.setZhhifuTime(payTime);
-//                shopOrderMapper.updateById(order);
-                    Payment payment = new Payment();
+                    log.info("支付宝验签通过");
+//                    System.out.println("交易名称: " + params.get("subject"));
+//                    System.out.println("交易状态: " + params.get("trade_status"));
+//                    System.out.println("支付宝交易凭证号: " + params.get("trade_no"));
+//                    System.out.println("商户订单号: " + params.get("out_trade_no"));
+//                    System.out.println("交易金额: " + params.get("total_amount"));
+//                    System.out.println("买家在支付宝唯一id: " + params.get("buyer_id"));
+//                    System.out.println("买家付款时间: " + params.get("gmt_payment"));
+//                    System.out.println("买家付款金额: " + params.get("buyer_pay_amount"));
+                    log.info("交易名称: " + params.get("subject"));
+                    log.info("交易状态: " + params.get("trade_status"));
+                    log.info("支付宝交易凭证号: " + params.get("trade_no"));
+                    log.info("商户订单号: " + params.get("out_trade_no"));
+                    log.info("交易金额: " + params.get("total_amount"));
+                    log.info("买家在支付宝唯一id: " + params.get("buyer_id"));
+                    log.info("买家付款时间: " + params.get("gmt_payment"));
+                    log.info("买家付款金额: " + params.get("buyer_pay_amount"));
+
+                    //更新支付状态
+                    LambdaQueryWrapper<Payment> lqw = new LambdaQueryWrapper<Payment>();
+                    lqw.eq(Payment::getOrderId,Long.valueOf(params.get("out_trade_no")));
+                    Payment payment = paymentMapper.selectOne(lqw);
+                    payment.setPayStatus(1);
+                    payment.setContent(String.valueOf(params.get("trade_status")));
+                    payment.setPaymentId(Long.valueOf(params.get("trade_no")));
+                    paymentMapper.updateById(payment);
 
                 }
             } catch (Exception e) {
@@ -128,17 +148,6 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
 
     @Override
     public String refund(Refund refund) {
-        // 7天无理由退款
-        String now = DateUtil.now();
-//        Orders orders = ordersMapper.getByNo(aliPay.getTraceNo());
-//        if (orders != null) {
-//            // hutool工具类，判断时间间隔
-//            long between = DateUtil.between(DateUtil.parseDateTime(orders.getPaymentTime()), DateUtil.parseDateTime(now), DateUnit.DAY);
-//            if (between > 7) {
-//                return "该订单已超过7天，不支持退款";
-//            }
-//        }
-
 
         // 1. 创建Client，通用SDK提供的Client，负责调用支付宝的API
         AlipayClient alipayClient = new DefaultAlipayClient(GATEWAY_URL,
@@ -149,7 +158,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         JSONObject bizContent = new JSONObject();
         bizContent.set("trade_no", refund.getAlipayTraceNo());  // 支付宝回调的订单流水号
         bizContent.set("refund_amount", refund.getTotalAmount());  // 订单的总金额
-        bizContent.set("out_trace_no", refund.getMerchantId());   //  商户订单编号
+        bizContent.set("out_trace_no", refund.getOrderId());   //  商户订单编号
 
         // 返回参数选项，按需传入
         //JSONArray queryOptions = new JSONArray();

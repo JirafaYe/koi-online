@@ -37,11 +37,6 @@ public class Payment implements Serializable {
     private double totalAmount;
 
     /**
-     * 支付成功后生成的商户订单号，退款时需要
-     */
-    private Long merchantId;
-
-    /**
      * 支付状态
      */
     private Integer payStatus;
@@ -50,6 +45,11 @@ public class Payment implements Serializable {
      * 存储支付信息
      */
     private String content;
+
+    /**
+     * 支付成功后生成的支付凭证
+     */
+    private Long paymentId;
 
     private LocalDateTime updateTime;
 
