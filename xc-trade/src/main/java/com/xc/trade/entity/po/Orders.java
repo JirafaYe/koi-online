@@ -1,4 +1,4 @@
-package com.xc.trade.entity;
+package com.xc.trade.entity.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -54,6 +54,11 @@ public class Orders implements Serializable {
      * 优惠后金额 *100
      */
     private Integer finalPrice;
+
+    /**
+     * 退款金额
+     */
+    private Integer refundPrice;
 
     /**
      * 优惠券id list

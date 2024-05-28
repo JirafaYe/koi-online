@@ -1,6 +1,6 @@
 package com.xc.trade.mapper;
 
-import com.xc.trade.entity.ShoppingChart;
+import com.xc.trade.entity.po.ShoppingChart;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

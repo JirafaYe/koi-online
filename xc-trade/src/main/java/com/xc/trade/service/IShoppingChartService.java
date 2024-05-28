@@ -1,11 +1,10 @@
 package com.xc.trade.service;
 
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.trade.entity.ShoppingChart;
+import com.xc.trade.entity.po.ShoppingChart;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.ShoppingChartDTO;
 import com.xc.trade.entity.query.ShoppingChartQuery;
-import com.xc.trade.entity.vo.AddressVO;
 import com.xc.trade.entity.vo.ShoppingChartVO;
 
 import java.util.List;

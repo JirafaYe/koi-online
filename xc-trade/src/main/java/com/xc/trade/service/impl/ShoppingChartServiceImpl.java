@@ -8,7 +8,7 @@ import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.UserContext;
-import com.xc.trade.entity.ShoppingChart;
+import com.xc.trade.entity.po.ShoppingChart;
 import com.xc.trade.entity.dto.ShoppingChartDTO;
 import com.xc.trade.entity.query.ShoppingChartQuery;
 import com.xc.trade.entity.vo.ShoppingChartVO;

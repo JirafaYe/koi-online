@@ -1,6 +1,6 @@
 package com.xc.trade.service;
 
-import com.xc.trade.entity.Orders;
+import com.xc.trade.entity.po.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.vo.FlowReportsVO;
@@ -29,5 +29,21 @@ public interface IOrderService extends IService<Orders> {
     List<GoodsSpuReportsVO> achieveReports();
 
     List<GoodsCategroyReportsVO> marketingReports();
+
+    /**
+     * 管理员发货
+     * @param orderId
+     * @return
+     */
+    boolean delivery(Long orderId);
+
+    /**
+     * 收货
+     * @param orderId
+     * @return
+     */
+    boolean finishOrder(Long orderId);
+
+    boolean deleteOrder(Long orderId);
 
 }

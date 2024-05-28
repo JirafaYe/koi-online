@@ -1,5 +1,6 @@
-package com.xc.trade.entity;
+package com.xc.trade.entity.po;
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
@@ -20,8 +21,8 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("shopping_chart")
-public class ShoppingChart implements Serializable {
+@TableName("order_details")
+public class OrderDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,19 +30,31 @@ public class ShoppingChart implements Serializable {
     private Long id;
 
     /**
-     * 用户id
+     * 订单id
      */
-    private Long userId;
+    private Long orderId;
+
+    private String spuName;
 
     /**
-     * spu
+     * spuId
      */
     private Long spuId;
 
     /**
-     * sku
+     * 详细sku id
      */
     private Long skuId;
+
+    /**
+     * sku属性
+     */
+    private String attributes;
+
+    /**
+     * sku图片url
+     */
+    private String image;
 
     /**
      * 数量
@@ -49,19 +62,30 @@ public class ShoppingChart implements Serializable {
     private Integer quantity;
 
     /**
-     * 总金额
+     * 金额*100
      */
     private Integer price;
 
+    /**
+     * 不为空则退款，退款申请中0，退款申请成功1，已退款2
+     */
+    private Integer refundStatus;
+
     private Integer deleted;
+
+
+    /**
+     * 最终金额
+     */
+    private Integer finalPrice;
 
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;
 
-    private Long creater;
-
     private Long updater;
+
+    private Long creater;
 
 
 }

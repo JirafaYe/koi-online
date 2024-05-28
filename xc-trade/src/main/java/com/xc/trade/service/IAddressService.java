@@ -1,7 +1,7 @@
 package com.xc.trade.service;
 
 import com.xc.common.domain.dto.PageDTO;
-import com.xc.trade.entity.Address;
+import com.xc.trade.entity.po.Address;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.query.AddressQuery;
 import com.xc.trade.entity.vo.AddressVO;

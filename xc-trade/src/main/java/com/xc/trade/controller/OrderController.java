@@ -38,6 +38,35 @@ public class OrderController {
         return orderService.createOrder(vo);
     }
 
+    /**
+     * 管理员根据订单id发货
+     * @param id
+     * @return
+     */
+    @PostMapping("/delivery/{id}")
+    public boolean delivery(@PathVariable Long id){
+        return orderService.delivery(id);
+    }
+
+    /**
+     * 管理员删除订单
+     * @param id
+     * @return
+     */
+    @PostMapping("/delete/{id}")
+    public boolean delete(@PathVariable Long id){
+        return orderService.deleteOrder(id);
+    }
+
+    /**
+     * 个人确定收货
+     * @param id
+     * @return
+     */
+    @PostMapping("/finish/{id}")
+    public boolean finishOrder(@PathVariable Long id){
+        return orderService.finishOrder(id);
+    }
 
 
 }

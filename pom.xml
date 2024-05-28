@@ -51,6 +51,7 @@
         <elasticsearch.version>7.12.1</elasticsearch.version>
         <xxl-job-version>2.3.1</xxl-job-version>
         <minio.version>8.3.4</minio.version>
+        <fast.version>1.2.45</fast.version>
 
     </properties>
 
@@ -120,6 +121,12 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
+            </dependency>
+            <!--JSON-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fast.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

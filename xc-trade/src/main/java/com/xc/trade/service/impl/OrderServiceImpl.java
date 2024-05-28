@@ -1,11 +1,9 @@
 package com.xc.trade.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xc.api.client.product.ProductClient;
 import com.xc.api.client.promotion.PromotionClient;
 import com.xc.api.dto.IdAndNumDTO;
-import com.xc.api.dto.product.SkuNumVO;
 import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.promotion.CouponDiscountDTO;
 import com.xc.api.dto.promotion.OrderCouponDTO;
@@ -14,11 +12,12 @@ import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.*;
 import com.xc.trade.constants.RedisConstants;
-import com.xc.trade.entity.Address;
-import com.xc.trade.entity.Orders;
-import com.xc.trade.entity.OrderDetails;
-import com.xc.trade.entity.ShoppingChart;
+import com.xc.trade.entity.po.Address;
+import com.xc.trade.entity.po.Orders;
+import com.xc.trade.entity.po.OrderDetails;
+import com.xc.trade.entity.po.ShoppingChart;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.enums.OrdersStatus;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
 import com.xc.trade.entity.vo.GoodsSpuReportsVO;
@@ -73,6 +72,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     StringRedisTemplate redisTemplate;
     @Autowired
     private ShoppingChartMapper shoppingChartMapper;
+    @Autowired
+    private OrderDetailsMapper orderDetailsMapper;
 
 
     @Override
@@ -176,11 +177,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         orders.setRawPrice(reduce);
         orders.setFinalPrice(reduce);
 
-        CouponDiscountDTO discountDTO = promotionClient.queryDiscountDetailByOrder(new OrderCouponDTO(vo.getCoupons(), orderProducts));
         Map<Long, Integer> map=null;
-        if(discountDTO!=null){
-            orders.setFinalPrice(reduce-discountDTO.getDiscountAmount());
-            map = discountDTO.getDiscountDetail();
+        if(!CollUtils.isEmpty(vo.getCoupons())) {
+            CouponDiscountDTO discountDTO = promotionClient.queryDiscountDetailByOrder(new OrderCouponDTO(vo.getCoupons(), orderProducts));
+            if (discountDTO != null) {
+                orders.setFinalPrice(reduce - discountDTO.getDiscountAmount());
+                map = discountDTO.getDiscountDetail();
+            }
         }
 
         if(!save(orders)){
@@ -214,11 +217,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             list.add(idAndNumDTO);
         });
 
-
-        promotionClient.writeOffCoupon(vo.getCoupons());
+        if(!CollUtils.isEmpty(vo.getCoupons())) {
+            promotionClient.writeOffCoupon(vo.getCoupons());
+        }
         shoppingChartMapper.deleteBatchIds(vo.getShoppingCharts());
         productClient.updateSkuNum(list);
-
+        //todo: 定时任务查询支付状态
 
         return true;
     }
@@ -237,4 +241,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         return orderMapper.getMarketingReports();
     }
 
+    @Override
+    public boolean delivery(Long orderId) {
+        return orderMapper.deliveryOrder(orderId)==1;
+    }
+
+    @Override
+    public boolean finishOrder(Long orderId) {
+        return orderMapper.updateOrderStatusByUser(OrdersStatus.SUCCESS.getValue(),orderId,UserContext.getUser())==1;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteOrder(Long orderId) {
+        List<Long> detailsIDs = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId)).stream().map(OrderDetails::getId).collect(Collectors.toList());
+        orderDetailsService.removeByIds(detailsIDs);
+        return baseMapper.deleteById(orderId)==1;
+    }
 }

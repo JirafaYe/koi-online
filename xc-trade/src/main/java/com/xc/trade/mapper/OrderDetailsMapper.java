@@ -1,6 +1,6 @@
 package com.xc.trade.mapper;
 
-import com.xc.trade.entity.OrderDetails;
+import com.xc.trade.entity.po.OrderDetails;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

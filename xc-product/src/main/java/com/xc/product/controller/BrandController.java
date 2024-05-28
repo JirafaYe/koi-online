@@ -1,5 +1,6 @@
 package com.xc.product.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.utils.UserContext;
 import com.xc.product.entity.dto.BrandDTO;
@@ -29,24 +30,35 @@ public class BrandController {
      */
     @PostMapping("/create")
     public Boolean createBrand(@RequestBody @Valid BrandVO vo){
-//        UserContext.setUser(1790297174534524928L);
         return brandService.createBand(vo);
     }
 
+    /**
+     * 删除品牌
+     * @param id
+     */
     @PostMapping("/remove/{id}")
-    public boolean removeBrand(@PathVariable Long id){
-//        UserContext.setUser(1790297174534524928L);
+    public Boolean removeBrand(@PathVariable Long id){
         return brandService.removeBrand(id);
     }
 
+    /**
+     * 查询品牌
+     * @param query
+     * @return
+     */
     @GetMapping("/page")
     public PageDTO<BrandPageVO> queryByPage(BrandQuery query){
-//        UserContext.setUser(1790297174534524928L);
         return brandService.queryBrandsByPage(query);
     }
 
+    /**
+     * 更新品牌
+     * @param vo
+     * @return
+     */
     @PostMapping("/update")
-    public boolean updateBrand(@RequestBody BrandVO vo){
+    public Boolean updateBrand(@RequestBody BrandVO vo){
         return brandService.updateBrand(vo);
     }
 }

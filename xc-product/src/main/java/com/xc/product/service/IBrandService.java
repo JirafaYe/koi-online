@@ -1,5 +1,6 @@
 package com.xc.product.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.product.entity.Brand;
 import com.baomidou.mybatisplus.extension.service.IService;
