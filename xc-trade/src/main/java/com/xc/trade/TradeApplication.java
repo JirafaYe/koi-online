@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.xc.trade"})
 @EnableScheduling
 @MapperScan("com.xc.trade.mapper")
 @Slf4j
