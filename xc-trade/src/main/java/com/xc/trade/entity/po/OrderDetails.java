@@ -71,6 +71,11 @@ public class OrderDetails implements Serializable {
      */
     private Integer refundStatus;
 
+    /**
+     * 是否取消，默认false
+     */
+    private boolean canceled;
+
     private Integer deleted;
 
 

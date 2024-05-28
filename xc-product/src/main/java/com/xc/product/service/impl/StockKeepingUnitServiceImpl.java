@@ -240,6 +240,11 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             Set<Long> images = stockKeepingUnits.stream().map(StockKeepingUnit::getImageId).collect(Collectors.toSet());
             Set<Long> spu = stockKeepingUnits.stream().map(StockKeepingUnit::getSpuId).collect(Collectors.toSet());
             List<StandardProductUnit> units = spuMapper.selectBatchIds(spu);
+
+            List<Long> invalidSpu = units.stream().filter(p -> !p.isAvailable()).map(StandardProductUnit::getId).collect(Collectors.toList());
+            if(!CollUtils.isEmpty(invalidSpu)){
+                throw new BizIllegalException("不合法spu id:"+invalidSpu);
+            }
             Map<Long, StandardProductUnit> spuMap = units.stream().collect(Collectors.toMap(
                     StandardProductUnit::getId,
                     Function.identity()
@@ -270,7 +275,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                     StockKeepingUnit stockKeepingUnit = baseMapper.selectById(obj);
                     if(stockKeepingUnit!=null){
                         SkuVO skuVO = BeanUtils.copyBean(stockKeepingUnit, SkuVO.class);
-                        skuVO.setNum(stockKeepingUnit.getNum()-numMap.get(obj));
+                        skuVO.setNum(stockKeepingUnit.getNum()+numMap.get(obj));
                         skuVO.setPrice(stockKeepingUnit.getPrice());
                         if(stockKeepingUnit.getNum()<0){
                             throw new BizIllegalException("不合法修改");

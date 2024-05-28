@@ -56,7 +56,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
     @Override
-    //todo: check dependencies from order table
     public boolean remove(List<Long> ids) {
         List<Address> addresses = baseMapper.selectBatchIds(ids);
         for(Address address : addresses){

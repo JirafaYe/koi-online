@@ -1,8 +1,11 @@
 package com.xc.trade.service;
 
+import com.xc.common.domain.dto.PageDTO;
+import com.xc.trade.entity.dto.OrderDTO;
 import com.xc.trade.entity.po.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.query.OrderQuery;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
 import com.xc.trade.entity.vo.GoodsSpuReportsVO;
@@ -45,5 +48,9 @@ public interface IOrderService extends IService<Orders> {
     boolean finishOrder(Long orderId);
 
     boolean deleteOrder(Long orderId);
+
+    boolean canceledOrder(Long orderId);
+
+    PageDTO<OrderDTO> pageQuery(OrderQuery query);
 
 }

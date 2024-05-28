@@ -56,11 +56,6 @@ public class Orders implements Serializable {
     private Integer finalPrice;
 
     /**
-     * 退款金额
-     */
-    private Integer refundPrice;
-
-    /**
      * 优惠券id list
      */
     private String  couponId;
@@ -68,7 +63,7 @@ public class Orders implements Serializable {
     /**
      * 收货地址
      */
-    private Long addressId;
+    private String  address;
 
     private Integer deleted;
 

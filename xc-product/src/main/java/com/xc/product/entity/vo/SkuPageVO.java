@@ -1,9 +1,11 @@
 package com.xc.product.entity.vo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 @Data
+@EqualsAndHashCode
 public class SkuPageVO {
     private Long id;
 

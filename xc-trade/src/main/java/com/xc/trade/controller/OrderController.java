@@ -1,9 +1,13 @@
 package com.xc.trade.controller;
 
+import com.xc.common.domain.dto.PageDTO;
+import com.xc.trade.entity.dto.OrderDTO;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
+import com.xc.trade.entity.query.OrderQuery;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.service.IOrderService;
 import com.xc.trade.entity.vo.OrderVO;
+import feign.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -68,5 +72,24 @@ public class OrderController {
         return orderService.finishOrder(id);
     }
 
+    /**
+     * 分页查询，可指定spuName
+     * @param query
+     * @return
+     */
+    @GetMapping("/page")
+    public PageDTO<OrderDTO> pageQuery(@Param("page")OrderQuery query){
+        return orderService.pageQuery(query);
+    }
+
+    /**
+     * 取消订单
+     * @param id 订单id
+     * @return
+     */
+    @PostMapping("/cancel/{id}")
+    public boolean cancelOrder(@PathVariable Long id){
+        return orderService.canceledOrder(id);
+    }
 
 }

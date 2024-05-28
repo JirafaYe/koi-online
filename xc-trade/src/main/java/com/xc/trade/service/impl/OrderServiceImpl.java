@@ -1,6 +1,8 @@
 package com.xc.trade.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.product.ProductClient;
 import com.xc.api.client.promotion.PromotionClient;
 import com.xc.api.dto.IdAndNumDTO;
@@ -8,20 +10,21 @@ import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.promotion.CouponDiscountDTO;
 import com.xc.api.dto.promotion.OrderCouponDTO;
 import com.xc.api.dto.promotion.OrderProductDTO;
+import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.*;
 import com.xc.trade.constants.RedisConstants;
+import com.xc.trade.entity.dto.OrderDTO;
+import com.xc.trade.entity.dto.OrderDetailsDTO;
 import com.xc.trade.entity.po.Address;
 import com.xc.trade.entity.po.Orders;
 import com.xc.trade.entity.po.OrderDetails;
 import com.xc.trade.entity.po.ShoppingChart;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.enums.OrdersStatus;
-import com.xc.trade.entity.vo.FlowReportsVO;
-import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
-import com.xc.trade.entity.vo.GoodsSpuReportsVO;
-import com.xc.trade.entity.vo.OrderVO;
+import com.xc.trade.entity.query.OrderQuery;
+import com.xc.trade.entity.vo.*;
 import com.xc.trade.mapper.AddressMapper;
 import com.xc.trade.mapper.OrderDetailsMapper;
 import com.xc.trade.mapper.OrderMapper;
@@ -38,6 +41,7 @@ import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -88,6 +92,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         if(!CollUtils.isEmpty(list)){
             List<SkuPageVO> skuById = productClient.getSkuById(list.stream()
                     .map(ShoppingChart::getSkuId).collect(Collectors.toSet()));
+
+            validateSkuPageVO(skuById);
+
             String chartsKey = shoppingCharts.stream().map(String::valueOf).collect(Collectors.joining(","));
 
             redisTemplate.opsForValue()
@@ -142,8 +149,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             throw new CommonException("addressId invalid");
         }
 
+        address.setId(null);
         Orders orders = new Orders();
-        orders.setAddressId(vo.getAddressId());
+        orders.setAddress(JsonUtils.parse(address).toString());
         orders.setUserId(UserContext.getUser());
 
         List<ShoppingChart> shoppingList = chartMapper.selectList(new LambdaQueryWrapper<ShoppingChart>()
@@ -155,13 +163,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         String chartsKey = vo.getShoppingCharts().stream().map(String::valueOf).collect(Collectors.joining(","));
 
         String skuList = redisTemplate.opsForValue().get(RedisConstants.SHOPPING_PREFIX + UserContext.getUser()+":"+chartsKey);
-        List<SkuPageVO> skuVOs=null;
+        List<SkuPageVO> skuVOs;
         if(!StringUtils.isEmpty(skuList)){
             skuVOs = JsonUtils.parseArray(skuList).toList(SkuPageVO.class);
         }else {
             skuVOs=productClient.getSkuById(shoppingList.stream()
                     .map(ShoppingChart::getSkuId).collect(Collectors.toSet()));
         }
+
+        validateSkuPageVO(skuVOs);
 
         List<OrderProductDTO> orderProducts = skuVOs.stream().map(obj -> {
             OrderProductDTO dto = new OrderProductDTO();
@@ -213,7 +223,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         details.forEach(p->{
             IdAndNumDTO idAndNumDTO = new IdAndNumDTO();
             idAndNumDTO.setId(p.getSkuId());
-            idAndNumDTO.setNum(p.getQuantity());
+            idAndNumDTO.setNum(-p.getQuantity());
             list.add(idAndNumDTO);
         });
 
@@ -225,6 +235,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         //todo: 定时任务查询支付状态
 
         return true;
+    }
+
+    public void validateSkuPageVO(List<SkuPageVO> skuVOs){
+        if(CollUtils.isEmpty(skuVOs)){
+            throw new BizIllegalException("skuId 无效");
+        }
+        Set<Long> invalidSku = skuVOs.stream()
+                .filter(p -> !p.getAvailable().equals(true)).map(SkuPageVO::getId).collect(Collectors.toSet());
+        invalidSku.addAll(skuVOs.stream()
+                .filter(p -> p.getNum()<=0).map(SkuPageVO::getId).collect(Collectors.toSet()));
+        if(!CollUtils.isEmpty(invalidSku)){
+            throw new BizIllegalException("商品不合法，请重新添加:"+invalidSku);
+        }
     }
 
     @Override
@@ -256,6 +279,76 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     public boolean deleteOrder(Long orderId) {
         List<Long> detailsIDs = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId)).stream().map(OrderDetails::getId).collect(Collectors.toList());
         orderDetailsService.removeByIds(detailsIDs);
-        return baseMapper.deleteById(orderId)==1;
+        return baseMapper.delete(new LambdaQueryWrapper<Orders>()
+                .eq(Orders::getId,orderId)
+                .eq(Orders::getStatus,OrdersStatus.CLOSED.getValue())
+                .or().eq(Orders::getStatus,OrdersStatus.SUCCESS.getValue()))==1;
+    }
+
+    @Override
+    @Transactional
+    public boolean canceledOrder(Long orderId) {
+        Orders one = lambdaQuery().eq(Orders::getId, orderId).eq(Orders::getDeliveryStatus, 0).one();
+        if(one==null){
+            throw new BizIllegalException("该订单已发出不可取消");
+        }
+        List<OrderDetails> orderDetails = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId).isNull(OrderDetails::getRefundStatus));
+
+        //todo: 判断是否支付and调用退款接口进行退款(reduce)
+        Integer reduce =  orderDetails.stream().map(p -> p.getQuantity() * p.getFinalPrice())
+                .mapToInt(Integer::intValue).reduce(0, Integer::sum);
+
+        orderDetailsService.updateBatchById(orderDetails.stream().map(p->p.setCanceled(true)).collect(Collectors.toList()));
+        orderMapper.updateOrderStatusByUser(OrdersStatus.CLOSED.getValue(),orderId,UserContext.getUser());
+
+        List<IdAndNumDTO> list=new LinkedList<>();
+        orderDetails.forEach(p->{
+            IdAndNumDTO idAndNumDTO = new IdAndNumDTO();
+            idAndNumDTO.setId(p.getSkuId());
+            idAndNumDTO.setNum(-p.getQuantity());
+            list.add(idAndNumDTO);
+        });
+
+        productClient.updateSkuNum(list);
+
+        return true;
+    }
+
+    @Override
+    public PageDTO<OrderDTO> pageQuery(OrderQuery query) {
+        List<Long> orders;
+        LambdaQueryChainWrapper<Orders> wrapper = lambdaQuery().eq(Orders::getUserId, UserContext.getUser());
+        if(!StringUtils.isEmpty(query.getSpuName())){
+            orders = orderDetailsMapper.selectOrdersBySpuName(query.getSpuName());
+            wrapper.in(Orders::getId,orders);
+        }
+        Page<Orders> page = wrapper.page(query.toMpPageDefaultSortByCreateTimeDesc());
+        List<Orders> records = page.getRecords();
+        PageDTO<OrderDTO> res=PageDTO.empty(page);
+        if(!CollUtils.isEmpty(records)){
+            List<Long> idList = records.stream().map(Orders::getId).collect(Collectors.toList());
+            List<OrderDetails> orderDetails = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>()
+                    .in(OrderDetails::getOrderId, idList));
+            HashMap<Long, List<OrderDetailsDTO>> dtoMap = new HashMap<>();
+            orderDetails.forEach(p-> {
+                if (!dtoMap.containsKey(p.getOrderId())){
+                    dtoMap.put(p.getOrderId(),List.of(BeanUtils.copyBean(p,OrderDetailsDTO.class)));
+                }else {
+                    List<OrderDetailsDTO> dtos = dtoMap.get(p.getOrderId());
+                    dtos.add(BeanUtils.copyBean(p,OrderDetailsDTO.class));
+                    dtoMap.put(p.getOrderId(),dtos);
+                }
+            });
+
+            List<OrderDTO> collect = records.stream().map(p -> {
+                OrderDTO orderDTO = BeanUtils.copyBean(p, OrderDTO.class);
+                orderDTO.setDetails(dtoMap.get(orderDTO.getId()));
+                orderDTO.setAddressVO(JsonUtils.parse(p.getAddress()).toBean(AddressVO.class));
+                return orderDTO;
+            }).collect(Collectors.toList());
+
+            res=PageDTO.of(page,collect);
+        }
+        return res;
     }
 }
