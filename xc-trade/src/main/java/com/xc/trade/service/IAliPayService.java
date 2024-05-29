@@ -6,8 +6,6 @@ import com.xc.trade.entity.dto.RefundResultDTO;
 import com.xc.trade.entity.po.Payment;
 
 import com.xc.trade.entity.dto.AliPay;
-import com.xc.trade.entity.dto.Refund;
-import com.xc.trade.entity.po.RefundApply;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,5 +20,4 @@ public interface IAliPayService extends IService<Payment> {
 
     RefundResultDTO refund(RefundApplyDTO refund);
 
-    RefundResultDTO queryRefundResult(Long id);
 }
