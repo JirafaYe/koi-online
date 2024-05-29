@@ -26,11 +26,6 @@ public class RefundApplyVO {
     private Long orderId;
 
     /**
-     * 支付流水单号
-     */
-    private Long payOrderNo;
-
-    /**
      * 退款流水单号
      */
     private Long refundOrderNo;
@@ -51,9 +46,9 @@ public class RefundApplyVO {
     private String userName;
 
     /**
-     * 手机号
+     * 退款申请人
      */
-    private String mobile;
+    private String refundProposerName;
 
     /**
      * 订单时间
@@ -96,6 +91,11 @@ public class RefundApplyVO {
     private String name;
 
     /**
+     * 规格
+     */
+    private String attributes;
+
+    /**
      * 价格
      */
     private Integer price;
@@ -121,6 +121,10 @@ public class RefundApplyVO {
      */
     private Integer status;
 
+    /**
+     * 退款类别
+     */
+    private Integer refundClassify;
     /**
      * 退款失败原因
      */

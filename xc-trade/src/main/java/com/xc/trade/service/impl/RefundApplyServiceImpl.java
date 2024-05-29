@@ -1,14 +1,18 @@
 package com.xc.trade.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.user.res.UserInfoResVO;
+import com.xc.common.constants.Constant;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.enums.UserType;
 import com.xc.common.exceptions.BadRequestException;
+import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.DbException;
 import com.xc.common.utils.AssertUtils;
+import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.UserContext;
-import com.xc.trade.config.ThreadPoolConfig;
 import com.xc.trade.entity.dto.*;
 import com.xc.trade.entity.enums.OrdersStatus;
 import com.xc.trade.entity.enums.RefundClassifyStatus;
@@ -31,7 +35,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.xc.trade.entity.enums.RefundStatus.AGREE;
 
 /**
  * <p>
@@ -86,7 +93,7 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
         refundApply.setStatus(
                 isUser ? RefundStatus.UN_APPROVE :
                         refundFormDTO.getRefundClassify().equals(RefundClassifyStatus.REFUND_ONLY) ?
-                                RefundStatus.AGREE :
+                                AGREE :
                                 RefundStatus.AGREE_RG
         );
         boolean success = save(refundApply);
@@ -200,27 +207,194 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
 
     @Override
     public PageDTO<RefundApplyPageVO> RefundApplyPageQuery(RefundApplyPageQuery pageQuery) {
-        return null;
+        Page<RefundApply> p = searchRefundApply(pageQuery);
+
+        List<RefundApply> records = p.getRecords();
+        if(CollUtils.isEmpty(records)){
+            return PageDTO.empty(p);
+        }
+
+        Map<Long, UserInfoResVO> userMap = getRefundUserInfo(records);
+        List<RefundApplyPageVO> list = new ArrayList<>(records.size());
+        for (RefundApply r : records) {
+            RefundApplyPageVO vo = BeanUtils.copyBean(r, RefundApplyPageVO.class);
+            vo.setClassifyStatus(r.getRefundClassify().getValue());
+            UserInfoResVO u = userMap.get(r.getCreater());
+            vo.setProposerName(u.getAccount());
+
+            vo.setApproverName(r.getApprover() == null ? "--" : userMap.get(r.getApprover()).getAccount());
+            // 4.3.退款状态
+            vo.setRefundStatusDesc(RefundStatus.desc(r.getStatus().getValue()));
+            if (RefundStatus.SUCCESS.equalsValue(r.getStatus().getValue())) {
+                vo.setRefundSuccessTime(r.getFinishTime());
+            }
+            list.add(vo);
+        }
+        return PageDTO.of(p, list);
+    }
+
+    private Map<Long, UserInfoResVO> getRefundUserInfo(List<RefundApply> records) {
+        Set<Long> userIds = new HashSet<>();
+        for (RefundApply record : records) {
+            userIds.add(record.getCreater());
+            userIds.add(record.getApprover());
+        }
+        userIds.remove(null);
+        List<UserInfoResVO> userInfos = userClient.getUserInfos(userIds);
+        if(userInfos.size() != userIds.size()){
+            throw new BizIllegalException("用户数据有误");
+        }
+        return userInfos.stream().collect(Collectors.toMap(UserInfoResVO::getUserId, u -> u));
+    }
+
+    private Page<RefundApply> searchRefundApply(RefundApplyPageQuery q) {
+        Integer refundStatus = q.getRefundStatus();
+        Integer classifyStatus = q.getRefundClassifyStatus();
+        String defaultSortBy = "id";
+        boolean isAsc = true;
+        if (refundStatus != null) {
+            if (RefundStatus.UN_APPROVE.equalsValue(refundStatus)) {
+                defaultSortBy = Constant.DATA_FIELD_NAME_CREATE_TIME;
+            } else {
+                defaultSortBy = "approve_time";
+                isAsc = false;
+            }
+        }
+        Page<RefundApply> p = q.toMpPage(defaultSortBy, isAsc);
+
+        return lambdaQuery()
+                .eq(q.getId() != null, RefundApply::getId, q.getId())
+                .eq(refundStatus != null, RefundApply::getStatus, refundStatus)
+                .eq(classifyStatus != null , RefundApply::getRefundClassify, classifyStatus)
+                .eq(q.getOrderDetailId() != null, RefundApply::getOrderDetailId, q.getOrderDetailId())
+                .eq(q.getOrderId() != null, RefundApply::getOrderId, q.getOrderId())
+                .ge(q.getApplyStartTime() != null, RefundApply::getCreateTime, q.getApplyStartTime())
+                .le(q.getApplyEndTime() != null, RefundApply::getCreateTime, q.getApplyEndTime())
+                .page(p);
     }
 
     @Override
+    @Transactional
     public void cancelRefundApply(RefundCancelDTO cancelDTO) {
+        Long applyId = cancelDTO.getId();
+        Long detailId = cancelDTO.getOrderDetailId();
+        List<RefundApply> list = lambdaQuery()
+                .eq(applyId != null, RefundApply::getId, applyId)
+                .eq(detailId != null, RefundApply::getOrderDetailId, detailId)
+                .list();
+        if(CollUtils.isEmpty(list)){
+            return;
+        }
+        RefundApply apply = list.get(0);
+        if(!RefundStatus.UN_APPROVE.equals(apply.getStatus()) && !RefundStatus.WAIT_SENT_B.equals(apply.getStatus())){
+            throw new BizIllegalException("退款申请已经处理过了");
+        }
 
+        RefundApply r = new RefundApply();
+        r.setId(apply.getId());
+        r.setStatus(RefundStatus.CANCEL);
+        r.setMessage(RefundStatus.CANCEL.getDesc());
+        boolean success = updateById(r);
+        if(!success){
+            throw new DbException("数据更新失败");
+        }
+
+        detailsService.lambdaUpdate()
+                .eq(OrderDetails::getId, r.getOrderDetailId())
+                .set(OrderDetails::getRefundStatus, r.getStatus())
+                .update();
     }
 
     @Override
     public void userDelivery(Long id) {
+        RefundApply refundApply = getById(id);
+        RefundClassifyStatus refundClassify = refundApply.getRefundClassify();
+        if(refundClassify.equals(RefundClassifyStatus.REFUND_ONLY)){
+            throw new BadRequestException("改订单为仅退款");
+        }
+        if(!refundApply.getStatus().equals(RefundStatus.WAIT_SENT_B)){
+            throw new BadRequestException("改订单状态错误");
+        }
 
+        RefundApply r = new RefundApply();
+        r.setId(refundApply.getId());
+        r.setStatus(RefundStatus.WAIT_M_RECEIVE);
+        updateById(r);
     }
 
     @Override
     public RefundApplyVO queryRefundDetailById(Long id) {
-        return null;
+        RefundApply apply = getById(id);
+        if(apply == null){
+            throw new BadRequestException("退款记录不存在");
+        }
+        RefundApplyVO vo = BeanUtils.copyBean(apply, RefundApplyVO.class);
+        vo.setRefundClassify(apply.getRefundClassify().getValue());
+        Orders order = orderMapper.selectById(apply.getOrderId());
+        if(order == null){
+            throw new BadRequestException("订单不存在");
+        }
+        vo.setOrderTime(order.getCreateTime());
+        vo.setPaySuccessTime(order.getPayTime());
+
+        Set<Long> uIds = new HashSet<>();
+        uIds.add(apply.getCreater());
+        uIds.add(apply.getUserId());
+        List<UserInfoResVO> userInfos = userClient.getUserInfos(uIds);
+        AssertUtils.isNotEmpty(userInfos, "用户不存在");
+        Map<Long, UserInfoResVO> userMap = userInfos.stream().collect(Collectors.toMap(UserInfoResVO::getUserId, u -> u));
+
+        UserInfoResVO u = userMap.get(apply.getUserId());
+        vo.setUserName(u.getAccount());
+        vo.setRefundProposerName(userMap.get(apply.getCreater()).getAccount());
+
+        OrderDetails detail = detailsService.getById(apply.getOrderDetailId());
+        if(detail == null){
+            throw new BadRequestException("订单不存在");
+        }
+        vo.setName(detail.getSpuName());
+        vo.setAttributes(detail.getAttributes());
+        vo.setPrice(detail.getPrice());
+        vo.setRealPayAmount(detail.getFinalPrice());
+        return vo;
     }
 
     @Override
     public RefundApplyVO queryRefundDetailByDetailId(Long detailId) {
-        return null;
+        List<RefundApply> refundApplies = queryByDetailId(detailId);
+        if(CollUtils.isEmpty(refundApplies)){
+            return null;
+        }
+        RefundApply refundApply = refundApplies.get(0);
+        RefundApplyVO vo = BeanUtils.copyBean(refundApply, RefundApplyVO.class);
+        vo.setRefundClassify(refundApply.getRefundClassify().getValue());
+
+        Orders order = orderMapper.selectById(refundApply.getOrderId());
+        vo.setPaySuccessTime(order.getPayTime());
+        return vo;
+    }
+
+    @Override
+    public List<RefundApply> queryApplyToSend(int index, int size) {
+        Page<RefundApply> page = lambdaQuery()
+                .eq(RefundApply::getStatus, AGREE.getValue())
+                .page(new Page<>(index, size));
+        if (page == null || CollUtils.isEmpty(page.getRecords())) {
+            return CollUtils.emptyList();
+        }
+        return page.getRecords();
+    }
+
+    @Override
+    @Transactional
+    public boolean checkRefundStatus(RefundApply r) {
+        RefundStatus status = r.getStatus();
+        return !status.equals(AGREE);
+    }
+
+    private List<RefundApply> queryByDetailId(Long id) {
+        List<RefundApply> list = baseMapper.queryByDetailId(id);
+        return CollUtils.isEmpty(list) ? CollUtils.emptyList() : list;
     }
 
     private void refundRequestAsync(RefundApply refundApply) {

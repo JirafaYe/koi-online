@@ -11,6 +11,8 @@ import com.xc.trade.entity.query.RefundApplyPageQuery;
 import com.xc.trade.entity.vo.RefundApplyPageVO;
 import com.xc.trade.entity.vo.RefundApplyVO;
 
+import java.util.List;
+
 /**
  * <p>
  * 退款申请 服务类
@@ -38,4 +40,8 @@ public interface IRefundApplyService extends IService<RefundApply> {
     RefundApplyVO queryRefundDetailById(Long id);
 
     RefundApplyVO queryRefundDetailByDetailId(Long detailId);
+
+    List<RefundApply> queryApplyToSend(int index, int size);
+
+    boolean checkRefundStatus(RefundApply r);
 }

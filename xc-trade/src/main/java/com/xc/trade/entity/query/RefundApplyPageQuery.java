@@ -26,6 +26,11 @@ public class RefundApplyPageQuery extends PageQuery {
     private Integer refundStatus;
 
     /**
+     * 1为仅退款，2为退货退款
+     */
+    private Integer refundClassifyStatus;
+
+    /**
      * 订单明细id
      */
     private Long orderDetailId;
@@ -34,11 +39,6 @@ public class RefundApplyPageQuery extends PageQuery {
      * 订单id
      */
     private Long orderId;
-
-    /**
-     * 手机号
-     */
-    private String mobile;
 
     /**
      * 申请开始时间

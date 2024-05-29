@@ -36,14 +36,14 @@ public class RefundApplyPageVO {
     private String proposerName;
 
     /**
-     * 申请人手机号
-     */
-    private String proposerMobile;
-
-    /**
      * 退款申请状态
      */
     private Integer status;
+
+    /**
+     * 退款类型
+     */
+    private Integer classifyStatus;
 
     /**
      * 退款申请状态描述

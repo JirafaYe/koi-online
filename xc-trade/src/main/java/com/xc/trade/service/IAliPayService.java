@@ -22,4 +22,5 @@ public interface IAliPayService extends IService<Payment> {
 
     RefundResultDTO refund(RefundApplyDTO refund);
 
+    RefundResultDTO queryRefundResult(Long id);
 }

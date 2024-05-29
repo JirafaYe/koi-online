@@ -83,9 +83,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
              * 支付成功后将此支付信息写入数据库
              */
             Payment payment = new Payment();
-            UserContext.setUser(1792188141227216896L);
             payment.setOrderId(Long.valueOf(aliPay.getTraceNo()));
-//            payment.setUserId(UserContext.getUser());
             payment.setUserId(UserContext.getUser());
             payment.setTotalAmount(aliPay.getTotalAmount());
             paymentMapper.insert(payment);
@@ -100,7 +98,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
     public String payNotify(HttpServletRequest request) {
         if (request.getParameter("trade_status").equals("TRADE_SUCCESS")) {
 //            System.out.println("=========支付宝异步回调========");
-            log.info("支付宝异步回调");
+//            log.info("支付宝异步回调");
 
             Map<String, String> params = new HashMap<>();
             Map<String, String[]> requestParams = request.getParameterMap();
@@ -116,7 +114,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
             // 支付宝验签
             try {
                 if (Factory.Payment.Common().verifyNotify(params)) {
-                    log.info("支付宝验签通过");
+//                    log.info("支付宝验签通过");
 //                    System.out.println("交易名称: " + params.get("subject"));
 //                    System.out.println("交易状态: " + params.get("trade_status"));
 //                    System.out.println("支付宝交易凭证号: " + params.get("trade_no"));
@@ -125,14 +123,14 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
 //                    System.out.println("买家在支付宝唯一id: " + params.get("buyer_id"));
 //                    System.out.println("买家付款时间: " + params.get("gmt_payment"));
 //                    System.out.println("买家付款金额: " + params.get("buyer_pay_amount"));
-                    log.info("交易名称: " + params.get("subject"));
-                    log.info("交易状态: " + params.get("trade_status"));
-                    log.info("支付宝交易凭证号: " + params.get("trade_no"));
-                    log.info("商户订单号: " + params.get("out_trade_no"));
-                    log.info("交易金额: " + params.get("total_amount"));
-                    log.info("买家在支付宝唯一id: " + params.get("buyer_id"));
-                    log.info("买家付款时间: " + params.get("gmt_payment"));
-                    log.info("买家付款金额: " + params.get("buyer_pay_amount"));
+//                    log.info("交易名称: " + params.get("subject"));
+//                    log.info("交易状态: " + params.get("trade_status"));
+//                    log.info("支付宝交易凭证号: " + params.get("trade_no"));
+//                    log.info("商户订单号: " + params.get("out_trade_no"));
+//                    log.info("交易金额: " + params.get("total_amount"));
+//                    log.info("买家在支付宝唯一id: " + params.get("buyer_id"));
+//                    log.info("买家付款时间: " + params.get("gmt_payment"));
+//                    log.info("买家付款金额: " + params.get("buyer_pay_amount"));
 
                     //更新支付状态
                     LambdaQueryWrapper<Payment> lqw = new LambdaQueryWrapper<Payment>();
@@ -167,7 +165,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         lqw.eq(Payment::getOrderId, orderId);
         Payment payment = paymentMapper.selectOne(lqw);
 
-        Double refundMoney =  Double.valueOf(refund.getRefundAmount()/100);
+        Double refundMoney = (double) refund.getRefundAmount() / 100;
 
 //        bizContent.set("trade_no", refund.getAlipayTraceNo());  // 支付宝回调的订单流水号
         bizContent.set("trade_no", payment.getPaymentId());  // 支付宝回调的订单流水号
@@ -193,6 +191,7 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
             AlipayTradeRefundResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {  // 退款成功，isSuccess 为true
                 log.info("调用成功");
+                payment.setPayStatus(2);
                 refundResultDTO.setStatus(3);
 
 
@@ -216,4 +215,5 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
         refundResultDTO.setStatus(2);
         return refundResultDTO;
     }
+
 }
