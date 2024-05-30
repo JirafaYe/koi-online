@@ -40,13 +40,13 @@ public class UserController {
         return userBaseService.login(vo);
     }
 
-    /**
-     * 发送验证码
-     */
-    @PostMapping("sendcode/{phone}")
-    public void sendCode(@Valid @RequestParam("phone") String phone) {
-        userBaseService.sendCode(phone);
-    }
+//    /**
+//     * 发送验证码
+//     */
+//    @PostMapping("sendcode/{phone}")
+//    public void sendCode(@Valid @RequestParam("phone") String phone) {
+//        userBaseService.sendCode(phone);
+//    }
 
     /**
      * 注册
@@ -72,13 +72,13 @@ public class UserController {
         return userBaseService.updatePwd(vo);
     }
 
-    /**
-     * 手机号绑定
-     */
-    @PostMapping("bindMobile")
-    public int bindMobile(@RequestBody @Valid BindMobileVO vo) {
-        return userBaseService.bindMobile(vo);
-    }
+//    /**
+//     * 手机号绑定
+//     */
+//    @PostMapping("bindMobile")
+//    public int bindMobile(@RequestBody @Valid BindMobileVO vo) {
+//        return userBaseService.bindMobile(vo);
+//    }
 
     /**
      * 分页查询用户信息
