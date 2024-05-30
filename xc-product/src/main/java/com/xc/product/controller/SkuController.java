@@ -10,6 +10,7 @@ import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.utils.JsonUtils;
 import com.xc.product.entity.query.SkuQuery;
 import com.xc.product.entity.vo.SkuAttributesVO;
+import com.xc.product.entity.vo.SkuListVO;
 import com.xc.product.entity.vo.SkuPageVO;
 import com.xc.product.entity.vo.SkuVO;
 import com.xc.product.service.IStockKeepingUnitService;
@@ -39,7 +40,7 @@ public class SkuController {
      * @return
      */
     @PostMapping("/create")
-    public boolean create(@Valid @RequestBody SkuVO vo){
+    public boolean create(@Valid @RequestBody SkuListVO vo){
         return skuService.createSku(vo);
     }
 
@@ -109,9 +110,19 @@ public class SkuController {
      * @return
      */
     @PostMapping("/num")
-    public boolean updateSkuNum(@RequestBody List<IdAndNumDTO> list) throws JsonProcessingException {
+    public boolean updateSkuNum(@RequestBody List<IdAndNumDTO> list) {
         Map<Long, Integer> map = IdAndNumDTO.toMap(list);
         skuService.updateSkuNum(map);
         return true;
+    }
+
+    /**
+     * 修改sku 上架or下架
+     * @param id
+     * @return
+     */
+    @PostMapping("/available/{id}")
+    public boolean changeAvailable(@PathVariable Long id){
+        return skuService.changeAvailable(id);
     }
 }

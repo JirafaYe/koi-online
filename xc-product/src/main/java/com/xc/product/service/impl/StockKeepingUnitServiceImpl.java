@@ -15,9 +15,7 @@ import com.xc.common.utils.JsonUtils;
 import com.xc.product.entity.StandardProductUnit;
 import com.xc.product.entity.StockKeepingUnit;
 import com.xc.product.entity.query.SkuQuery;
-import com.xc.product.entity.vo.SkuPageVO;
-import com.xc.product.entity.vo.SkuVO;
-import com.xc.product.entity.vo.SpuPageVO;
+import com.xc.product.entity.vo.*;
 import com.xc.product.mapper.StandardProductUnitMapper;
 import com.xc.product.mapper.StockKeepingUnitMapper;
 import com.xc.product.service.IStockKeepingUnitService;
@@ -67,10 +65,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         boolean save = save(stockKeepingUnit);
         boolean update=true;
         if(save&&vo.getAvailable()){
-//            Integer i = spuMapper.updateNumWhenCreateSku(vo);
-//            update=i==1;
-//            update=1==spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId());
-            if(!(spuMapper.updateNumWhenCreateSku(vo)==1
+            if(!(spuMapper.updateNumWhenCreateSku(vo.getSpuId(),vo.getNum())==1
                     &&spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())==1)){
                 update=false;
             }
@@ -79,6 +74,44 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(!(save&&update)){
             throw new CommonException("创建sku异常");
         }
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean createSku(SkuListVO vo) {
+        vo.getVos().forEach(p->{
+            if(!JsonUtils.isJson(p.getAttributes())){
+                throw new CommonException("attributes 需要为json格式");
+            }
+        });
+        Set<Long> imageList = vo.getVos().stream().map(SkuDetailsVO::getImageId).collect(Collectors.toSet());
+        List<Long> imgRes = mediaClient.judgeFileExist(imageList);
+        if(imgRes.size()!=imageList.size()){
+            imgRes.forEach(imageList::remove);
+            throw new BizIllegalException("images不合法:"+imageList);
+        }
+        List<StockKeepingUnit> skuList = new LinkedList<>();
+        vo.getVos().forEach(p->{
+            StockKeepingUnit sku = BeanUtils.copyBean(p, StockKeepingUnit.class);
+            sku.setSpuId(vo.getSpuId());
+            skuList.add(sku);
+            if(sku.isAvailable()){
+                if(spuMapper.updateNumWhenCreateSku(vo.getSpuId(),p.getNum())!=1){
+                    throw new BizIllegalException("更新spu数量失败");
+                }
+            }
+        });
+
+        if(!CollUtils.isEmpty(skuList)){
+           if(! saveBatch(skuList)){
+               throw new BizIllegalException("批量插入sku失败");
+           }
+        }
+        if(spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())!=1){
+            throw new BizIllegalException("更新spu价格失败");
+        }
+
         return true;
     }
 
@@ -134,7 +167,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             if(sku.isAvailable()){
                 template.setNum(vo.getNum()-sku.getNum());
             }
-            updateNum=spuMapper.updateNumWhenCreateSku(template)==1;
+            updateNum=spuMapper.updateNumWhenCreateSku(template.getSpuId(), template.getNum())==1;
         }else{
             if(sku.isAvailable()){
                 updateNum=spuMapper.updateNumWhenRemoveSku(sku)==1;
@@ -268,12 +301,22 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
     }
 
     @Override
+    public boolean changeAvailable(Long id) {
+        StockKeepingUnit sku = baseMapper.selectById(id);
+        SkuVO skuVO = BeanUtils.copyBean(sku, SkuVO.class);
+        skuVO.setAvailable(!sku.isAvailable());
+        return updateByVO(skuVO,sku);
+    }
+
+    @Override
     @Transactional
     public void updateSkuNum(Map<Long,Integer> numMap) {
+        HashMap<Long, Integer> spuMap = new HashMap<>();
         numMap.keySet().forEach(
                 obj->{
                     StockKeepingUnit stockKeepingUnit = baseMapper.selectById(obj);
                     if(stockKeepingUnit!=null){
+                        Long spuId = stockKeepingUnit.getSpuId();
                         SkuVO skuVO = BeanUtils.copyBean(stockKeepingUnit, SkuVO.class);
                         skuVO.setNum(stockKeepingUnit.getNum()+numMap.get(obj));
                         skuVO.setPrice(stockKeepingUnit.getPrice());
@@ -281,9 +324,15 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                             throw new BizIllegalException("不合法修改");
                         }
                         updateByVO(skuVO,stockKeepingUnit);
+                        if(!spuMap.containsKey(spuId)){
+                            spuMap.put(spuId, numMap.get(obj));
+                        } else{
+                            spuMap.put(spuId, spuMap.get(spuId) + numMap.get(obj));
+                        }
                     }
                 }
         );
+        spuMapper.updateSalesById(spuMap);
 
 
     }

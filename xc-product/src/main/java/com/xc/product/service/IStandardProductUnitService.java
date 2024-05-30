@@ -3,7 +3,9 @@ package com.xc.product.service;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.product.entity.StandardProductUnit;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
+import com.xc.product.entity.query.SpuUserQuery;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
 
@@ -33,4 +35,10 @@ public interface IStandardProductUnitService extends IService<StandardProductUni
     List<SpuPageVO> queryByName(String name);
 
     List<SpuPageVO> queryById(List<Long> ids);
+
+    boolean changeAvailable(Long spuId);
+
+    PageDTO<SpuPageVO> pageQuery(SpuAdminQuery query,boolean isAdmin);
+
+    PageDTO<SpuPageVO> adminQuery(SpuAdminQuery query);
 }

@@ -5,10 +5,7 @@ import com.xc.product.entity.StockKeepingUnit;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.product.entity.query.SkuQuery;
 import com.xc.product.entity.query.SpuQuery;
-import com.xc.product.entity.vo.SkuPageVO;
-import com.xc.product.entity.vo.SkuVO;
-import com.xc.product.entity.vo.SpuPageVO;
-import com.xc.product.entity.vo.SpuVO;
+import com.xc.product.entity.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +23,8 @@ public interface IStockKeepingUnitService extends IService<StockKeepingUnit> {
 
     boolean createSku(SkuVO vo);
 
+    boolean createSku(SkuListVO vo);
+
     boolean removeSku(Long id);
 
     boolean updateSku(SkuVO vo);
@@ -39,4 +38,6 @@ public interface IStockKeepingUnitService extends IService<StockKeepingUnit> {
     List<SkuPageVO> getSkuById(List<Long> skuID);
 
     void updateSkuNum(Map<Long,Integer> numMap);
+
+    boolean changeAvailable(Long id);
 }

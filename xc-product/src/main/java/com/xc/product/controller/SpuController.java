@@ -1,7 +1,10 @@
 package com.xc.product.controller;
 
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.utils.UserContext;
+import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
+import com.xc.product.entity.query.SpuUserQuery;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
 import com.xc.product.service.IStandardProductUnitService;
@@ -79,5 +82,38 @@ public class SpuController {
     @GetMapping("/ids")
     public List<SpuPageVO> queryById(@RequestBody List<Long> ids){
         return spuService.queryById(ids);
+    }
+
+    /**
+     * 修改spu 上架or下架
+     * @param id
+     * @return
+     */
+    @PostMapping("/available/{id}")
+    public boolean changeAvailable(@PathVariable Long id){
+        return spuService.changeAvailable(id);
+    }
+
+    /**
+     * 用户查询，可不登录
+     * @param query
+     * @return
+     */
+    @GetMapping("/page/user")
+    public PageDTO<SpuPageVO> userQuery(SpuUserQuery query){
+        if(UserContext.getUser()==null){
+            query.setSpuName(null);
+        }
+        return spuService.pageQuery(new SpuAdminQuery(query),false);
+    }
+
+    /**
+     * 管理员查询
+     * @param query
+     * @return
+     */
+    @GetMapping("/page/admin")
+    public PageDTO<SpuPageVO> adminQuery(SpuAdminQuery query){
+        return spuService.pageQuery(query,true);
     }
 }
