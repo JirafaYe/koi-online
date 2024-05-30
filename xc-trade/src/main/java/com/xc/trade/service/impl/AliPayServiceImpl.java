@@ -9,6 +9,7 @@ import com.xc.common.utils.UserContext;
 import com.xc.trade.config.AliPayConfig;
 import com.xc.trade.entity.dto.RefundApplyDTO;
 import com.xc.trade.entity.dto.RefundResultDTO;
+import com.xc.trade.entity.po.Orders;
 import com.xc.trade.entity.po.Payment;
 import com.xc.trade.entity.dto.AliPay;
 import com.xc.trade.entity.dto.Refund;
@@ -30,6 +31,7 @@ import com.alipay.api.DefaultAlipayClient;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -141,6 +143,13 @@ public class AliPayServiceImpl extends ServiceImpl<PaymentMapper, Payment> imple
                     payment.setPaymentId(String.valueOf(params.get("trade_no")));
                     paymentMapper.updateById(payment);
 
+                    //更新订单表中pay_time以及payment_id
+                    LambdaQueryWrapper<Orders> orderLqw = new LambdaQueryWrapper<Orders>();
+                    orderLqw.eq(Orders::getId,Long.valueOf(params.get("out_trade_no")));
+                    Orders order = orderMapper.selectOne(orderLqw);
+                    order.setPaymentId(payment.getId());
+                    order.setPayTime(LocalDateTime.now());
+                    orderMapper.updateById(order);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
