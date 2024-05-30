@@ -54,7 +54,7 @@ public class PageQuery {
             return page;
         }
         // 前端是否有排序字段
-        if (StringUtils.isNotEmpty(sortBy)){
+        if (StringUtils.isNotEmpty(sortBy)&&isAsc!=null){
             OrderItem orderItem = new OrderItem();
             orderItem.setAsc(isAsc);
             orderItem.setColumn(sortBy);

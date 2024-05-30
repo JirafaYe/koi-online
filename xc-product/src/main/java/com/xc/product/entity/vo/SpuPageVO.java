@@ -73,4 +73,9 @@ public class SpuPageVO {
      * 更新人
      */
     private String updater;
+
+    /**
+     * 是否新品（7天内创建）
+     */
+    private boolean upToDate=false;
 }

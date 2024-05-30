@@ -110,9 +110,19 @@ public class SkuController {
      * @return
      */
     @PostMapping("/num")
-    public boolean updateSkuNum(@RequestBody List<IdAndNumDTO> list) throws JsonProcessingException {
+    public boolean updateSkuNum(@RequestBody List<IdAndNumDTO> list) {
         Map<Long, Integer> map = IdAndNumDTO.toMap(list);
         skuService.updateSkuNum(map);
         return true;
+    }
+
+    /**
+     * 修改sku 上架or下架
+     * @param id
+     * @return
+     */
+    @PostMapping("/available/{id}")
+    public boolean changeAvailable(@PathVariable Long id){
+        return skuService.changeAvailable(id);
     }
 }
