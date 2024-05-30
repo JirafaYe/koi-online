@@ -60,6 +60,8 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
 
     @Resource
     StockKeepingUnitMapper stockKeepingUnitMapper;
+    @Autowired
+    private StandardProductUnitMapper standardProductUnitMapper;
 
     @Override
     public Integer countByBrand(Long brandId) {
@@ -186,6 +188,11 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         }
 
         return res;
+    }
+
+    @Override
+    public boolean changeAvailable(Long spuId) {
+        return standardProductUnitMapper.updateAvailable(spuId)==1;
     }
 
     public List<Long> splitImagesId(String ids){

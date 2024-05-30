@@ -10,6 +10,7 @@ import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.utils.JsonUtils;
 import com.xc.product.entity.query.SkuQuery;
 import com.xc.product.entity.vo.SkuAttributesVO;
+import com.xc.product.entity.vo.SkuListVO;
 import com.xc.product.entity.vo.SkuPageVO;
 import com.xc.product.entity.vo.SkuVO;
 import com.xc.product.service.IStockKeepingUnitService;
@@ -39,7 +40,7 @@ public class SkuController {
      * @return
      */
     @PostMapping("/create")
-    public boolean create(@Valid @RequestBody SkuVO vo){
+    public boolean create(@Valid @RequestBody SkuListVO vo){
         return skuService.createSku(vo);
     }
 

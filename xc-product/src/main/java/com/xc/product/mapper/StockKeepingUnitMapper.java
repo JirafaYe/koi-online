@@ -2,6 +2,7 @@ package com.xc.product.mapper;
 
 import com.xc.product.entity.StockKeepingUnit;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * <p>

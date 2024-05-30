@@ -33,4 +33,6 @@ public interface IStandardProductUnitService extends IService<StandardProductUni
     List<SpuPageVO> queryByName(String name);
 
     List<SpuPageVO> queryById(List<Long> ids);
+
+    boolean changeAvailable(Long spuId);
 }
