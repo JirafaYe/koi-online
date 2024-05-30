@@ -43,7 +43,8 @@ public class ReportsController {
     }
 
     @PostMapping("/downLoadFlowReports")
-    public void downLoadFlowReports(@RequestBody List<FlowReportsVO> vo, HttpServletRequest req, HttpServletResponse res) {
+    public void downLoadFlowReports( HttpServletRequest req, HttpServletResponse res) {
+        List<FlowReportsVO> vo = orderService.flowReports();
         InputStream inputStream = this.getClass().getResourceAsStream("/template/每日流量报表.xlsx");
         String fileName = "流量报表";
         ObjectImportUtil.exceptionDownload(res, fileName, vo, inputStream);
