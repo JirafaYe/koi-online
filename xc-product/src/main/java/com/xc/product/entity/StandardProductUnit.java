@@ -34,6 +34,8 @@ public class StandardProductUnit implements Serializable {
 
     private Long categoryId;
 
+    private Integer sales;
+
     /**
      * 图片
      */

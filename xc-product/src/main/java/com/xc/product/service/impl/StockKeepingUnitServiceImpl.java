@@ -309,10 +309,12 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
     @Override
     @Transactional
     public void updateSkuNum(Map<Long,Integer> numMap) {
+        HashMap<Long, Integer> spuMap = new HashMap<>();
         numMap.keySet().forEach(
                 obj->{
                     StockKeepingUnit stockKeepingUnit = baseMapper.selectById(obj);
                     if(stockKeepingUnit!=null){
+                        Long spuId = stockKeepingUnit.getSpuId();
                         SkuVO skuVO = BeanUtils.copyBean(stockKeepingUnit, SkuVO.class);
                         skuVO.setNum(stockKeepingUnit.getNum()+numMap.get(obj));
                         skuVO.setPrice(stockKeepingUnit.getPrice());
@@ -320,9 +322,15 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                             throw new BizIllegalException("不合法修改");
                         }
                         updateByVO(skuVO,stockKeepingUnit);
+                        if(!spuMap.containsKey(spuId)){
+                            spuMap.put(spuId, numMap.get(obj));
+                        } else{
+                            spuMap.put(spuId, spuMap.get(spuId) + numMap.get(obj));
+                        }
                     }
                 }
         );
+        spuMapper.updateSalesById(spuMap);
 
 
     }
