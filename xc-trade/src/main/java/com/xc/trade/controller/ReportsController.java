@@ -4,9 +4,11 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.metadata.Sheet;
 import com.xc.common.utils.ObjectImportUtil;
+import com.xc.trade.entity.dto.ReportsByRangeReqDTO;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.GoodsSpuReportsVO;
 import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
+import com.xc.trade.entity.vo.ReportsByRangeVO;
 import com.xc.trade.service.IOrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,6 @@ public class ReportsController {
     IOrderService orderService;
 
 
-
     /**
      * 每日订单销量报表
      *
@@ -42,8 +43,9 @@ public class ReportsController {
         return orderService.flowReports();
     }
 
+
     @PostMapping("/downLoadFlowReports")
-    public void downLoadFlowReports( HttpServletRequest req, HttpServletResponse res) {
+    public void downLoadFlowReports(HttpServletRequest req, HttpServletResponse res) {
         List<FlowReportsVO> vo = orderService.flowReports();
         InputStream inputStream = this.getClass().getResourceAsStream("/template/每日流量报表.xlsx");
         String fileName = "流量报表";
@@ -61,7 +63,6 @@ public class ReportsController {
     }
 
 
-
     /**
      * 商品大类销售报表
      *
@@ -72,6 +73,16 @@ public class ReportsController {
         return orderService.marketingReports();
     }
 
+    /**
+     * 根据时间范围查询报表
+     *
+     * @param reportsByRangeVO
+     * @return
+     */
+    @PostMapping("/getReportsByRange")
+    public ReportsByRangeVO getReportsByRange(@RequestBody ReportsByRangeReqDTO reportsByRangeVO) {
+        return orderService.getReportsByRange(reportsByRangeVO);
+    }
 
 
 }

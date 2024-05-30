@@ -2,14 +2,12 @@ package com.xc.trade.service;
 
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.trade.entity.dto.OrderDTO;
+import com.xc.trade.entity.dto.ReportsByRangeReqDTO;
 import com.xc.trade.entity.po.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.query.OrderQuery;
-import com.xc.trade.entity.vo.FlowReportsVO;
-import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
-import com.xc.trade.entity.vo.GoodsSpuReportsVO;
-import com.xc.trade.entity.vo.OrderVO;
+import com.xc.trade.entity.vo.*;
 
 import java.util.List;
 
@@ -53,4 +51,5 @@ public interface IOrderService extends IService<Orders> {
 
     PageDTO<OrderDTO> pageQuery(OrderQuery query);
 
+    ReportsByRangeVO getReportsByRange(ReportsByRangeReqDTO reportsByRangeVO);
 }

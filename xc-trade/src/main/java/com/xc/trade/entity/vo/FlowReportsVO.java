@@ -19,7 +19,7 @@ public class FlowReportsVO {
     private LocalDateTime time;
 
     /**
-     * 流量
+     * 销售数量
      */
     @ExcelProperty(value = "销售数量", index = 1)
     private Long flow;

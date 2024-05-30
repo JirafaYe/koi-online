@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.GoodsCategroyReportsVO;
 import com.xc.trade.entity.vo.GoodsSpuReportsVO;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
