@@ -97,9 +97,8 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             sku.setSpuId(vo.getSpuId());
             skuList.add(sku);
             if(sku.isAvailable()){
-                if(!(spuMapper.updateNumWhenCreateSku(vo.getSpuId(),p.getNum())==1
-                        &&spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())==1)){
-                    throw new BizIllegalException("更新spu价格or数量失败");
+                if(spuMapper.updateNumWhenCreateSku(vo.getSpuId(),p.getNum())!=1){
+                    throw new BizIllegalException("更新spu数量失败");
                 }
             }
         });
@@ -108,6 +107,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
            if(! saveBatch(skuList)){
                throw new BizIllegalException("批量插入sku失败");
            }
+        }
+        if(spuMapper.updateMinPriceWhenUpdateSku(vo.getSpuId())!=1){
+            throw new BizIllegalException("更新spu价格失败");
         }
 
         return true;
