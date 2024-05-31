@@ -2,6 +2,7 @@ package com.xc.product.controller;
 
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.utils.UserContext;
+import com.xc.product.entity.dto.SpuPageDTO;
 import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.query.SpuUserQuery;
@@ -60,7 +61,7 @@ public class SpuController {
      * @return
      */
     @GetMapping("/query")
-    public PageDTO<SpuPageVO> queryPage(SpuQuery query){
+    public SpuPageDTO<SpuPageVO> queryPage(SpuQuery query){
         return spuService.queryByPage(query);
     }
 
@@ -100,7 +101,7 @@ public class SpuController {
      * @return
      */
     @GetMapping("/page/user")
-    public PageDTO<SpuPageVO> userQuery(SpuUserQuery query){
+    public SpuPageDTO<SpuPageVO> userQuery(SpuUserQuery query){
         if(UserContext.getUser()==null){
             query.setSpuName(null);
         }
@@ -113,7 +114,7 @@ public class SpuController {
      * @return
      */
     @GetMapping("/page/admin")
-    public PageDTO<SpuPageVO> adminQuery(SpuAdminQuery query){
+    public SpuPageDTO<SpuPageVO> adminQuery(SpuAdminQuery query){
         return spuService.pageQuery(query,true);
     }
 }

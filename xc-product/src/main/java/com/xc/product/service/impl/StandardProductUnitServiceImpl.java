@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.media.MediaClient;
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.media.FileDTO;
+import com.xc.api.dto.media.MediaDTO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.exceptions.CommonException;
@@ -20,10 +21,12 @@ import com.xc.product.entity.Brand;
 import com.xc.product.entity.Category;
 import com.xc.product.entity.StandardProductUnit;
 import com.xc.product.entity.StockKeepingUnit;
+import com.xc.product.entity.dto.SpuPageDTO;
 import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.query.SpuUserQuery;
 import com.xc.product.entity.vo.BrandPageVO;
+import com.xc.product.entity.vo.SkuPageVO;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
 import com.xc.product.mapper.BrandMapper;
@@ -35,6 +38,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -123,8 +127,8 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     public List<SpuPageVO> convert2voList(List<StandardProductUnit> spu){
         List<SpuPageVO> res=CollUtils.emptyList();
         if(!CollUtils.isEmpty(spu)){
-            Set<Long> users = spu.stream().map(StandardProductUnit::getUpdater).collect(Collectors.toSet());
-            users.addAll(spu.stream().map(StandardProductUnit::getCreater).collect(Collectors.toSet()));
+            Set<Long> users = spu.stream().map(StandardProductUnit::getCreater).collect(Collectors.toSet());
+            Set<Long> video = spu.stream().map(StandardProductUnit::getMainVideoId).filter(Objects::nonNull).collect(Collectors.toSet());
             HashSet<Long> images = new HashSet<>();
             HashMap<Long, List<Long>> imagesMapMain = new HashMap<>();
             HashMap<Long, List<Long>> imagesMapContents = new HashMap<>();
@@ -142,13 +146,32 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
                     FileDTO::getId,
                     FileDTO::getFileUrl
             ));
+            Map<Long, String> userMap = userClient.getUserInfos(users).stream().collect(Collectors.toMap(
+                    UserInfoResVO::getUserId,
+                    UserInfoResVO::getAccount
+            ));
+            Map<Long, String> realVideo;
+            if(!CollUtils.isEmpty(video)){
+                 realVideo= mediaClient.getMediaInfos(video).stream().collect(Collectors.toMap(
+                        MediaDTO::getId,
+                        MediaDTO::getMediaUrl
+                ));
+            } else {
+                realVideo = null;
+            }
+
+
             LocalDateTime daysBefore = LocalDateTime.now().minusDays(7);
             res = spu.stream().map(obj -> {
                 SpuPageVO spuPageVO = BeanUtils.copyBean(obj, SpuPageVO.class);
                 spuPageVO.setContentImagesUrl(getUrlList(imagesMapContents.get(obj.getId()), imageMap));
                 spuPageVO.setMainImagesUrl(getUrlList(imagesMapMain.get(obj.getId()), imageMap));
+                spuPageVO.setCreater(userMap.get(obj.getCreater()));
                 if(!obj.getCreateTime().isBefore(daysBefore)){
                     spuPageVO.setUpToDate(true);
+                }
+                if(obj.getMainVideoId()!=null) {
+                    spuPageVO.setMainVideoUrl(realVideo != null ? realVideo.get(obj.getMainVideoId()) : null);
                 }
                 return spuPageVO;
             }).collect(Collectors.toList());
@@ -172,7 +195,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     }
 
     @Override
-    public PageDTO<SpuPageVO> queryByPage(SpuQuery query) {
+    public SpuPageDTO<SpuPageVO> queryByPage(SpuQuery query) {
         LambdaQueryChainWrapper<StandardProductUnit> wrapper= lambdaQuery();
         if(query.getBrandId()!=null){
             wrapper.eq(StandardProductUnit::getBrandId,query.getBrandId());
@@ -180,29 +203,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
             wrapper.eq(StandardProductUnit::getCategoryId,query.getCategoryId());
         }
         Page<StandardProductUnit> page = wrapper.page(query.toMpPageDefaultSortByCreateTimeDesc());
-        List<StandardProductUnit> records = page.getRecords();
-        PageDTO<SpuPageVO> res = new PageDTO<>();
-        if(!CollUtils.isEmpty(records)){
-            Set<Long> userIds = records.stream().map(StandardProductUnit::getCreater).collect(Collectors.toSet());
-            userIds.addAll(records.stream().map(StandardProductUnit::getUpdater).collect(Collectors.toList()));
-            HashMap<Long, String> userMap = new HashMap<>();
-            for (UserInfoResVO userInfo : userClient.getUserInfos(userIds)) {
-                userMap.put(userInfo.getUserId(),userInfo.getAccount());
-            }
-
-            if(!CollUtils.isEmpty(userMap)){
-                List<SpuPageVO> voList = records.stream().map(obj->{
-                    SpuPageVO spuPageVO = BeanUtils.copyBean(obj, SpuPageVO.class);
-                    spuPageVO.setCreater(userMap.get(obj.getCreater()));
-                    spuPageVO.setUpdater(userMap.get(obj.getUpdater()));
-                    return spuPageVO;
-                }).collect(Collectors.toList());
-
-                res=PageDTO.of(page, voList);
-            }
-        }
-
-        return res;
+        return generateSpuPageDTO(page);
     }
 
     @Override
@@ -221,7 +222,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     }
 
     @Override
-    public PageDTO<SpuPageVO> pageQuery(SpuAdminQuery query, boolean isAdmin) {
+    public SpuPageDTO<SpuPageVO> pageQuery(SpuAdminQuery query, boolean isAdmin) {
         LambdaQueryChainWrapper<StandardProductUnit> chainWrapper = lambdaQuery();
         if(!StringUtils.isEmpty(query.getSpuName())){
             chainWrapper.like(!StringUtils.isEmpty(query.getSpuName()), StandardProductUnit::getSpuName,query.getSpuName());
@@ -234,11 +235,19 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         }
 
         Page<StandardProductUnit> page = chainWrapper.page(query.toMpPage());
+        return generateSpuPageDTO(page);
+    }
+
+    @Nullable
+    private SpuPageDTO<SpuPageVO> generateSpuPageDTO(Page<StandardProductUnit> page) {
         List<StandardProductUnit> records = page.getRecords();
-        PageDTO<SpuPageVO> res=PageDTO.empty(page);
+        SpuPageDTO<SpuPageVO> res=null;
         List<SpuPageVO> spuPageVOS = convert2voList(records);
         if(!CollUtils.isEmpty(spuPageVOS)){
-            res=PageDTO.of(page,spuPageVOS);
+            long unAvailable = spuPageVOS.stream().filter(p -> !p.getAvailable()).count();
+            long available = spuPageVOS.stream().filter(SpuPageVO::getAvailable).count();
+            PageDTO<SpuPageVO> spuPageVOPageDTO = PageDTO.of(page, spuPageVOS);
+            res=new SpuPageDTO<>(spuPageVOPageDTO, (int) unAvailable, (int) available);
         }
         return res;
     }

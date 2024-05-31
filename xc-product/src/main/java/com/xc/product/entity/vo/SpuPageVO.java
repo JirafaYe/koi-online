@@ -25,11 +25,6 @@ public class SpuPageVO {
     private String  category;
 
     /**
-     * 图片list,以，分隔,最多8个
-     */
-    private String  mainImagesId;
-
-    /**
      * 图片url list,以，分隔,最多8个
      */
     private String  mainImagesUrl;
@@ -40,19 +35,14 @@ public class SpuPageVO {
     private String content;
 
     /**
-     * 详情图，id以，分隔,最多8个
-     */
-    private String  contentImagesId;
-
-    /**
      * 详情图，url以，分隔,最多8个
      */
     private String  contentImagesUrl;
 
     /**
-     * 视频id
+     * 视频url
      */
-    private Long mainVideoId;
+    private String  mainVideoUrl;
 
     /**
      * 默认为false
@@ -69,10 +59,6 @@ public class SpuPageVO {
      */
     private String creater;
 
-    /**
-     * 更新人
-     */
-    private String updater;
 
     /**
      * 是否新品（7天内创建）
