@@ -33,6 +33,7 @@
             o.spu_id = s.id  and s.category_id = p.id
         GROUP BY
             s.category_id
+        ORDER BY count DESC ;
     </select>
 
 </mapper>
