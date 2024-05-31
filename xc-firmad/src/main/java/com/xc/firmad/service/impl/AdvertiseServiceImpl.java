@@ -82,11 +82,12 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
         advertise.setAdStartDate(vo.getAdStartDate());
         advertise.setAdUri(vo.getAdUri());
         advertise.setAdEndDate(vo.getAdEndDate());
-        List<FileDTO> fileInfos = mediaClient.getFileInfos(List.of(vo.getFileId()));
+        Long fileId = Long.valueOf(vo.getFileId());
+        List<FileDTO> fileInfos = mediaClient.getFileInfos(List.of(fileId));
         if(CollUtils.isEmpty(fileInfos)){
             throw new BadRequestException("图片不存在");
         }
-        advertise.setFileId(vo.getFileId());
+        advertise.setFileId(fileId);
         return advertiseMapper.insert(advertise);
     }
 
