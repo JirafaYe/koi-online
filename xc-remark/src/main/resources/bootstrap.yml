@@ -30,3 +30,6 @@ xc:
   auth:
     resource:
       enable: true
+      exclude-login-paths:
+        - /replies/page
+        - /reviews/list

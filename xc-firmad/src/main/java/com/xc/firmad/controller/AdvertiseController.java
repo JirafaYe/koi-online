@@ -62,7 +62,7 @@ public class AdvertiseController {
      * 用户获取广告
      * @return
      */
-    @GetMapping
+    @GetMapping("/get")
     public AdvertiseVO userGetAdvertise(){
         return advertiseService.userGetAdvertise();
     }

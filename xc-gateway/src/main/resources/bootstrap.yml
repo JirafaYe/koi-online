@@ -91,3 +91,8 @@ xc:
     excludePaths: # 无需登录校验的路径
       - /user/login
       - /user/register
+      - /spu/page/user
+      - /coupons/list
+      - /advertise/get
+      - /replies/page
+      - /reviews/list
