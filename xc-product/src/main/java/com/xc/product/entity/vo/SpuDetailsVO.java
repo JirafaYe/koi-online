@@ -2,11 +2,11 @@ package com.xc.product.entity.vo;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.Map;
+import java.util.Set;
 
 @Data
-public class SpuPageVO {
+public class SpuDetailsVO {
     private Long id;
 
     /**
@@ -65,11 +65,6 @@ public class SpuPageVO {
     private Integer sales;
 
     /**
-     * 商品最低价*100
-     */
-    private Integer minPrice;
-
-    /**
      * 创建人
      */
     private String creater;
@@ -79,4 +74,9 @@ public class SpuPageVO {
      * 是否新品（7天内创建）
      */
     private boolean upToDate=false;
+
+    /**
+     * 属性map
+     */
+    private Map<String , Set<String>> attributesMap;
 }

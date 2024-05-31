@@ -7,6 +7,7 @@ import com.xc.product.entity.dto.SpuPageDTO;
 import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.query.SpuUserQuery;
+import com.xc.product.entity.vo.SpuDetailsVO;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
 
@@ -36,6 +37,8 @@ public interface IStandardProductUnitService extends IService<StandardProductUni
     List<SpuPageVO> queryByName(String name);
 
     List<SpuPageVO> queryById(List<Long> ids);
+
+    SpuDetailsVO queryById(Long spuId);
 
     boolean changeAvailable(Long spuId);
 

@@ -52,7 +52,7 @@ public class StandardProductUnit implements Serializable {
     private String  contentImagesId;
 
     /**
-     * 商品最低价*100
+     * 商品最低价
      */
     private Integer minPrice;
 

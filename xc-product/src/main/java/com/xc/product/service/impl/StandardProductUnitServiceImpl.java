@@ -11,6 +11,7 @@ import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
@@ -25,16 +26,14 @@ import com.xc.product.entity.dto.SpuPageDTO;
 import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.query.SpuUserQuery;
-import com.xc.product.entity.vo.BrandPageVO;
-import com.xc.product.entity.vo.SkuPageVO;
-import com.xc.product.entity.vo.SpuPageVO;
-import com.xc.product.entity.vo.SpuVO;
+import com.xc.product.entity.vo.*;
 import com.xc.product.mapper.BrandMapper;
 import com.xc.product.mapper.CategoryMapper;
 import com.xc.product.mapper.StandardProductUnitMapper;
 import com.xc.product.mapper.StockKeepingUnitMapper;
 import com.xc.product.service.IStandardProductUnitService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xc.product.service.IStockKeepingUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +66,9 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
 
     @Resource
     BrandMapper brandMapper;
+
+    @Resource
+    IStockKeepingUnitService skuService;
 
     @Resource
     StockKeepingUnitMapper stockKeepingUnitMapper;
@@ -128,16 +130,15 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         List<SpuPageVO> res=CollUtils.emptyList();
         if(!CollUtils.isEmpty(spu)){
             Set<Long> users = spu.stream().map(StandardProductUnit::getCreater).collect(Collectors.toSet());
-            Set<Long> video = spu.stream().map(StandardProductUnit::getMainVideoId).filter(Objects::nonNull).collect(Collectors.toSet());
+            Set<Long> category = spu.stream().map(StandardProductUnit::getCategoryId).collect(Collectors.toSet());
+            Set<Long> brand = spu.stream().map(StandardProductUnit::getBrandId).collect(Collectors.toSet());
             HashSet<Long> images = new HashSet<>();
-            HashMap<Long, List<Long>> imagesMapMain = new HashMap<>();
-            HashMap<Long, List<Long>> imagesMapContents = new HashMap<>();
+            HashMap<Long, Long> imagesMapMain = new HashMap<>();
 
             for (StandardProductUnit unit : spu) {
                 List<Long> mains = splitImagesId(unit.getMainImagesId());
-                imagesMapMain.put(unit.getId(), mains);
+                imagesMapMain.put(unit.getId(), mains.get(0));
                 List<Long> contents = splitImagesId(unit.getContentImagesId());
-                imagesMapContents.put(unit.getId(), contents);
                 images.addAll(mains);
                 images.addAll(contents);
             }
@@ -150,28 +151,27 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
                     UserInfoResVO::getUserId,
                     UserInfoResVO::getAccount
             ));
-            Map<Long, String> realVideo;
-            if(!CollUtils.isEmpty(video)){
-                 realVideo= mediaClient.getMediaInfos(video).stream().collect(Collectors.toMap(
-                        MediaDTO::getId,
-                        MediaDTO::getMediaUrl
-                ));
-            } else {
-                realVideo = null;
-            }
+
+            Map<Long, String> brandMap = brandMapper.selectBatchIds(brand).stream().collect(Collectors.toMap(
+                    Brand::getId,
+                    Brand::getBrandName
+            ));
+
+            Map<Long, String> categoryMap = categoryMapper.selectBatchIds(category).stream().collect(Collectors.toMap(
+                    Category::getId,
+                    Category::getCategoryName
+            ));
 
 
             LocalDateTime daysBefore = LocalDateTime.now().minusDays(7);
             res = spu.stream().map(obj -> {
                 SpuPageVO spuPageVO = BeanUtils.copyBean(obj, SpuPageVO.class);
-                spuPageVO.setContentImagesUrl(getUrlList(imagesMapContents.get(obj.getId()), imageMap));
-                spuPageVO.setMainImagesUrl(getUrlList(imagesMapMain.get(obj.getId()), imageMap));
+                spuPageVO.setMainImagesUrl(getUrlList(Collections.singletonList(imagesMapMain.get(obj.getId())), imageMap));
                 spuPageVO.setCreater(userMap.get(obj.getCreater()));
+                spuPageVO.setBrand(brandMap.get(obj.getBrandId()));
+                spuPageVO.setCategory(categoryMap.get(obj.getCategoryId()));
                 if(!obj.getCreateTime().isBefore(daysBefore)){
                     spuPageVO.setUpToDate(true);
-                }
-                if(obj.getMainVideoId()!=null) {
-                    spuPageVO.setMainVideoUrl(realVideo != null ? realVideo.get(obj.getMainVideoId()) : null);
                 }
                 return spuPageVO;
             }).collect(Collectors.toList());
@@ -190,6 +190,40 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
                 spuPageVO.setSpuName(obj.getSpuName());
                 return spuPageVO;
             }).collect(Collectors.toList());
+        }
+        return res;
+    }
+
+    @Override
+    public SpuDetailsVO queryById(Long spuId) {
+        StandardProductUnit spu = baseMapper.selectById(spuId);
+        if(spu==null){
+            throw new BizIllegalException("spuId不存在");
+        }
+        Category category = categoryMapper.selectById(spu.getCategoryId());
+        Brand brand = brandMapper.selectById(spu.getBrandId());
+        List<Long> main = splitImagesId(spu.getContentImagesId());
+        List<Long> content = splitImagesId(spu.getContentImagesId());
+        main.addAll(content);
+
+        Map<Long, String> imageMap = mediaClient.getFileInfos(main).stream().collect(Collectors.toMap(
+                FileDTO::getId,
+                FileDTO::getFileUrl
+        ));
+        List<UserInfoResVO> creater = userClient.getUserInfos(Collections.singleton(spu.getCreater()));
+        Map<String, Set<String>> attributes = skuService.getAttributes(spuId);
+
+        SpuDetailsVO res = BeanUtils.copyBean(spu, SpuDetailsVO.class);
+        res.setAttributesMap(attributes);
+        res.setBrand(brand.getBrandName());
+        res.setCategory(category.getCategoryName());
+        creater.stream().findFirst().ifPresent(p->res.setCreater(p.getAccount()));
+        res.setContentImagesUrl(getUrlList(content,imageMap));
+        res.setMainImagesUrl(getUrlList(main,imageMap));
+        if(spu.getMainVideoId()!=null)
+        {
+            mediaClient.getMediaInfos(Collections.singleton(spu.getMainVideoId()))
+                    .stream().findFirst().ifPresent(p->res.setMainVideoUrl(p.getMediaUrl()));
         }
         return res;
     }

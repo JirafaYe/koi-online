@@ -6,6 +6,7 @@ import com.xc.product.entity.dto.SpuPageDTO;
 import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.query.SpuUserQuery;
+import com.xc.product.entity.vo.SpuDetailsVO;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
 import com.xc.product.service.IStandardProductUnitService;
@@ -116,5 +117,15 @@ public class SpuController {
     @GetMapping("/page/admin")
     public SpuPageDTO<SpuPageVO> adminQuery(SpuAdminQuery query){
         return spuService.pageQuery(query,true);
+    }
+
+    /**
+     * 根据spuId获取详情
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/details")
+    public SpuDetailsVO queryById(@Param("id") Long spuId){
+        return spuService.queryById(spuId);
     }
 }
