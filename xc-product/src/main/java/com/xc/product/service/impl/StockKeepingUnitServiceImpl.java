@@ -325,9 +325,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                         }
                         updateByVO(skuVO,stockKeepingUnit);
                         if(!spuMap.containsKey(spuId)){
-                            spuMap.put(spuId, numMap.get(obj));
+                            spuMap.put(spuId, numMap.get(obj) * (-1));
                         } else{
-                            spuMap.put(spuId, spuMap.get(spuId) + numMap.get(obj));
+                            spuMap.put(spuId, spuMap.get(spuId) + numMap.get(obj) * (-1));
                         }
                     }
                 }

@@ -4,7 +4,7 @@
 
     <update id="updateSalesByIds">
         UPDATE standard_product_unit
-        SET sales = CASE
+        SET sales = sales + CASE
         <foreach collection="list" item="spu" index="index" separator=" ">
             WHEN id = #{spu.id} THEN #{spu.sales}
         </foreach>
