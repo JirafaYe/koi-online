@@ -7,6 +7,7 @@ import com.xc.firmad.entity.Advertise;
 import com.xc.firmad.vo.req.AddAdvertise;
 import com.xc.firmad.vo.req.SearchAdvertiseVO;
 import com.xc.firmad.vo.res.AdvertisePageResVO;
+import com.xc.firmad.vo.res.AdvertiseVO;
 
 import java.util.List;
 
@@ -38,4 +39,6 @@ public interface AdvertiseService extends IService<Advertise> {
      * @return
      */
     Integer deleteAdvertise(List<Long> ids);
+
+    AdvertiseVO userGetAdvertise();
 }

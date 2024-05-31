@@ -23,6 +23,7 @@ import com.xc.firmad.service.AdvertiseService;
 import com.xc.firmad.vo.req.AddAdvertise;
 import com.xc.firmad.vo.req.SearchAdvertiseVO;
 import com.xc.firmad.vo.res.AdvertisePageResVO;
+import com.xc.firmad.vo.res.AdvertiseVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -105,5 +106,15 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
 //            TODO mediaClient.deleteFiles(longIds);
         });
         return advertiseMapper.deleteBatchIds(ids);
+    }
+
+    @Override
+    public AdvertiseVO userGetAdvertise() {
+        LocalDateTime now = LocalDateTime.now();
+        Advertise ad = baseMapper.getRandAdvertise(now);
+        FileDTO fileDTO = mediaClient.getFileInfos(List.of(ad.getFileIds())).get(0);
+        AdvertiseVO vo = BeanUtils.copyBean(ad, AdvertiseVO.class);
+        vo.setImgUrl(fileDTO.getFileUrl());
+        return vo;
     }
 }

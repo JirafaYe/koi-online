@@ -7,6 +7,7 @@ import com.xc.firmad.service.AdvertiseService;
 import com.xc.firmad.vo.req.AddAdvertise;
 import com.xc.firmad.vo.req.SearchAdvertiseVO;
 import com.xc.firmad.vo.res.AdvertisePageResVO;
+import com.xc.firmad.vo.res.AdvertiseVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -54,6 +55,12 @@ public class AdvertiseController {
     @DeleteMapping("deleteAdvertise")
     public Integer deleteAdvertise(List<Long> ids){
         return advertiseService.deleteAdvertise(ids);
+    }
+
+
+    @GetMapping
+    public AdvertiseVO userGetAdvertise(){
+        return advertiseService.userGetAdvertise();
     }
 }
 
