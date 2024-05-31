@@ -60,11 +60,6 @@ public class SpuPageVO {
     private Integer sales;
 
     /**
-     * 商品最低价*100
-     */
-    private Integer minPrice;
-
-    /**
      * 创建人
      */
     private String creater;
