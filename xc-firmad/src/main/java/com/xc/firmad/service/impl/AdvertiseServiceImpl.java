@@ -51,7 +51,6 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
 
     @Override
     public PageDTO<AdvertisePageResVO> getAdvertisePage(SearchAdvertiseVO vo) {
-        LambdaQueryWrapper<Advertise> lqw = new LambdaQueryWrapper<Advertise>().orderByAsc(Advertise::getAdStartDate);
         Page<Advertise> selectPage = lambdaQuery().like(StringUtils.isNotEmpty(vo.getAdName()), Advertise::getAdName, vo.getAdName())
                 .between(vo.getMinExpense() != null && vo.getMaxExpense() != null, Advertise::getExpense, vo.getMinExpense(), vo.getMaxExpense())
                 .gt(vo.getAdStartDate() != null, Advertise::getAdStartDate, vo.getAdStartDate())

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
+import com.xc.api.client.media.MediaClient;
+import com.xc.api.dto.media.FileDTO;
 import com.xc.common.constants.ErrorInfo;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
@@ -39,6 +41,8 @@ public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMap
 
     @Resource
     private CorporatePartnerMapper corporatePartnerMapper;
+    @Resource
+    private MediaClient mediaClient;
     @Override
     public PageDTO<CorporatePartnerResVO> getCorporatePage(PageQuery vo) {
 
@@ -56,7 +60,11 @@ public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMap
         partner.setPartnerName(vo.getPartnerName());
         partner.setUriBrand(vo.getUriBrand());
         Long fileId = vo.getFileId();
-
+        //判断文件是否存在
+        List<FileDTO> fileInfos = mediaClient.getFileInfos(List.of(fileId));
+        if(CollUtil.isEmpty(fileInfos)){
+            throw new CommonException(ErrorInfo.Code.FAILED,ErrorInfo.Msg.FILE_NOT_EXIST);
+        }
         partner.setFileId(fileId);
         partner.setRemark(vo.getRemark());
         return this.save(partner);
@@ -73,7 +81,8 @@ public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMap
 
     @Override
     public PageDTO<CorporatePartnerResVO> searchCorporatePartner(SearchCorporatePartnerVO vo) {
-        LambdaQueryWrapper<CorporatePartner> lqw = new LambdaQueryWrapper<CorporatePartner>().like(CorporatePartner::getPartnerName, vo.getName());
+        LambdaQueryWrapper<CorporatePartner> lqw = new LambdaQueryWrapper<CorporatePartner>()
+                .like(CorporatePartner::getPartnerName, vo.getName());
         Page<CorporatePartner> page = corporatePartnerMapper.selectPage(new Page<>(vo.getPageNo(), vo.getPageSize()), lqw);
         List<CorporatePartnerResVO> list = page.getRecords().stream()
                 .map(record -> {

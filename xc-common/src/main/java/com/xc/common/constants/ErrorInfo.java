@@ -25,6 +25,7 @@ public interface ErrorInfo {
 
         String PASSWORD_ERROR = "密码错误";
 
+        String FILE_NOT_EXIST = "文件不存在";
     }
 
     interface Code {
