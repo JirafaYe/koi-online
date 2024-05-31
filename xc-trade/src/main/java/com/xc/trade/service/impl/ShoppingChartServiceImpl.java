@@ -13,6 +13,7 @@ import com.xc.trade.entity.dto.ShoppingChartDTO;
 import com.xc.trade.entity.query.ShoppingChartQuery;
 import com.xc.trade.entity.vo.ShoppingChartVO;
 import com.xc.trade.mapper.ShoppingChartMapper;
+import com.xc.trade.service.IOrderService;
 import com.xc.trade.service.IShoppingChartService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,9 @@ public class ShoppingChartServiceImpl extends ServiceImpl<ShoppingChartMapper, S
     @Resource
     ProductClient productClient;
 
+    @Resource
+    IOrderService orderService;
+
     @Override
     public boolean create(ShoppingChartVO vo) {
         vo.setId(null);
@@ -61,18 +65,14 @@ public class ShoppingChartServiceImpl extends ServiceImpl<ShoppingChartMapper, S
     }
     ShoppingChart getShoppingChart(ShoppingChartVO vo){
         List<SkuPageVO> skuById = productClient.getSkuById(List.of(vo.getSkuId()));
-        if(CollUtils.isEmpty(skuById)){
-           throw new CommonException("sku id invalid");
-        }
+        orderService.validateSkuPageVO(skuById);
+
         SkuPageVO sku= skuById.get(0);
-        if (sku.getNum() < vo.getQuantity()) {
-            throw new CommonException("quantity invalid");
-        }
 
         return BeanUtils.copyBean(vo, ShoppingChart.class)
                 .setUserId(UserContext.getUser())
                 .setSpuId(sku.getSpuId())
-                .setPrice((int) (sku.getPrice() * 100));
+                .setPrice(sku.getPrice());
     }
 
     @Override

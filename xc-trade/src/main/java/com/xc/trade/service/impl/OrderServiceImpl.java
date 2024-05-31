@@ -120,7 +120,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             List<CouponDiscountDTO> discounts = promotionClient.findDiscountSolution(orderProducts)
                     .stream().map(obj -> obj.setDiscountDetail(null)).collect(Collectors.toList());
 
-            Integer sum = skuById.stream().map(sku -> sku.getNum() * sku.getPrice())
+            Integer sum = list.stream().map(chart -> chart.getQuantity() * chart.getPrice())
                     .mapToInt(Integer::intValue).reduce(0, Integer::sum);
             res.setFinalPrice(sum);
             res.setRawPrice(sum);
@@ -164,6 +164,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         if (CollUtils.isEmpty(shoppingList)) {
             throw new CommonException("");
         }
+
+        Map<Long, Integer> quantityMap = shoppingList.stream().collect(Collectors.toMap(
+                ShoppingChart::getSkuId,
+                ShoppingChart::getQuantity
+        ));
 
         String chartsKey = vo.getShoppingCharts().stream().map(String::valueOf).collect(Collectors.joining(","));
 
@@ -212,7 +217,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             orderDetails.setId(null);
             orderDetails.setOrderId(orders.getId());
             orderDetails.setSkuId(obj.getId());
-            orderDetails.setQuantity(obj.getNum());
+            orderDetails.setQuantity(quantityMap.get(obj.getId()));
             orderDetails.setFinalPrice(obj.getPrice());
             if (finalMap != null) {
                 orderDetails.setFinalPrice(obj.getPrice() - finalMap.get(obj.getId()));
@@ -237,7 +242,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         }
         shoppingChartMapper.deleteBatchIds(vo.getShoppingCharts());
         productClient.updateSkuNum(list);
-        //todo: 定时任务查询支付状态
+
+        redisTemplate.opsForValue()
+                .set(RedisConstants.ORDER_PREFIX+orders.getId()
+                        ,String.valueOf(orders.getId()),Duration.ofMinutes(RedisConstants.DURATION_MINUTES));
 
         return true;
     }
@@ -247,7 +255,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             throw new BizIllegalException("skuId 无效");
         }
         Set<Long> invalidSku = skuVOs.stream()
-                .filter(p -> !p.getAvailable().equals(true)).map(SkuPageVO::getId).collect(Collectors.toSet());
+                .filter(p -> !p.getAvailable()).map(SkuPageVO::getId).collect(Collectors.toSet());
         invalidSku.addAll(skuVOs.stream()
                 .filter(p -> p.getNum() <= 0).map(SkuPageVO::getId).collect(Collectors.toSet()));
         if (!CollUtils.isEmpty(invalidSku)) {
@@ -294,15 +302,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Override
     @Transactional
     public boolean canceledOrder(Long orderId) {
-        Orders one = lambdaQuery().eq(Orders::getId, orderId).eq(Orders::getDeliveryStatus, 0).one();
+        Orders one = lambdaQuery().eq(Orders::getId, orderId).isNull(Orders::getPayTime).one();
         if (one == null) {
-            throw new BizIllegalException("该订单已发出不可取消");
+            throw new BizIllegalException("该订单已支付不可取消");
         }
         List<OrderDetails> orderDetails = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId).isNull(OrderDetails::getRefundStatus));
-
-        //todo: 判断是否支付and调用退款接口进行退款(reduce)
-        Integer reduce = orderDetails.stream().map(p -> p.getQuantity() * p.getFinalPrice())
-                .mapToInt(Integer::intValue).reduce(0, Integer::sum);
 
         orderDetailsService.updateBatchById(orderDetails.stream().map(p -> p.setCanceled(true)).collect(Collectors.toList()));
         orderMapper.updateOrderStatusByUser(OrdersStatus.CLOSED.getValue(), orderId, UserContext.getUser());
