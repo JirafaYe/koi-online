@@ -55,6 +55,11 @@ public class SpuPageVO {
     private Long num;
 
     /**
+     * 销量
+     */
+    private Integer sales;
+
+    /**
      * 创建人
      */
     private String creater;

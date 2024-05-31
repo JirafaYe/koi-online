@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xc.product.mapper.StandardProductUnitMapper">
-    <update id="updateSalesById" parameterType="map">
+
+    <update id="updateSalesByIds">
         UPDATE standard_product_unit
         SET sales = CASE
-        <foreach collection="spuMap" item="item" index="index" open="(" separator=", " close=")">
-            WHEN id = #{item.key} THEN #{item.value}
+        <foreach collection="list" item="spu" index="index" separator=" ">
+            WHEN id = #{spu.id} THEN #{spu.sales}
         </foreach>
         END
         WHERE id IN
-        <foreach collection="spuMap.keySet()" item="id" open="(" separator=", " close=")" index="index">
-            #{id}
+        <foreach collection="list" item="spu" index="index" open="(" separator="," close=")">
+            #{spu.id}
         </foreach>
     </update>
 </mapper>

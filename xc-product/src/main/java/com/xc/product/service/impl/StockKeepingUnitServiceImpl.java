@@ -320,7 +320,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                         SkuVO skuVO = BeanUtils.copyBean(stockKeepingUnit, SkuVO.class);
                         skuVO.setNum(stockKeepingUnit.getNum()+numMap.get(obj));
                         skuVO.setPrice(stockKeepingUnit.getPrice());
-                        if(stockKeepingUnit.getNum()<0){
+                        if(stockKeepingUnit.getNum()<=0){
                             throw new BizIllegalException("不合法修改");
                         }
                         updateByVO(skuVO,stockKeepingUnit);
@@ -332,8 +332,14 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                     }
                 }
         );
-        spuMapper.updateSalesById(spuMap);
-
+        List<StandardProductUnit> list = new ArrayList<>(spuMap.size());
+        spuMap.forEach( (key, value) -> {
+            StandardProductUnit spu = new StandardProductUnit();
+            spu.setId(key);
+            spu.setSales(value);
+            list.add(spu);
+        });
+        spuMapper.updateSalesByIds(list);
 
     }
 
