@@ -244,8 +244,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         productClient.updateSkuNum(list);
 
         redisTemplate.opsForValue()
-                .set(RedisConstants.ORDER_PREFIX+orders.getId()
-                        ,String.valueOf(orders.getId()),Duration.ofMinutes(RedisConstants.DURATION_MINUTES));
+                .set(RedisConstants.ORDER_PREFIX+orders.getId()+":"+orders.getUserId()
+                        ,String.valueOf(orders.getUserId()),Duration.ofMinutes(RedisConstants.DURATION_MINUTES));
 
         return true;
     }
