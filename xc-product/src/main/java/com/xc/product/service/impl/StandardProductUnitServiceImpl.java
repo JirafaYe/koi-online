@@ -138,9 +138,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
             for (StandardProductUnit unit : spu) {
                 List<Long> mains = splitImagesId(unit.getMainImagesId());
                 imagesMapMain.put(unit.getId(), mains.get(0));
-                List<Long> contents = splitImagesId(unit.getContentImagesId());
-                images.addAll(mains);
-                images.addAll(contents);
+                images.add(mains.get(0));
             }
 
             Map<Long, String> imageMap = mediaClient.getFileInfos(images).stream().collect(Collectors.toMap(
