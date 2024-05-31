@@ -1,5 +1,6 @@
 package com.xc.trade.service;
 
+import com.xc.api.dto.product.SkuPageVO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.trade.entity.dto.OrderDTO;
 import com.xc.trade.entity.dto.ReportsByRangeReqDTO;
@@ -30,6 +31,8 @@ public interface IOrderService extends IService<Orders> {
     List<GoodsSpuReportsVO> achieveReports();
 
     List<GoodsCategroyReportsVO> marketingReports();
+
+    void validateSkuPageVO(List<SkuPageVO> skuVOs);
 
     /**
      * 管理员发货

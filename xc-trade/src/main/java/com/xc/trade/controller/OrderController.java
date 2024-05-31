@@ -83,7 +83,7 @@ public class OrderController {
     }
 
     /**
-     * 取消订单
+     * 取消订单(未支付时)
      * @param id 订单id
      * @return
      */
