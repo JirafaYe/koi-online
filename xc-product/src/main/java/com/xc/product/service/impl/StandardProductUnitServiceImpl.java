@@ -224,9 +224,9 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     @Override
     public SpuPageDTO<SpuPageVO> pageQuery(SpuAdminQuery query, boolean isAdmin) {
         LambdaQueryChainWrapper<StandardProductUnit> chainWrapper = lambdaQuery();
-        if(!StringUtils.isEmpty(query.getSpuName())){
-            chainWrapper.like(!StringUtils.isEmpty(query.getSpuName()), StandardProductUnit::getSpuName,query.getSpuName());
-        }
+        chainWrapper
+                .like(!StringUtils.isEmpty(query.getSpuName()), StandardProductUnit::getSpuName,query.getSpuName())
+                .eq(StandardProductUnit::isAvailable, "1");
         if(isAdmin){
             chainWrapper
                     .eq(query.getAvailable()!=null,StandardProductUnit::isAvailable,query.getAvailable())

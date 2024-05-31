@@ -27,3 +27,8 @@ spring:
 xc:
   jdbc:
     database: xc_product
+  auth:
+    resource:
+      enable: true
+      exclude-login-paths:
+        - /spu/page/user
