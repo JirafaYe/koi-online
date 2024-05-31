@@ -79,8 +79,8 @@ public class Advertise implements Serializable {
     /**
      * 上传图片文件id
      */
-    @TableField("file_ids")
-    private Long fileIds;
+    @TableField("file_id")
+    private Long fileId;
 
 
 }

@@ -27,5 +27,5 @@ public class CorporatePartnerResVO {
     /**
      * 合作商图片
      */
-    private String fileIds;
+    private String fileId;
 }

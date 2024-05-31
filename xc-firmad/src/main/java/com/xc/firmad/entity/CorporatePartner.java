@@ -46,8 +46,8 @@ public class CorporatePartner implements Serializable {
     /**
      * 合作商图片所关联的文件id
      */
-    @TableField("file_ids")
-    private String fileIds;
+    @TableField("file_id")
+    private Long fileId;
 
     /**
      * 备注

@@ -12,12 +12,12 @@
         <result column="ad_end_date" property="adEndDate" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
-        <result column="file_ids" property="fileIds" />
+        <result column="file_id" property="fileId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, ad_name, expense, ad_start_date, ad_uri, ad_end_date, create_time, update_time, file_ids
+        id, ad_name, expense, ad_start_date, ad_uri, ad_end_date, create_time, update_time, file_id
     </sql>
 
 

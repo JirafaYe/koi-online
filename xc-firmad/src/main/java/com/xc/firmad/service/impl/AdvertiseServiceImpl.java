@@ -61,16 +61,8 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
         List<Advertise> records = selectPage.getRecords();
         ArrayList<AdvertisePageResVO> list = new ArrayList<>();
         for (Advertise record : records) {
-            String fileIds = record.getFileIds();
             AdvertisePageResVO resVO = new AdvertisePageResVO();
-            List<Long> longIds = Arrays.stream(fileIds.split(","))
-                    .map(String::trim)
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            List<FileDTO> fileInfos = mediaClient.getFileInfos(longIds);
-            List<Long> collect = fileInfos.stream().map(FileDTO::getId).collect(Collectors.toList());
             BeanUtils.copyProperties(record, resVO);
-            resVO.setFileIds(collect);
             list.add(resVO);
         }
 
@@ -85,10 +77,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
         advertise.setAdStartDate(vo.getAdStartDate());
         advertise.setAdUri(vo.getAdUri());
         advertise.setAdEndDate(vo.getAdEndDate());
-        String fileIds = vo.getFileIds().stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-        advertise.setFileIds(fileIds);
+        advertise.setFileId(vo.getFileId());
         return advertiseMapper.insert(advertise);
     }
 
@@ -97,14 +86,6 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
         if (CollUtil.isEmpty(ids)) {
           return 0;
         }
-        advertiseMapper.selectBatchIds(ids).forEach(advertise -> {
-            String fileIds = advertise.getFileIds();
-            List<Long> longIds = Arrays.stream(fileIds.split(","))
-                    .map(String::trim)
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-//            TODO mediaClient.deleteFiles(longIds);
-        });
         return advertiseMapper.deleteBatchIds(ids);
     }
 
@@ -112,7 +93,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
     public AdvertiseVO userGetAdvertise() {
         LocalDateTime now = LocalDateTime.now();
         Advertise ad = baseMapper.getRandAdvertise(now);
-        FileDTO fileDTO = mediaClient.getFileInfos(List.of(ad.getFileIds())).get(0);
+        FileDTO fileDTO = mediaClient.getFileInfos(List.of(ad.getFileId())).get(0);
         AdvertiseVO vo = BeanUtils.copyBean(ad, AdvertiseVO.class);
         vo.setImgUrl(fileDTO.getFileUrl());
         return vo;

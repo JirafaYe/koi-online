@@ -47,6 +47,6 @@ public class AddAdvertise {
     /**
      * 上传图片文件id
      */
-    private List<Long> fileIds;
+    private Long fileId;
 
 }

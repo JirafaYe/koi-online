@@ -23,7 +23,8 @@ public class AddCorporatePartner {
     /**
      * 合作商图片
      */
-    private List<Long> fileIds;
+    @NotNull(message = "图片不能为空")
+    private Long fileId;
 
     /**
      * 备注

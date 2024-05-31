@@ -55,9 +55,9 @@ public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMap
         CorporatePartner partner = new CorporatePartner();
         partner.setPartnerName(vo.getPartnerName());
         partner.setUriBrand(vo.getUriBrand());
-        List<Long> fileIds = vo.getFileIds();
-        String images = fileIds.stream().map(Object::toString).collect(Collectors.joining(","));
-        partner.setFileIds(images);
+        Long fileId = vo.getFileId();
+
+        partner.setFileId(fileId);
         partner.setRemark(vo.getRemark());
         return this.save(partner);
     }
