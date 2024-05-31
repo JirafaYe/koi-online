@@ -24,7 +24,7 @@ public class OrderController {
     IOrderService orderService;
 
     /**
-     * 根据购物车预览订单金额
+     * 根据购物车预览订单
      * @param ids
      * @return
      */
