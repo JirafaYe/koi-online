@@ -22,6 +22,6 @@ import java.util.List;
 @Mapper
 public interface AdvertiseMapper extends BaseMapper<Advertise> {
 
-    @Select("SELECT id, ad_name, ad_uri, file_ids from advertise where ad_start_date <= #{now} AND ad_end_date >= #{now ORDER BY RAND() LIMIT 1")
+    @Select("SELECT id, ad_name, ad_uri, file_id from advertise where ad_start_date <= #{now} AND ad_end_date >= #{now} ORDER BY RAND() LIMIT 1")
     Advertise getRandAdvertise(@Param("now") LocalDateTime now);
 }

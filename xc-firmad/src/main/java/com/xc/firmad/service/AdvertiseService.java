@@ -35,10 +35,10 @@ public interface AdvertiseService extends IService<Advertise> {
 
     /**
      * 删除广告
-     * @param ids
+     * @param id
      * @return
      */
-    Integer deleteAdvertise(List<Long> ids);
+    Integer deleteAdvertise(Long id);
 
     AdvertiseVO userGetAdvertise();
 }

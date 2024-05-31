@@ -49,15 +49,19 @@ public class AdvertiseController {
 
     /**
      * 删除广告
-     * @param ids
+     * @param id
      * @return
      */
-    @DeleteMapping("deleteAdvertise")
-    public Integer deleteAdvertise(List<Long> ids){
-        return advertiseService.deleteAdvertise(ids);
+    @DeleteMapping("deleteAdvertise/{id}")
+    public Integer deleteAdvertise(@PathVariable("id") Long id){
+        return advertiseService.deleteAdvertise(id);
     }
 
 
+    /**
+     * 用户获取广告
+     * @return
+     */
     @GetMapping
     public AdvertiseVO userGetAdvertise(){
         return advertiseService.userGetAdvertise();

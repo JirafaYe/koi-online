@@ -4,28 +4,32 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.page.PageMethod;
 import com.xc.api.client.media.MediaClient;
 import com.xc.api.dto.media.FileDTO;
 import com.xc.common.constants.ErrorInfo;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
+import com.xc.common.exceptions.BadRequestException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
+import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.JsonUtils;
+import com.xc.common.utils.StringUtils;
 import com.xc.firmad.entity.CorporatePartner;
 import com.xc.firmad.mapper.CorporatePartnerMapper;
 import com.xc.firmad.service.CorporatePartnerService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xc.firmad.vo.req.AddCorporatePartner;
+import com.xc.firmad.vo.req.FirmPageQuery;
 import com.xc.firmad.vo.req.SearchCorporatePartnerVO;
 import com.xc.firmad.vo.res.CorporatePartnerResVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -37,20 +41,33 @@ import java.util.stream.Collectors;
  * @since 2024年05月17日
  */
 @Service
+@RequiredArgsConstructor
 public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMapper, CorporatePartner> implements CorporatePartnerService {
 
     @Resource
     private CorporatePartnerMapper corporatePartnerMapper;
-    @Resource
-    private MediaClient mediaClient;
+
+    private final MediaClient mediaClient;
+
     @Override
-    public PageDTO<CorporatePartnerResVO> getCorporatePage(PageQuery vo) {
-
-        PageMethod.startPage(vo.getPageNo(), vo.getPageSize());
-        List<CorporatePartnerResVO> list =  corporatePartnerMapper.getCorporatePage();
-        PageInfo<CorporatePartnerResVO> pageInfo = new PageInfo<>(list);
-        return  new PageDTO<>(pageInfo.getTotal(), (long) pageInfo.getPages(),list);
-
+    public PageDTO<CorporatePartnerResVO> getCorporatePage(FirmPageQuery query) {
+        Page<CorporatePartner> page = lambdaQuery()
+                .eq(StringUtils.isNotBlank(query.getName()), CorporatePartner::getPartnerName, query.getName())
+                .page(query.toMpPage());
+        List<CorporatePartner> records = page.getRecords();
+        if(CollUtils.isEmpty(records)){
+            return PageDTO.empty(page);
+        }
+        List<Long> imageIds = records.stream().map(CorporatePartner::getFileId).collect(Collectors.toList());
+        Map<Long, String> imageMap = mediaClient.getFileInfos(imageIds).stream().collect(Collectors.toMap(FileDTO::getId, FileDTO::getFileUrl));
+        List<CorporatePartnerResVO> voList = new ArrayList<>(records.size());
+        for (CorporatePartner r : records) {
+            CorporatePartnerResVO vo = BeanUtils.copyBean(r, CorporatePartnerResVO.class);
+            String imageUrl = imageMap.get(r.getFileId());
+            vo.setFileUrl(imageUrl);
+            voList.add(vo);
+        }
+        return PageDTO.of(page, voList);
     }
 
     @Override
@@ -60,10 +77,9 @@ public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMap
         partner.setPartnerName(vo.getPartnerName());
         partner.setUriBrand(vo.getUriBrand());
         Long fileId = vo.getFileId();
-        //判断文件是否存在
-        List<FileDTO> fileInfos = mediaClient.getFileInfos(List.of(fileId));
-        if(CollUtil.isEmpty(fileInfos)){
-            throw new CommonException(ErrorInfo.Code.FAILED,ErrorInfo.Msg.FILE_NOT_EXIST);
+        List<Long> list = mediaClient.judgeFileExist(List.of(fileId));
+        if(CollUtils.isEmpty(list)){
+            throw new BadRequestException("图片不存在");
         }
         partner.setFileId(fileId);
         partner.setRemark(vo.getRemark());
@@ -71,26 +87,11 @@ public class CorporatePartnerServiceImpl extends ServiceImpl<CorporatePartnerMap
     }
 
     @Override
-    public boolean deleteCorporatePartner(List<Integer> ids) {
-        if(CollUtil.isEmpty(ids)){
+    public boolean deleteCorporatePartner(Integer id) {
+        if(id == null){
             throw new CommonException(ErrorInfo.Code.FAILED,ErrorInfo.Msg.REQUEST_PARAM_ILLEGAL);
         }
-        return corporatePartnerMapper.deleteBatchIds(ids) != 0;
+        return corporatePartnerMapper.deleteById(id) != 0;
 
-    }
-
-    @Override
-    public PageDTO<CorporatePartnerResVO> searchCorporatePartner(SearchCorporatePartnerVO vo) {
-        LambdaQueryWrapper<CorporatePartner> lqw = new LambdaQueryWrapper<CorporatePartner>()
-                .like(CorporatePartner::getPartnerName, vo.getName());
-        Page<CorporatePartner> page = corporatePartnerMapper.selectPage(new Page<>(vo.getPageNo(), vo.getPageSize()), lqw);
-        List<CorporatePartnerResVO> list = page.getRecords().stream()
-                .map(record -> {
-                    CorporatePartnerResVO resVO = new CorporatePartnerResVO();
-                    BeanUtils.copyProperties(record, resVO);
-                    return resVO;
-                })
-                .collect(Collectors.toList());
-        return new PageDTO<>(page.getTotal(),page.getPages(),list);
     }
 }

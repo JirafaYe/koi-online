@@ -5,6 +5,7 @@ import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
 import com.xc.firmad.service.CorporatePartnerService;
 import com.xc.firmad.vo.req.AddCorporatePartner;
+import com.xc.firmad.vo.req.FirmPageQuery;
 import com.xc.firmad.vo.req.SearchCorporatePartnerVO;
 import com.xc.firmad.vo.res.CorporatePartnerResVO;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +30,8 @@ public class CorporatePartnerController {
      * 分页查看所有合作企业
      * @return
      */
-    @PostMapping("getCorporatePage")
-    public PageDTO<CorporatePartnerResVO> getCorporatePage(@RequestBody @Valid PageQuery vo){
+    @GetMapping("getCorporatePage")
+    public PageDTO<CorporatePartnerResVO> getCorporatePage(FirmPageQuery vo){
         return corporatePartnerService.getCorporatePage(vo);
     }
 
@@ -46,22 +47,13 @@ public class CorporatePartnerController {
 
     /**
      * 删除合作企业
-     * @param ids
+     * @param id
      * @return
      */
-    @DeleteMapping("deleteCorporatePartner")
-    public boolean deleteCorporatePartner(@RequestParam("ids") List<Integer> ids){
-        return corporatePartnerService.deleteCorporatePartner(ids);
+    @DeleteMapping("deleteCorporatePartner/{id}")
+    public boolean deleteCorporatePartner(@PathVariable("id") Integer id){
+        return corporatePartnerService.deleteCorporatePartner(id);
     }
 
-    /**
-     * 模糊搜索合作企业
-     * @param vo
-     * @return
-     */
-    @PostMapping("searchCorporatePartner")
-    public PageDTO<CorporatePartnerResVO> searchCorporatePartner(@RequestBody SearchCorporatePartnerVO vo){
-        return corporatePartnerService.searchCorporatePartner(vo);
-    }
 }
 

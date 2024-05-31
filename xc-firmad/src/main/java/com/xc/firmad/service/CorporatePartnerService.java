@@ -5,6 +5,7 @@ import com.xc.common.domain.query.PageQuery;
 import com.xc.firmad.entity.CorporatePartner;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.firmad.vo.req.AddCorporatePartner;
+import com.xc.firmad.vo.req.FirmPageQuery;
 import com.xc.firmad.vo.req.SearchCorporatePartnerVO;
 import com.xc.firmad.vo.res.CorporatePartnerResVO;
 
@@ -21,7 +22,7 @@ public interface CorporatePartnerService extends IService<CorporatePartner> {
     /**
      *分页查看所有合作企业
      */
-    PageDTO<CorporatePartnerResVO> getCorporatePage(PageQuery vo);
+    PageDTO<CorporatePartnerResVO> getCorporatePage(FirmPageQuery vo);
 
     /**
      * 增加合作企业
@@ -32,15 +33,9 @@ public interface CorporatePartnerService extends IService<CorporatePartner> {
 
     /**
      * 删除合作企业
-     * @param ids
+     * @param id
      * @return
      */
-    boolean deleteCorporatePartner(List<Integer> ids);
+    boolean deleteCorporatePartner(Integer id);
 
-    /**
-     * 模糊搜索合作企业
-     * @param vo
-     * @return
-     */
-    PageDTO<CorporatePartnerResVO> searchCorporatePartner(SearchCorporatePartnerVO vo);
 }

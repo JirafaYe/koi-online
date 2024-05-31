@@ -1,6 +1,5 @@
 package com.xc.firmad.service.impl;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -8,12 +7,12 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.page.PageMethod;
 import com.xc.api.client.media.MediaClient;
 import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.common.domain.query.PageQuery;
+import com.xc.common.exceptions.BadRequestException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.StringUtils;
@@ -30,6 +29,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -58,10 +58,16 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
                 .orderByAsc(Advertise::getAdStartDate)
                 .page(vo.toMpPage());
         List<Advertise> records = selectPage.getRecords();
-        ArrayList<AdvertisePageResVO> list = new ArrayList<>();
+        if(CollUtils.isEmpty(records)){
+            return PageDTO.empty(selectPage);
+        }
+        List<Long> imageIds = records.stream().map(Advertise::getFileId).collect(Collectors.toList());
+        Map<Long, String> imageMap = mediaClient.getFileInfos(imageIds).stream().collect(Collectors.toMap(FileDTO::getId, FileDTO::getFileUrl));
+        ArrayList<AdvertisePageResVO> list = new ArrayList<>(records.size());
         for (Advertise record : records) {
             AdvertisePageResVO resVO = new AdvertisePageResVO();
             BeanUtils.copyProperties(record, resVO);
+            resVO.setFileUrl(imageMap.get(record.getFileId()));
             list.add(resVO);
         }
 
@@ -76,22 +82,29 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseMapper, Advertise
         advertise.setAdStartDate(vo.getAdStartDate());
         advertise.setAdUri(vo.getAdUri());
         advertise.setAdEndDate(vo.getAdEndDate());
+        List<FileDTO> fileInfos = mediaClient.getFileInfos(List.of(vo.getFileId()));
+        if(CollUtils.isEmpty(fileInfos)){
+            throw new BadRequestException("图片不存在");
+        }
         advertise.setFileId(vo.getFileId());
         return advertiseMapper.insert(advertise);
     }
 
     @Override
-    public Integer deleteAdvertise(List<Long> ids) {
-        if (CollUtil.isEmpty(ids)) {
+    public Integer deleteAdvertise(Long id) {
+        if (id == null) {
           return 0;
         }
-        return advertiseMapper.deleteBatchIds(ids);
+        return advertiseMapper.deleteById(id);
     }
 
     @Override
     public AdvertiseVO userGetAdvertise() {
         LocalDateTime now = LocalDateTime.now();
         Advertise ad = baseMapper.getRandAdvertise(now);
+        if(ad == null){
+            return null;
+        }
         FileDTO fileDTO = mediaClient.getFileInfos(List.of(ad.getFileId())).get(0);
         AdvertiseVO vo = BeanUtils.copyBean(ad, AdvertiseVO.class);
         vo.setImgUrl(fileDTO.getFileUrl());

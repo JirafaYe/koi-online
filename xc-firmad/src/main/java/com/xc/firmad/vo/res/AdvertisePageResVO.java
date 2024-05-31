@@ -43,7 +43,7 @@ public class AdvertisePageResVO {
 
 
     /**
-     * 上传图片文件id
+     * 上传图片链接
      */
-    private Long fileId;
+    private String fileUrl;
 }
