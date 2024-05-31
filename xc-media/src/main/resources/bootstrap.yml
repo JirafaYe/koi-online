@@ -35,6 +35,11 @@ xc:
   auth:
     resource:
       enable: true
+      exclude-login-paths:
+        - /files/images
+        - /files/exist
+        - /medias/videos
+        - /medias/exist
   minio:
     endpoint: http://47.108.192.109:9000
     accessKey: minioadmin

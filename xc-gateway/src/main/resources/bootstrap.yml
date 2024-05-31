@@ -96,3 +96,7 @@ xc:
       - /advertise/get
       - /replies/page
       - /reviews/list
+      - /files/images
+      - /files/exist
+      - /medias/videos
+      - /medias/exist
