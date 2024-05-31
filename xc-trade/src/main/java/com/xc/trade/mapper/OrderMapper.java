@@ -32,7 +32,7 @@ public interface OrderMapper extends BaseMapper<Orders> {
     @Update("update orders set status=#{status} where id=#{orderId}")
     int updateOrderStatusByAdmin(int status,Long orderId);
 
-    @Update("update orders set status=#{status} where id=#{orderId} and user_id=#{userId} and payment_id is not null")
+    @Update("update orders set status=#{status} where id=#{orderId} and user_id=#{userId}")
     int updateOrderStatusByUser(int status,Long orderId,Long userId);
 
 }

@@ -162,7 +162,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         List<ShoppingChart> shoppingList = chartMapper.selectList(new LambdaQueryWrapper<ShoppingChart>()
                 .eq(ShoppingChart::getUserId, UserContext.getUser()).in(ShoppingChart::getId, vo.getShoppingCharts()));
         if (CollUtils.isEmpty(shoppingList)) {
-            throw new CommonException("");
+            throw new CommonException("购物车不存在");
         }
 
         Map<Long, Integer> quantityMap = shoppingList.stream().collect(Collectors.toMap(
@@ -315,7 +315,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         orderDetails.forEach(p -> {
             IdAndNumDTO idAndNumDTO = new IdAndNumDTO();
             idAndNumDTO.setId(p.getSkuId());
-            idAndNumDTO.setNum(-p.getQuantity());
+            idAndNumDTO.setNum(p.getQuantity());
             list.add(idAndNumDTO);
         });
 
