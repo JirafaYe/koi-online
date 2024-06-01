@@ -57,6 +57,7 @@ import static com.xc.promotion.constants.PromotionConstants.COUPON_CACHE_KEY_PRE
 @Slf4j
 public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> implements ICouponService {
 
+
     private final IExchangeCodeService codeService;
 
     private final ICouponScopeService scopeService;
@@ -293,6 +294,11 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
             }
             return null;
         } );
+    }
+
+    @Override
+    public Integer getNum() {
+        return lambdaQuery().eq(Coupon::getStatus, CouponStatus.DRAFT).count();
     }
 
     @Override

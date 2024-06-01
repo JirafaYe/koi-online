@@ -104,4 +104,12 @@ public class CouponController {
     public List<CouponVO> queryIssuingCoupon(){
         return couponService.queryIssuingCoupon();
     }
+
+    /**
+     * 内部api 获取优惠券待发布数量
+     */
+    @GetMapping("/getNum")
+    public Integer getNum(){
+        return couponService.getNum();
+    }
 }

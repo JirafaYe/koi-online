@@ -44,6 +44,11 @@ public class PromotionClientFallback implements FallbackFactory<PromotionClient>
             public List<String> queryDiscountRules(List<Long> userCouponIds) {
                 return CollUtils.emptyList();
             }
+
+            @Override
+            public Integer getNum() {
+                return null;
+            }
         };
     }
 }

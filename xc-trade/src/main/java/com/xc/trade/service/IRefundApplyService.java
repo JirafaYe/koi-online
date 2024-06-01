@@ -8,6 +8,7 @@ import com.xc.trade.entity.dto.RefundResultDTO;
 import com.xc.trade.entity.po.RefundApply;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.trade.entity.query.RefundApplyPageQuery;
+import com.xc.trade.entity.vo.RefundAndCouponVO;
 import com.xc.trade.entity.vo.RefundApplyPageVO;
 import com.xc.trade.entity.vo.RefundApplyVO;
 
@@ -44,4 +45,6 @@ public interface IRefundApplyService extends IService<RefundApply> {
     List<RefundApply> queryApplyToSend(int index, int size);
 
     boolean checkRefundStatus(RefundApply r);
+
+    RefundAndCouponVO getRefundAndCoupon();
 }
