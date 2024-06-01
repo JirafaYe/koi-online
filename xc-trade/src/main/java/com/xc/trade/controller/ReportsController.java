@@ -41,7 +41,7 @@ public class ReportsController {
     }
 
     /**
-     * 下载每日订单销量报表
+     * 下载每日订单销量报表(近100天内）
      * @param req
      * @param res
      */

@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yaml.snakeyaml.tokens.FlowEntryToken;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -271,6 +272,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         return orderMapper.getflowReports();
     }
 
+    List<FlowReportsVO> flowReports100(){
+        return orderMapper.getflowReports100();
+    }
+
     @Override
     public List<GoodsSpuReportsVO> achieveReports() {
         return orderMapper.getAchieveReports();
@@ -439,7 +444,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
     @Override
     public void downLoadFlowReports(HttpServletResponse res) {
-        List<FlowReportsVO> vo = flowReports();
+        List<FlowReportsVO> vo = flowReports100();
         String fileName = "流量报表";
         //设置响应流和文件名称
         ExcelUtils.setResponse(res, fileName);

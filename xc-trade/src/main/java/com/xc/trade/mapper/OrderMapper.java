@@ -35,4 +35,5 @@ public interface OrderMapper extends BaseMapper<Orders> {
     @Update("update orders set status=#{status} where id=#{orderId} and user_id=#{userId}")
     int updateOrderStatusByUser(int status,Long orderId,Long userId);
 
+    List<FlowReportsVO> getflowReports100();
 }

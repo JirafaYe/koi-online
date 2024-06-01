@@ -8,7 +8,15 @@
         FROM orders
         WHERE status = 1
         GROUP BY time
-        order by time desc
+        order by time ASC
+        limit 15;
+    </select>
+    <select id="getflowReports100" resultType="com.xc.trade.entity.vo.FlowReportsVO">
+        SELECT DATE_FORMAT(`create_time`, '%m/%d') as time ,COUNT(id) as flow,sum(final_price) as amount
+        FROM orders
+        WHERE status = 1
+        GROUP BY time
+        order by time DESC
         limit 100;
     </select>
     <select id="getAchieveReports" resultType="com.xc.trade.entity.vo.GoodsSpuReportsVO">
