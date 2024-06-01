@@ -39,7 +39,7 @@ public class OrderController {
      * @return order id
      */
     @PostMapping("/create")
-    public Long create(OrderVO vo){
+    public Long create(@RequestBody OrderVO vo){
         return orderService.createOrder(vo);
     }
 

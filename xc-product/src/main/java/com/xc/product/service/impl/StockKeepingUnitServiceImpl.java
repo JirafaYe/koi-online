@@ -297,7 +297,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         }else {
             List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
                     .eq(StockKeepingUnit::isAvailable,true).list();
-            if(!CollUtils.isEmpty(sku)){
+            if(CollUtils.isEmpty(sku)){
                 throw new BizIllegalException("spu Id 不存在");
             }
             //HashMap<Long,HashMap<String,String>>
@@ -309,7 +309,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
         }
         Map finalResultMaps = resultMaps;
-        List<String> list = (List) resultMaps.keySet().stream().filter(p -> {
+        List list = (List) resultMaps.keySet().stream().filter(p -> {
                     Map<String, String> attributesMap = (Map<String, String>) finalResultMaps.get(p);
                     return attributesMap.entrySet().equals(attributesObj.entrySet());
                 }
@@ -317,7 +317,15 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
 
         SkuPageVO result = null;
         if (!CollUtils.isEmpty(list)) {
-            Long matchId = Long.valueOf(list.get(0));
+            Long matchId;
+            Object o = list.get(0);
+            if(o instanceof Long){
+                matchId = (Long) o;
+            }else if(o instanceof String){
+                matchId = Long.valueOf((String) o);
+            }else {
+                throw new CommonException("无法转换类型");
+            }
             StockKeepingUnit match = lambdaQuery()
                     .eq(StockKeepingUnit::getId, matchId)
                     .eq(StockKeepingUnit::isAvailable, true)
