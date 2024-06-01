@@ -8,6 +8,7 @@ import com.xc.api.client.trade.TradeClient;
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
+import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.product.SpuPageVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
@@ -99,7 +100,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
             rIds.add(r.getId());
             userIds.add(r.getUserId());
             pIds.add(r.getProductId());
-            oIds.add(r.getOrderId());
+            oIds.add(r.getOrderDetailId());
             if(r.getHaveVideo()){
                 mediaIds.add(r.getVideo());
             }
@@ -119,11 +120,19 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
         if(CollUtils.isNotEmpty(productInfos)){
             productMap = productInfos.stream().collect(Collectors.toMap(SpuPageVO::getId, SpuPageVO::getSpuName));
         }
-//        List<> orderInfos = tradeClient.queryOrderByIds(oIds);
-//        Map<Long, > orderMap = new HashMap(orderInfos.size());
-//        if(CollUtils.isNotEmpty(orderInfos)){
-//            orderMap = orderInfos.stream().collect(Collectors.toMap());
-//        }
+        List<Long> skuIds = tradeClient.getSKuIds(oIds);
+        Map<Long, SkuPageVO> orderMap = new HashMap<>(skuIds.size());
+        List<SkuPageVO> skus = new ArrayList<>();
+        if(CollUtils.isNotEmpty(skuIds)){
+            skus = productClient.getSkuById(skuIds);
+        }
+        Iterator<Long> iterator = oIds.iterator();
+        for (SkuPageVO sku : skus) {
+            if(iterator.hasNext()){
+                Long oId = iterator.next();
+                orderMap.put(oId, sku);
+            }
+        }
         List<MediaDTO> mediaInfos = mediaClient.getMediaInfos(mediaIds);
         Map<Long, String> mediaMap = new HashMap<>(mediaInfos.size());
         if(CollUtils.isNotEmpty(mediaInfos)){
@@ -145,10 +154,12 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
             if(spuName != null){
                 vo.setProductName(spuName);
             }
-//            orderInfo = orderMap.get(review.getOrderId());
-//            if(orderInfo != null){
-//                (orderInfo);
-//            }
+            SkuPageVO sku = orderMap.get(review.getOrderDetailId());
+            if(sku != null){
+                vo.setSpuName(sku.getSpuName());
+                vo.setAttributes(sku.getAttributes());
+                vo.setImage(sku.getImage());
+            }
             if(review.getHaveVideo()){
                 String mediaUrl = mediaMap.get(review.getVideo());
                 if(mediaUrl != null){

@@ -23,8 +23,8 @@ public class ReviewFormDTO {
     /**
      * 订单id
      */
-    @NotNull(message = "订单id不能为空")
-    private Long orderId;
+    @NotNull(message = "订单详细id不能为空")
+    private Long orderDetailId;
 
     /**
      * 描述
@@ -68,8 +68,4 @@ public class ReviewFormDTO {
     @Min(value = 1)
     private Integer productScore;
 
-    /**
-     * 是否匿名
-     */
-    private Boolean anonymity;
 }

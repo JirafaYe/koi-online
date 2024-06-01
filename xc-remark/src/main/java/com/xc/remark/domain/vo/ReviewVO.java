@@ -63,4 +63,19 @@ public class ReviewVO {
 
     private String productName;
 
+
+    /**
+     * 所属spu name
+     */
+    private String  spuName;
+
+    /**
+     * 图片
+     */
+    private String image;
+
+    /**
+     * json储存的特征描述
+     */
+    private String attributes;
 }

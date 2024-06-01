@@ -10,5 +10,5 @@ import java.util.List;
 @FeignClient(value = "trade-service", fallbackFactory = TradeClientFallback.class)
 public interface TradeClient {
     @GetMapping("/order/skues")
-    List<Long> getSKuIds(@RequestBody List<Long> detailsIds);
+    List<Long> getSKuIds(@RequestBody Iterable<Long> detailsIds);
 }
