@@ -197,6 +197,9 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
                 r.setStatus(RefundStatus.WAIT_SENT_B);
                 r.setMessage(RefundStatus.desc(r.getStatus().getValue()));
             }
+        } else {
+            r.setStatus(AGREE);
+            r.setMessage(RefundStatus.desc(AGREE.getValue()));
         }
 
         if(!agree){
