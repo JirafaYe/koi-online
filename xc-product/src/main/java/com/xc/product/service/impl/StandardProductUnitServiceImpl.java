@@ -236,7 +236,8 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         LambdaQueryChainWrapper<StandardProductUnit> wrapper= lambdaQuery();
         if(query.getBrandId()!=null){
             wrapper.eq(StandardProductUnit::getBrandId,query.getBrandId());
-        } else if (query.getCategoryId() != null) {
+        }
+        if (query.getCategoryId() != null) {
             wrapper.eq(StandardProductUnit::getCategoryId,query.getCategoryId());
         }
         Page<StandardProductUnit> page = wrapper.page(query.toMpPageDefaultSortByCreateTimeDesc());

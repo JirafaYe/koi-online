@@ -4,5 +4,5 @@ public interface RedisConstants {
     String ORDER_PREFIX = "order:";
     String SHOPPING_PREFIX = "shopping:User:";
 
-    Integer DURATION_MINUTES=1;
+    Integer DURATION_MINUTES=15;
 }
