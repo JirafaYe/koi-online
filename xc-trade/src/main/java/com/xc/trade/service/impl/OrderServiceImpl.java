@@ -426,13 +426,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
                 .between(RefundApply::getCreateTime, startTime, endTime));
         ans.setWaitRefundProcessCount(refundApplyCount);
         //成交额（不考虑退款）
-        List<Payment> payments = paymentMapper.selectList(new LambdaQueryWrapper<Payment>()
-                .eq(Payment::getPayStatus, 1)
-                .between(Payment::getCreateTime, startTime, endTime));
-        double sum = payments.stream().map(Payment::getTotalAmount).mapToDouble(Double::doubleValue).sum();
-        ans.setTradedAmount(BigDecimal.valueOf(sum));
+        List<Orders> orders = orderMapper.selectList(new LambdaQueryWrapper<Orders>()
+                .eq(Orders::getStatus, 1)
+                .between(Orders::getCreateTime, startTime, endTime));
+        Integer sum = orders.stream().map(Orders::getFinalPrice).mapToInt(Integer::intValue).sum();
+        ans.setTradedAmount(sum);
         //成交数量
-        int size = payments.size();
+        int size = orders.size();
         ans.setTradedCount(size);
         //待支付数量
         Integer paying = paymentMapper.selectCount(new LambdaQueryWrapper<Payment>()

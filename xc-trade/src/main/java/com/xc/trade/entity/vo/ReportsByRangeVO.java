@@ -26,7 +26,7 @@ public class ReportsByRangeVO {
     /**
      * 成交额
      */
-    private BigDecimal tradedAmount;
+    private Integer tradedAmount;
     /**
      * 成交数量
      */
