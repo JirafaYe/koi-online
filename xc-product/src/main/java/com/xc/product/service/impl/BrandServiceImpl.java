@@ -118,7 +118,8 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             Map<Long, String> fileMap = mediaClient.getFileInfos(imageIds).stream().collect(Collectors.toMap(FileDTO::getId, FileDTO::getFileUrl));
 
             if(!CollUtils.isEmpty(userMap)){
-                voList = records.stream().map(obj -> new BrandPageVO(obj.getId(), obj.getBrandName(), fileMap.get(obj.getImageId())
+                voList = records.stream().map(obj -> new BrandPageVO(obj.getId(), obj.getBrandName(), obj.getImageId()
+                        ,fileMap.get(obj.getImageId())
                         , userMap.get(obj.getCreater()), userMap.get(obj.getUpdater()))).collect(Collectors.toList());
 
                 result=PageDTO.of(page, voList);

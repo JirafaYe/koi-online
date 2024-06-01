@@ -104,9 +104,9 @@ public class SpuController {
      */
     @GetMapping("/page/user")
     public SpuPageDTO<SpuPageVO> userQuery(SpuUserQuery query){
-        if(UserContext.getUser()==null){
-            query.setSpuName(null);
-        }
+//        if(UserContext.getUser()==null){
+//            query.setSpuName(null);
+//        }
         return spuService.pageQuery(new SpuAdminQuery(query),false);
     }
 

@@ -17,6 +17,11 @@ public class BrandPageVO {
     private String brandName;
 
     /**
+     * 图片链接id
+     */
+    private Long  imageId;
+
+    /**
      * 图片链接
      */
     private String  fileUrl;
