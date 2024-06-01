@@ -207,9 +207,10 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         Brand brand = brandMapper.selectById(spu.getBrandId());
         List<Long> main = splitImagesId(spu.getContentImagesId());
         List<Long> content = splitImagesId(spu.getContentImagesId());
-        main.addAll(content);
+        HashSet<Long> images = new HashSet<>(main);
+        images.addAll(content);
 
-        Map<Long, String> imageMap = mediaClient.getFileInfos(main).stream().collect(Collectors.toMap(
+        Map<Long, String> imageMap = mediaClient.getFileInfos(images).stream().collect(Collectors.toMap(
                 FileDTO::getId,
                 FileDTO::getFileUrl
         ));
@@ -308,9 +309,10 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         Brand brand = brandMapper.selectById(spu.getBrandId());
         List<Long> main = splitImagesId(spu.getContentImagesId());
         List<Long> content = splitImagesId(spu.getContentImagesId());
-        main.addAll(content);
+        HashSet<Long> images = new HashSet<>(main);
+        images.addAll(content);
 
-        Map<Long, String> imageMap = mediaClient.getFileInfos(main).stream().collect(Collectors.toMap(
+        Map<Long, String> imageMap = mediaClient.getFileInfos(images).stream().collect(Collectors.toMap(
                 FileDTO::getId,
                 FileDTO::getFileUrl
         ));

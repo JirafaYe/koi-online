@@ -101,6 +101,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         if (!CollUtils.isEmpty(list)) {
             List<SkuPageVO> skuById = productClient.getSkuById(list.stream()
                     .map(ShoppingChart::getSkuId).collect(Collectors.toSet()));
+            Map<Long, Integer> quantityMap = list.stream().collect(Collectors.toMap(
+                    ShoppingChart::getSkuId,
+                    ShoppingChart::getQuantity
+            ));
 
             validateSkuPageVO(skuById);
 
@@ -115,7 +119,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             List<OrderProductDTO> orderProducts = skuById.stream().map(obj -> {
                 OrderProductDTO dto = new OrderProductDTO();
                 dto.setId(obj.getId());
-                dto.setPrice(obj.getPrice() * obj.getNum());
+                if(quantityMap.get(obj.getId())>obj.getNum()){
+                    throw new BizIllegalException("大于库存无法添加sku:"+obj.getId());
+                }
+                dto.setPrice(obj.getPrice() * quantityMap.get(obj.getId()));
                 dto.setCateId(obj.getCategoryId());
                 return dto;
             }).collect(Collectors.toList());
@@ -190,7 +197,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         List<OrderProductDTO> orderProducts = skuVOs.stream().map(obj -> {
             OrderProductDTO dto = new OrderProductDTO();
             dto.setId(obj.getId());
-            dto.setPrice(obj.getPrice() * obj.getNum());
+            if(quantityMap.get(obj.getId())>obj.getNum()){
+                throw new BizIllegalException("大于库存无法添加sku:"+obj.getId());
+            }
+            dto.setPrice(obj.getPrice() * quantityMap.get(obj.getId()));
             dto.setCateId(obj.getCategoryId());
             return dto;
         }).collect(Collectors.toList());
