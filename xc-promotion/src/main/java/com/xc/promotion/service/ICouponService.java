@@ -41,4 +41,6 @@ public interface ICouponService extends IService<Coupon> {
     void beginIssueBatch(List<Coupon> coupons);
 
     void couponOverBatch(List<Coupon> coupons);
+
+    Integer getNum();
 }

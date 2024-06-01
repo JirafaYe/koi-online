@@ -52,4 +52,10 @@ public interface PromotionClient {
      */
     @GetMapping("/user-coupons/rules")
     List<String> queryDiscountRules(@RequestParam("couponIds") List<Long> userCouponIds);
+
+    /**
+     * 内部api 获取优惠券待发布数量
+     */
+    @GetMapping("/coupons/getNum")
+    Integer getNum();
 }

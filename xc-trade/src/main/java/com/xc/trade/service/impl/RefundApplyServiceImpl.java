@@ -1,6 +1,7 @@
 package com.xc.trade.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xc.api.client.promotion.PromotionClient;
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.constants.Constant;
@@ -21,6 +22,7 @@ import com.xc.trade.entity.po.OrderDetails;
 import com.xc.trade.entity.po.Orders;
 import com.xc.trade.entity.po.RefundApply;
 import com.xc.trade.entity.query.RefundApplyPageQuery;
+import com.xc.trade.entity.vo.RefundAndCouponVO;
 import com.xc.trade.entity.vo.RefundApplyPageVO;
 import com.xc.trade.entity.vo.RefundApplyVO;
 import com.xc.trade.mapper.OrderMapper;
@@ -61,6 +63,8 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     private final IAliPayService payService;
+
+    private final PromotionClient promotionClient;
 
     @Override
     @Transactional
@@ -390,6 +394,21 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
     public boolean checkRefundStatus(RefundApply r) {
         RefundStatus status = r.getStatus();
         return !status.equals(AGREE);
+    }
+
+    @Override
+    public RefundAndCouponVO getRefundAndCoupon() {
+        Integer countNum = lambdaQuery()
+                .in(RefundApply::getStatus, RefundStatus.UN_APPROVE, RefundStatus.WAIT_M_RECEIVE)
+                .count();
+        Integer couponNum = promotionClient.getNum();
+        if(countNum == null){
+            countNum = 0;
+        }
+        if(couponNum == null){
+            couponNum = 0;
+        }
+        return new RefundAndCouponVO(countNum, couponNum);
     }
 
     private List<RefundApply> queryByDetailId(Long id) {

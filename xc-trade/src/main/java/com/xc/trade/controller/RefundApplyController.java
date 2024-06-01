@@ -6,6 +6,7 @@ import com.xc.trade.entity.dto.ApproveFormDTO;
 import com.xc.trade.entity.dto.RefundCancelDTO;
 import com.xc.trade.entity.dto.RefundFormDTO;
 import com.xc.trade.entity.query.RefundApplyPageQuery;
+import com.xc.trade.entity.vo.RefundAndCouponVO;
 import com.xc.trade.entity.vo.RefundApplyPageVO;
 import com.xc.trade.entity.vo.RefundApplyVO;
 import com.xc.trade.service.IRefundApplyService;
@@ -83,5 +84,14 @@ public class RefundApplyController {
     @GetMapping("/detail/{id}")
     public RefundApplyVO queryRefundDetailByDetailId(@PathVariable("id") Long detailId){
         return refundApplyService.queryRefundDetailByDetailId(detailId);
+    }
+
+    /**
+     * 工作台获取退款待处理数量优惠券待发布数量
+     * @return
+     */
+    @GetMapping("/getRefundAndCoupon")
+    public RefundAndCouponVO getRefundAndCoupon(){
+        return refundApplyService.getRefundAndCoupon();
     }
 }
