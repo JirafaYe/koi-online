@@ -78,7 +78,7 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
         if(order == null){
             throw new BadRequestException("订单不存在");
         }
-        if(!(order.getStatus().equals(OrdersStatus.CLOSED.getValue()) || order.getPaymentId() == null)){
+        if(order.getStatus().equals(OrdersStatus.CLOSED.getValue()) || order.getPaymentId() == null){
             throw new BadRequestException("订单未支付或已关闭");
         }
         UserInfoResVO userInfo = userClient.getUserInfos(List.of(userId)).get(0);
