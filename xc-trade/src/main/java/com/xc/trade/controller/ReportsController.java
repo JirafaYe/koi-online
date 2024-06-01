@@ -1,9 +1,6 @@
 package com.xc.trade.controller;
 
-import com.alibaba.excel.EasyExcelFactory;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.metadata.Sheet;
-import com.xc.common.utils.ObjectImportUtil;
+;
 import com.xc.trade.entity.dto.ReportsByRangeReqDTO;
 import com.xc.trade.entity.vo.FlowReportsVO;
 import com.xc.trade.entity.vo.GoodsSpuReportsVO;
@@ -50,10 +47,11 @@ public class ReportsController {
      */
     @PostMapping("/downLoadFlowReports")
     public void downLoadFlowReports(HttpServletRequest req, HttpServletResponse res) {
-        List<FlowReportsVO> vo = orderService.flowReports();
+
         InputStream inputStream = this.getClass().getResourceAsStream("/template/每日流量报表.xlsx");
         String fileName = "流量报表";
-        ObjectImportUtil.exceptionDownload(res, fileName, vo, inputStream);
+        orderService.downLoadFlowReports(res);
+//        ObjectImportUtil.exceptionDownload(res, fileName, vo, inputStream);
     }
 
     /**

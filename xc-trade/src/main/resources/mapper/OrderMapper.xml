@@ -4,11 +4,12 @@
 
 
     <select id="getflowReports" resultType="com.xc.trade.entity.vo.FlowReportsVO">
-        SELECT create_time as time ,COUNT(id) as flow,sum(final_price) as amount
+        SELECT Date(create_time) as time ,COUNT(id) as flow,sum(final_price) as amount
         FROM orders
         WHERE status = 1
-        GROUP BY time
-        order by time desc ;
+        GROUP BY Date(create_time)
+        order by Date(create_time) desc
+        limit 100;
     </select>
     <select id="getAchieveReports" resultType="com.xc.trade.entity.vo.GoodsSpuReportsVO">
         SELECT COUNT(o.id) as count, s.spu_name as spuName, sum(o.final_price) as amount,

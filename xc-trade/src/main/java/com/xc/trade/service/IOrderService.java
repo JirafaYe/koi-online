@@ -10,6 +10,7 @@ import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.query.OrderQuery;
 import com.xc.trade.entity.vo.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -59,4 +60,6 @@ public interface IOrderService extends IService<Orders> {
     List<Long> getSKuIds(List<Long> detailsIds);
 
     ReportsByRangeVO getReportsByRange(ReportsByRangeReqDTO reportsByRangeVO);
+
+    void downLoadFlowReports(HttpServletResponse res);
 }

@@ -1,5 +1,6 @@
 package com.xc.trade.service.impl;
 
+import com.alibaba.excel.EasyExcelFactory;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -34,6 +35,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -432,5 +435,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
                 .between(Payment::getCreateTime, startTime, endTime));
         ans.setPayingCount(paying);
         return ans;
+    }
+
+    @Override
+    public void downLoadFlowReports(HttpServletResponse res) {
+        List<FlowReportsVO> vo = flowReports();
+        String fileName = "流量报表";
+        //设置响应流和文件名称
+        ExcelUtils.setResponse(res, fileName);
+
+        try {
+            EasyExcelFactory
+                    .write(res.getOutputStream(), FlowReportsVO.class)
+                    .sheet("流量报表")
+                    .doWrite(vo);
+        } catch (IOException e) {
+            throw new CommonException("导出失败");
+        }
     }
 }
