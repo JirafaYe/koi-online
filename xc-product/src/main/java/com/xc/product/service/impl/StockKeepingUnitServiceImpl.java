@@ -1,5 +1,6 @@
 package com.xc.product.service.impl;
 
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.media.MediaClient;
@@ -120,6 +121,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             throw new BizIllegalException("更新spu价格失败");
         }
 
+        redisTemplate.delete(RedisConstants.SKU_PREFIX + vo.getSpuId());
         return true;
     }
 
@@ -144,6 +146,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             if(!(remove&&update&&updatePrice)){
                 throw new CommonException("删除失败");
             }
+            redisTemplate.delete(RedisConstants.SKU_PREFIX + sku.getSpuId());
             return true;
         }
         throw new CommonException("SKU Id 不存在");
@@ -188,6 +191,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(!(updateNum&&updateSku&&updatePrice)){
             throw new CommonException("更新sku错误");
         }
+        redisTemplate.delete(RedisConstants.SKU_PREFIX + vo.getSpuId());
         return true;
     }
 
@@ -232,32 +236,39 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
 
     @Override
     public Map<String, Set<String>> getAttributes(Long spuId) {
-        List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
-                .eq(StockKeepingUnit::isAvailable,true).list();
         Map<String, Set<String>> attributes= new HashMap<>();
-        if(!CollUtils.isEmpty(sku)){
-//            List<HashMap> maps = sku.stream().map(obj
-//                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
-            //HashMap<Long,HashMap<String,String>>
-            Map resultMaps = sku.stream()
-                    .collect(Collectors.toMap(
-                            StockKeepingUnit::getId,
-                            obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
-                    ));
-            ArrayList maps = new ArrayList<>(resultMaps.values());
-            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
-            for (Object mapTmp : maps) {
-                HashMap map = (HashMap) mapTmp;
-                map.keySet().forEach(obj->{
-                    if(!attributes.containsKey(obj)){
-                        attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
-                    }else {
-                        Set<String> set = attributes.get(obj);
-                        set.add((String) map.get(obj));
-                        attributes.put((String) obj,set);
-                    }
-                });
+        String key = redisTemplate.opsForValue().get(RedisConstants.SKU_PREFIX + spuId);
+        Map resultMaps=null;
+        if(!StringUtils.isEmpty(key)){
+            redisTemplate.expire(RedisConstants.SKU_PREFIX + spuId,Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
+            resultMaps = JsonUtils.parse(key).toBean(Map.class);
+        }else {
+            List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
+                    .eq(StockKeepingUnit::isAvailable,true).list();
+            if(!CollUtils.isEmpty(sku)){
+                //HashMap<Long,HashMap<String,String>>
+                resultMaps = sku.stream()
+                        .collect(Collectors.toMap(
+                                StockKeepingUnit::getId,
+                                obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
+                        ));
+                redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
+
             }
+        }
+
+        List<JSONObject> maps = new LinkedList<>(resultMaps.values());
+        for (JSONObject mapTmp : maps) {
+            Map map = JsonUtils.toBean(mapTmp,HashMap.class);
+            map.keySet().forEach(obj->{
+                if(!attributes.containsKey(obj)){
+                    attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
+                }else {
+                    Set<String> set = attributes.get(obj);
+                    set.add((String) map.get(obj));
+                    attributes.put((String) obj,set);
+                }
+            });
         }
         return attributes;
     }
