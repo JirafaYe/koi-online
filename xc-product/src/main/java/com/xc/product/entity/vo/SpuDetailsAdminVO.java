@@ -1,0 +1,107 @@
+package com.xc.product.entity.vo;
+
+import lombok.Data;
+
+import java.util.Map;
+import java.util.Set;
+
+@Data
+public class SpuDetailsAdminVO {
+    private Long id;
+
+    /**
+     * 商品名
+     */
+    private String spuName;
+
+    /**
+     * 商品最低价
+     */
+    private Integer minPrice;
+
+    /**
+     * 品牌
+     */
+    private String  brand;
+
+    /**
+     * 品牌id
+     */
+    private Long brandId;
+
+    /**
+     * 分类
+     */
+    private String  category;
+
+    /**
+     * 分类id
+     */
+    private Long categoryId;
+
+    /**
+     * 图片
+     */
+    private String  mainImagesId;
+
+    /**
+     * 图片url list,以，分隔,最多8个
+     */
+    private String  mainImagesUrl;
+
+    /**
+     * 描述
+     */
+    private String content;
+
+    /**
+     * 详情图
+     */
+    private String  contentImagesId;
+
+    /**
+     * 详情图，url以，分隔,最多8个
+     */
+    private String  contentImagesUrl;
+
+    /**
+     * 视频id
+     */
+    private Long mainVideoId;
+
+    /**
+     * 视频url
+     */
+    private String  mainVideoUrl;
+
+    /**
+     * 默认为false
+     */
+    private Boolean available;
+
+    /**
+     * 库存
+     */
+    private Long num;
+
+    /**
+     * 销量
+     */
+    private Integer sales;
+
+    /**
+     * 创建人
+     */
+    private String creater;
+
+
+    /**
+     * 是否新品（7天内创建）
+     */
+    private boolean upToDate=false;
+
+    /**
+     * 属性map
+     */
+    private Map<String , Set<String>> attributesMap;
+}

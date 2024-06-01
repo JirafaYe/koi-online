@@ -29,6 +29,8 @@ public class SkuPageVO {
      */
     private String image;
 
+    private Long imageId;
+
     /**
      * 价格
      */

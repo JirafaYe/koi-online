@@ -11,6 +11,7 @@ import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.exceptions.BadRequestException;
 import com.xc.common.exceptions.BizIllegalException;
 import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
@@ -98,10 +99,11 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
 
     @Override
     public boolean removeSpu(Long id) {
-        stockKeepingUnitMapper.deleteBatchIds(
-                stockKeepingUnitMapper.selectList(new LambdaQueryWrapper<StockKeepingUnit>()
-                .eq(StockKeepingUnit::getSpuId, id))
-                        .stream().map(StockKeepingUnit::getId).collect(Collectors.toList()));
+        List<Long> skuIds = stockKeepingUnitMapper.selectList(new LambdaQueryWrapper<StockKeepingUnit>().eq(StockKeepingUnit::getSpuId, id))
+                .stream().map(StockKeepingUnit::getId).collect(Collectors.toList());
+        if(CollUtils.isNotEmpty(skuIds)){
+            stockKeepingUnitMapper.deleteBatchIds(skuIds);
+        }
         return removeById(id);
     }
 
@@ -198,6 +200,9 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         if(spu==null){
             throw new BizIllegalException("spuId不存在");
         }
+        if(!spu.isAvailable()){
+            throw new BadRequestException("商品未上架");
+        }
         Category category = categoryMapper.selectById(spu.getCategoryId());
         Brand brand = brandMapper.selectById(spu.getBrandId());
         List<Long> main = splitImagesId(spu.getContentImagesId());
@@ -287,6 +292,43 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     @Override
     public PageDTO<SpuPageVO> adminQuery(SpuAdminQuery query) {
         return null;
+    }
+
+    @Override
+    public SpuDetailsAdminVO queryByIdAdmin(Long spuId) {
+        StandardProductUnit spu = baseMapper.selectById(spuId);
+        if(spu==null){
+            throw new BizIllegalException("spuId不存在");
+        }
+        if(!spu.isAvailable()){
+            throw new BadRequestException("商品未上架");
+        }
+        Category category = categoryMapper.selectById(spu.getCategoryId());
+        Brand brand = brandMapper.selectById(spu.getBrandId());
+        List<Long> main = splitImagesId(spu.getContentImagesId());
+        List<Long> content = splitImagesId(spu.getContentImagesId());
+        main.addAll(content);
+
+        Map<Long, String> imageMap = mediaClient.getFileInfos(main).stream().collect(Collectors.toMap(
+                FileDTO::getId,
+                FileDTO::getFileUrl
+        ));
+        List<UserInfoResVO> creater = userClient.getUserInfos(Collections.singleton(spu.getCreater()));
+        Map<String, Set<String>> attributes = skuService.getAttributes(spuId);
+
+        SpuDetailsAdminVO res = BeanUtils.copyBean(spu, SpuDetailsAdminVO.class);
+        res.setAttributesMap(attributes);
+        res.setBrand(brand.getBrandName());
+        res.setCategory(category.getCategoryName());
+        creater.stream().findFirst().ifPresent(p->res.setCreater(p.getAccount()));
+        res.setContentImagesUrl(getUrlList(content,imageMap));
+        res.setMainImagesUrl(getUrlList(main,imageMap));
+        if(spu.getMainVideoId()!=null)
+        {
+            mediaClient.getMediaInfos(Collections.singleton(spu.getMainVideoId()))
+                    .stream().findFirst().ifPresent(p->res.setMainVideoUrl(p.getMediaUrl()));
+        }
+        return res;
     }
 
     public String getUrlList(List<Long> ids, Map<Long, String> urlMap){

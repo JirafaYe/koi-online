@@ -7,6 +7,7 @@ import com.xc.product.entity.dto.SpuPageDTO;
 import com.xc.product.entity.query.SpuAdminQuery;
 import com.xc.product.entity.query.SpuQuery;
 import com.xc.product.entity.query.SpuUserQuery;
+import com.xc.product.entity.vo.SpuDetailsAdminVO;
 import com.xc.product.entity.vo.SpuDetailsVO;
 import com.xc.product.entity.vo.SpuPageVO;
 import com.xc.product.entity.vo.SpuVO;
@@ -45,4 +46,6 @@ public interface IStandardProductUnitService extends IService<StandardProductUni
     SpuPageDTO<SpuPageVO> pageQuery(SpuAdminQuery query, boolean isAdmin);
 
     PageDTO<SpuPageVO> adminQuery(SpuAdminQuery query);
+
+    SpuDetailsAdminVO queryByIdAdmin(Long spuId);
 }
