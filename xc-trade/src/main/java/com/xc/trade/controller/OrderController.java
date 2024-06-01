@@ -36,10 +36,10 @@ public class OrderController {
     /**
      * 创建订单
      * @param vo
-     * @return
+     * @return order id
      */
     @PostMapping("/create")
-    public boolean create(OrderVO vo){
+    public Long create(OrderVO vo){
         return orderService.createOrder(vo);
     }
 

@@ -258,7 +258,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
 
             }
         }
-
+        if(CollUtils.isEmpty(resultMaps)){
+            return null;
+        }
         List maps = new LinkedList<>(resultMaps.values());
 
         for (Object mapTmp : maps) {
@@ -304,6 +306,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                             StockKeepingUnit::getId,
                             obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
                     ));
+            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
         }
         Map finalResultMaps = resultMaps;
         List<String> list = (List) resultMaps.keySet().stream().filter(p -> {
