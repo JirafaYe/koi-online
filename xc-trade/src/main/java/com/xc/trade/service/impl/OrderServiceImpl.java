@@ -317,7 +317,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Transactional
     public boolean deleteOrder(Long orderId) {
         List<Long> detailsIDs = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId)).stream().map(OrderDetails::getId).collect(Collectors.toList());
-        if(!CollUtils.isEmpty(detailsIDs)){
+        if(CollUtils.isEmpty(detailsIDs)){
             throw new BizIllegalException("orderId 不存在");
         }
         orderDetailsService.removeByIds(detailsIDs);
