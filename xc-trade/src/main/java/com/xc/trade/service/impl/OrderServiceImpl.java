@@ -293,8 +293,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
     @Override
     public boolean finishOrder(Long orderId) {
-        if(lambdaQuery().eq(Orders::getId,orderId).isNotNull(Orders::getPayTime).count().equals(0)){
+        Orders one = lambdaQuery().eq(Orders::getId, orderId).one();
+        if(one.getStatus().equals(OrdersStatus.CLOSED.getValue())||one.getPayTime()==null){
             throw new BizIllegalException("用户未支付");
+        }
+        if(!one.getDeliveryStatus().equals(1)){
+            throw new BizIllegalException("未发货不可收货");
         }
         return orderMapper.updateOrderStatusByUser(OrdersStatus.SUCCESS.getValue(), orderId, UserContext.getUser()) == 1;
     }

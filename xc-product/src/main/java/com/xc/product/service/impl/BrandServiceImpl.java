@@ -88,7 +88,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand> implements
             throw new CommonException("required brandId value");
         }
         if(!spuService.countByBrand(brandId).equals(0)){
-            throw new BadRequestException("改品牌下包含商品");
+            throw new BadRequestException("该品牌下包含商品");
         }
         boolean success = removeById(brandId);
         if(success){
