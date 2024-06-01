@@ -271,6 +271,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         String maps = redisTemplate.opsForValue().get(RedisConstants.SKU_PREFIX + spuId);
         Map resultMaps=null;
         if(!StringUtils.isEmpty(maps)){
+            redisTemplate.expire(RedisConstants.SKU_PREFIX + spuId,Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
             resultMaps = JsonUtils.parse(maps).toBean(Map.class);
         }else {
             List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
