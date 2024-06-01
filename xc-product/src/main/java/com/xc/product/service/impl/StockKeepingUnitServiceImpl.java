@@ -12,6 +12,8 @@ import com.xc.common.exceptions.CommonException;
 import com.xc.common.utils.BeanUtils;
 import com.xc.common.utils.CollUtils;
 import com.xc.common.utils.JsonUtils;
+import com.xc.common.utils.StringUtils;
+import com.xc.product.Constants.RedisConstants;
 import com.xc.product.entity.StandardProductUnit;
 import com.xc.product.entity.StockKeepingUnit;
 import com.xc.product.entity.query.SkuQuery;
@@ -20,10 +22,13 @@ import com.xc.product.mapper.StandardProductUnitMapper;
 import com.xc.product.mapper.StockKeepingUnitMapper;
 import com.xc.product.service.IStockKeepingUnitService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,6 +51,9 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
 
     @Resource
     StandardProductUnitMapper spuMapper;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -228,9 +236,18 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                 .eq(StockKeepingUnit::isAvailable,true).list();
         Map<String, Set<String>> attributes= new HashMap<>();
         if(!CollUtils.isEmpty(sku)){
-            List<HashMap> maps = sku.stream().map(obj
-                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
-            for (HashMap map : maps) {
+//            List<HashMap> maps = sku.stream().map(obj
+//                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
+            //HashMap<Long,HashMap<String,String>>
+            Map resultMaps = sku.stream()
+                    .collect(Collectors.toMap(
+                            StockKeepingUnit::getId,
+                            obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
+                    ));
+            ArrayList maps = new ArrayList<>(resultMaps.values());
+            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
+            for (Object mapTmp : maps) {
+                HashMap map = (HashMap) mapTmp;
                 map.keySet().forEach(obj->{
                     if(!attributes.containsKey(obj)){
                         attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
@@ -250,16 +267,53 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(!JsonUtils.isJson(attributes)){
             throw new CommonException("attributes 需要为json格式");
         }
-        StockKeepingUnit match = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
-                .eq(StockKeepingUnit::isAvailable, true).eq(StockKeepingUnit::getAttributes, attributes).one();
-        SkuPageVO vo=BeanUtils.copyBean(match,SkuPageVO.class);
-        if(vo!=null) {
-            vo.setPrice(match.getPrice());
-            vo.setSpuName(spuMapper.selectById(vo.getSpuId()).getSpuName());
-            mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
-                    .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
+        HashMap attributesObj = JsonUtils.parseObj(attributes).toBean(HashMap.class);
+        String maps = redisTemplate.opsForValue().get(RedisConstants.SKU_PREFIX + spuId);
+        Map resultMaps=null;
+        if(!StringUtils.isEmpty(maps)){
+            redisTemplate.expire(RedisConstants.SKU_PREFIX + spuId,Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
+            resultMaps = JsonUtils.parse(maps).toBean(Map.class);
+        }else {
+            List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
+                    .eq(StockKeepingUnit::isAvailable,true).list();
+            if(!CollUtils.isEmpty(sku)){
+                throw new BizIllegalException("spu Id 不存在");
+            }
+            //HashMap<Long,HashMap<String,String>>
+            resultMaps = sku.stream()
+                    .collect(Collectors.toMap(
+                            StockKeepingUnit::getId,
+                            obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
+                    ));
         }
-        return vo;
+        Map finalResultMaps = resultMaps;
+        List<String> list = (List) resultMaps.keySet().stream().filter(p -> {
+                    Map<String, String> attributesMap = (Map<String, String>) finalResultMaps.get(p);
+                    return attributesMap.entrySet().equals(attributesObj.entrySet());
+                }
+        ).collect(Collectors.toList());
+
+        SkuPageVO result = null;
+        if (!CollUtils.isEmpty(list)) {
+            Long matchId = Long.valueOf(list.get(0));
+            StockKeepingUnit match = lambdaQuery()
+                    .eq(StockKeepingUnit::getId, matchId)
+                    .eq(StockKeepingUnit::isAvailable, true)
+                    .one();
+
+            if (match != null) {
+                result = BeanUtils.copyBean(match, SkuPageVO.class);
+                result.setPrice(match.getPrice());
+                result.setSpuName(spuMapper.selectById(result.getSpuId()).getSpuName());
+
+                List<FileDTO> fileDTOs = mediaClient.getFileInfos(Collections.singletonList(match.getImageId()));
+                if (!CollUtils.isEmpty(fileDTOs)) {
+                    result.setImage(fileDTOs.get(0).getFileUrl());
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override

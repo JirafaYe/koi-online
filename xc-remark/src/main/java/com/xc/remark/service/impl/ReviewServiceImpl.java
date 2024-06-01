@@ -8,6 +8,7 @@ import com.xc.api.client.trade.TradeClient;
 import com.xc.api.client.user.UserClient;
 import com.xc.api.dto.media.FileDTO;
 import com.xc.api.dto.media.MediaDTO;
+import com.xc.api.dto.product.SkuPageVO;
 import com.xc.api.dto.product.SpuPageVO;
 import com.xc.api.dto.user.res.UserInfoResVO;
 import com.xc.common.domain.dto.PageDTO;
@@ -20,6 +21,7 @@ import com.xc.remark.domain.dto.ReviewFormDTO;
 import com.xc.remark.domain.po.Reply;
 import com.xc.remark.domain.po.Review;
 import com.xc.remark.domain.query.ReviewPageQuery;
+import com.xc.remark.domain.query.ReviewUserPageQuery;
 import com.xc.remark.domain.vo.ReviewVO;
 import com.xc.remark.mapper.ReplyMapper;
 import com.xc.remark.mapper.ReviewMapper;
@@ -89,6 +91,42 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
         if(CollUtils.isEmpty(records)){
             return PageDTO.empty(page);
         }
+        return queryByPage(page, records);
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long id) {
+        Review review = getById(id);
+        if(review == null){
+            return;
+        }
+        if(!review.getUserId().equals(UserContext.getUser())){
+            throw new BadRequestException("不可删除其他人的评论");
+        }
+        removeById(id);
+        LambdaQueryWrapper<Reply> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Reply::getReviewId, id);
+        replyMapper.delete(wrapper);
+    }
+
+    @Override
+    public PageDTO<ReviewVO> queryReviewById(ReviewUserPageQuery query) {
+        Long spuId = query.getSpuId();
+        if(spuId == null){
+            throw new BadRequestException("商品不存在");
+        }
+        Page<Review> page = lambdaQuery()
+                .eq(Review::getProductId, spuId)
+                .page(query.toMpPageDefaultSortByCreateTimeDesc());
+        List<Review> records = page.getRecords();
+        if(CollUtils.isEmpty(records)){
+            return PageDTO.empty(page);
+        }
+        return queryByPage(page, records);
+    }
+
+    private PageDTO<ReviewVO> queryByPage(Page<Review> page, List<Review> records) {
         Set<Long> userIds = new HashSet<>();
         Set<Long> pIds = new HashSet<>();
         Set<Long> oIds = new HashSet<>();
@@ -99,7 +137,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
             rIds.add(r.getId());
             userIds.add(r.getUserId());
             pIds.add(r.getProductId());
-            oIds.add(r.getOrderId());
+            oIds.add(r.getOrderDetailId());
             if(r.getHaveVideo()){
                 mediaIds.add(r.getVideo());
             }
@@ -119,11 +157,19 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
         if(CollUtils.isNotEmpty(productInfos)){
             productMap = productInfos.stream().collect(Collectors.toMap(SpuPageVO::getId, SpuPageVO::getSpuName));
         }
-//        List<> orderInfos = tradeClient.queryOrderByIds(oIds);
-//        Map<Long, > orderMap = new HashMap(orderInfos.size());
-//        if(CollUtils.isNotEmpty(orderInfos)){
-//            orderMap = orderInfos.stream().collect(Collectors.toMap());
-//        }
+        List<Long> skuIds = tradeClient.getSKuIds(oIds);
+        Map<Long, SkuPageVO> orderMap = new HashMap<>(skuIds.size());
+        List<SkuPageVO> skus = new ArrayList<>();
+        if(CollUtils.isNotEmpty(skuIds)){
+            skus = productClient.getSkuById(skuIds);
+        }
+        Iterator<Long> iterator = oIds.iterator();
+        for (SkuPageVO sku : skus) {
+            if(iterator.hasNext()){
+                Long oId = iterator.next();
+                orderMap.put(oId, sku);
+            }
+        }
         List<MediaDTO> mediaInfos = mediaClient.getMediaInfos(mediaIds);
         Map<Long, String> mediaMap = new HashMap<>(mediaInfos.size());
         if(CollUtils.isNotEmpty(mediaInfos)){
@@ -145,10 +191,12 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
             if(spuName != null){
                 vo.setProductName(spuName);
             }
-//            orderInfo = orderMap.get(review.getOrderId());
-//            if(orderInfo != null){
-//                (orderInfo);
-//            }
+            SkuPageVO sku = orderMap.get(review.getOrderDetailId());
+            if(sku != null){
+                vo.setSpuName(sku.getSpuName());
+                vo.setAttributes(sku.getAttributes());
+                vo.setImage(sku.getImage());
+            }
             if(review.getHaveVideo()){
                 String mediaUrl = mediaMap.get(review.getVideo());
                 if(mediaUrl != null){
@@ -166,21 +214,5 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
             voList.add(vo);
         }
         return PageDTO.of(page, voList);
-    }
-
-    @Override
-    @Transactional
-    public void deleteReview(Long id) {
-        Review review = getById(id);
-        if(review == null){
-            return;
-        }
-        if(!review.getUserId().equals(UserContext.getUser())){
-            throw new BadRequestException("不可删除其他人的评论");
-        }
-        removeById(id);
-        LambdaQueryWrapper<Reply> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Reply::getReviewId, id);
-        replyMapper.delete(wrapper);
     }
 }

@@ -94,8 +94,6 @@ xc:
       - /spu/page/user
       - /coupons/list
       - /advertise/get
-      - /replies/page
-      - /reviews/list
       - /files/images
       - /files/exist
       - /medias/videos

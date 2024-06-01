@@ -38,7 +38,7 @@ public class Review implements Serializable {
     /**
      * 订单id
      */
-    private Long orderId;
+    private Long orderDetailId;
 
     /**
      * 用户id
