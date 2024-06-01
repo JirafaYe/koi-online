@@ -15,6 +15,11 @@ public class SpuPageVO {
     private String spuName;
 
     /**
+     * 最低价
+     */
+    private Integer minPrice;
+
+    /**
      * 品牌
      */
     private String  brand;
