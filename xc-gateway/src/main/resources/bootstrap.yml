@@ -98,3 +98,4 @@ xc:
       - /files/exist
       - /medias/videos
       - /medias/exist
+      - /category/all

@@ -32,3 +32,4 @@ xc:
       enable: true
       exclude-login-paths:
         - /spu/page/user
+        - /category/all
