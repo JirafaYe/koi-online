@@ -373,10 +373,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             HashMap<Long, List<OrderDetailsDTO>> dtoMap = new HashMap<>();
             orderDetails.forEach(p -> {
                 if (!dtoMap.containsKey(p.getOrderId())) {
-                    dtoMap.put(p.getOrderId(), List.of(BeanUtils.copyBean(p, OrderDetailsDTO.class)));
+                    OrderDetailsDTO orderDetailsDTO = BeanUtils.copyBean(p, OrderDetailsDTO.class);
+                    LinkedList<OrderDetailsDTO> dtos = new LinkedList<>();
+                    dtos.add(orderDetailsDTO);
+                    dtoMap.put(p.getOrderId(), dtos);
                 } else {
                     List<OrderDetailsDTO> dtos = dtoMap.get(p.getOrderId());
-                    dtos.add(BeanUtils.copyBean(p, OrderDetailsDTO.class));
+                    OrderDetailsDTO orderDetailsDTO = BeanUtils.copyBean(p, OrderDetailsDTO.class);
+                    dtos.add(orderDetailsDTO);
                     dtoMap.put(p.getOrderId(), dtos);
                 }
             });
