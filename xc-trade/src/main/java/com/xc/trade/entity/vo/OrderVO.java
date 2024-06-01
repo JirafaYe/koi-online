@@ -2,6 +2,7 @@ package com.xc.trade.entity.vo;
 
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -11,7 +12,7 @@ public class OrderVO {
     /**
      * 购物车id list
      */
-    @NotBlank
+    @NotNull
     private List<Long> shoppingCharts;
 
     /**
@@ -23,6 +24,6 @@ public class OrderVO {
     /**
      * 优惠券选择
      */
-    @NotNull
+    @Nullable
     private List<Long> coupons;
 }

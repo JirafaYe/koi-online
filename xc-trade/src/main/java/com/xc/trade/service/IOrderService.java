@@ -25,7 +25,7 @@ public interface IOrderService extends IService<Orders> {
 
     PreviewOrderDTO preViewFromChart(List<Long> shoppingCharts);
 
-    boolean createOrder(OrderVO vo);
+    Long createOrder(OrderVO vo);
 
     List<FlowReportsVO> flowReports();
 

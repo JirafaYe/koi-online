@@ -12,6 +12,7 @@ import feign.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -36,10 +37,10 @@ public class OrderController {
     /**
      * 创建订单
      * @param vo
-     * @return
+     * @return order id
      */
     @PostMapping("/create")
-    public boolean create(OrderVO vo){
+    public Long create(@Valid @RequestBody OrderVO vo){
         return orderService.createOrder(vo);
     }
 

@@ -1,5 +1,6 @@
 package com.xc.product.service.impl;
 
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xc.api.client.media.MediaClient;
@@ -120,6 +121,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             throw new BizIllegalException("更新spu价格失败");
         }
 
+        redisTemplate.delete(RedisConstants.SKU_PREFIX + vo.getSpuId());
         return true;
     }
 
@@ -144,6 +146,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             if(!(remove&&update&&updatePrice)){
                 throw new CommonException("删除失败");
             }
+            redisTemplate.delete(RedisConstants.SKU_PREFIX + sku.getSpuId());
             return true;
         }
         throw new CommonException("SKU Id 不存在");
@@ -188,6 +191,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(!(updateNum&&updateSku&&updatePrice)){
             throw new CommonException("更新sku错误");
         }
+        redisTemplate.delete(RedisConstants.SKU_PREFIX + vo.getSpuId());
         return true;
     }
 
@@ -232,32 +236,49 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
 
     @Override
     public Map<String, Set<String>> getAttributes(Long spuId) {
-        List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
-                .eq(StockKeepingUnit::isAvailable,true).list();
         Map<String, Set<String>> attributes= new HashMap<>();
-        if(!CollUtils.isEmpty(sku)){
-//            List<HashMap> maps = sku.stream().map(obj
-//                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
-            //HashMap<Long,HashMap<String,String>>
-            Map resultMaps = sku.stream()
-                    .collect(Collectors.toMap(
-                            StockKeepingUnit::getId,
-                            obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
-                    ));
-            ArrayList maps = new ArrayList<>(resultMaps.values());
-            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
-            for (Object mapTmp : maps) {
-                HashMap map = (HashMap) mapTmp;
-                map.keySet().forEach(obj->{
-                    if(!attributes.containsKey(obj)){
-                        attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
-                    }else {
-                        Set<String> set = attributes.get(obj);
-                        set.add((String) map.get(obj));
-                        attributes.put((String) obj,set);
-                    }
-                });
+        String key = redisTemplate.opsForValue().get(RedisConstants.SKU_PREFIX + spuId);
+        Map resultMaps=null;
+        boolean redis=false;
+        if(!StringUtils.isEmpty(key)){
+            redisTemplate.expire(RedisConstants.SKU_PREFIX + spuId,Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
+            resultMaps = JsonUtils.parse(key).toBean(Map.class);
+            redis=true;
+        }else {
+            List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
+                    .eq(StockKeepingUnit::isAvailable,true).list();
+            if(!CollUtils.isEmpty(sku)){
+                //HashMap<Long,HashMap<String,String>>
+                resultMaps = sku.stream()
+                        .collect(Collectors.toMap(
+                                StockKeepingUnit::getId,
+                                obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
+                        ));
+                redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
+
             }
+        }
+        if(CollUtils.isEmpty(resultMaps)){
+            return null;
+        }
+        List maps = new LinkedList<>(resultMaps.values());
+
+        for (Object mapTmp : maps) {
+            Map map;
+            if(redis) {
+               map = JsonUtils.toBean((JSONObject) mapTmp, HashMap.class);
+            }else {
+                map= (Map) mapTmp;
+            }
+            map.keySet().forEach(obj->{
+                if(!attributes.containsKey(obj)){
+                    attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
+                }else {
+                    Set<String> set = attributes.get(obj);
+                    set.add((String) map.get(obj));
+                    attributes.put((String) obj,set);
+                }
+            });
         }
         return attributes;
     }
@@ -276,7 +297,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         }else {
             List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
                     .eq(StockKeepingUnit::isAvailable,true).list();
-            if(!CollUtils.isEmpty(sku)){
+            if(CollUtils.isEmpty(sku)){
                 throw new BizIllegalException("spu Id 不存在");
             }
             //HashMap<Long,HashMap<String,String>>
@@ -285,9 +306,10 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                             StockKeepingUnit::getId,
                             obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
                     ));
+            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
         }
         Map finalResultMaps = resultMaps;
-        List<String> list = (List) resultMaps.keySet().stream().filter(p -> {
+        List list = (List) resultMaps.keySet().stream().filter(p -> {
                     Map<String, String> attributesMap = (Map<String, String>) finalResultMaps.get(p);
                     return attributesMap.entrySet().equals(attributesObj.entrySet());
                 }
@@ -295,7 +317,15 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
 
         SkuPageVO result = null;
         if (!CollUtils.isEmpty(list)) {
-            Long matchId = Long.valueOf(list.get(0));
+            Long matchId;
+            Object o = list.get(0);
+            if(o instanceof Long){
+                matchId = (Long) o;
+            }else if(o instanceof String){
+                matchId = Long.valueOf((String) o);
+            }else {
+                throw new CommonException("无法转换类型");
+            }
             StockKeepingUnit match = lambdaQuery()
                     .eq(StockKeepingUnit::getId, matchId)
                     .eq(StockKeepingUnit::isAvailable, true)

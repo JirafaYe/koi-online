@@ -151,9 +151,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
     @Override
     @Transactional
-    public boolean createOrder(OrderVO vo) {
+    public Long createOrder(OrderVO vo) {
         Address address = addressMapper.selectById(vo.getAddressId());
-        if (address == null) {
+        if (address == null||!address.getUserId().equals(UserContext.getUser())) {
             throw new CommonException("addressId invalid");
         }
 
@@ -250,7 +250,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
                 .set(RedisConstants.ORDER_PREFIX+orders.getId()+":"+orders.getUserId()
                         ,String.valueOf(orders.getUserId()),Duration.ofMinutes(RedisConstants.DURATION_MINUTES));
 
-        return true;
+        return orders.getId();
     }
 
     public void validateSkuPageVO(List<SkuPageVO> skuVOs) {
