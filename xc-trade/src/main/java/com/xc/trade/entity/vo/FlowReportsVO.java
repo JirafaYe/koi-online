@@ -1,5 +1,6 @@
 package com.xc.trade.entity.vo;
 
+import cn.hutool.core.convert.impl.StringConverter;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentStyle;
@@ -23,8 +24,8 @@ public class FlowReportsVO {
     /**
      * 日期
      */
-    @ExcelProperty(value = "日期", index = 0,converter = LocalDateTimeDateConverter.class)
-    private LocalDateTime time;
+    @ExcelProperty(value = "日期", index = 0)
+    private String time;
 
     /**
      * 销售数量
