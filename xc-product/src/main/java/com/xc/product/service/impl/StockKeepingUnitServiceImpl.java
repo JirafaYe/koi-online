@@ -235,16 +235,18 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                 .eq(StockKeepingUnit::isAvailable,true).list();
         Map<String, Set<String>> attributes= new HashMap<>();
         if(!CollUtils.isEmpty(sku)){
-            List<HashMap> maps = sku.stream().map(obj
-                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
+//            List<HashMap> maps = sku.stream().map(obj
+//                    -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)).collect(Collectors.toList());
             //HashMap<Long,HashMap<String,String>>
             Map resultMaps = sku.stream()
                     .collect(Collectors.toMap(
                             StockKeepingUnit::getId,
                             obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
                     ));
+            ArrayList maps = new ArrayList<>(resultMaps.values());
             redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString());
-            for (HashMap map : maps) {
+            for (Object mapTmp : maps) {
+                HashMap map = (HashMap) mapTmp;
                 map.keySet().forEach(obj->{
                     if(!attributes.containsKey(obj)){
                         attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
@@ -264,10 +266,11 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         if(!JsonUtils.isJson(attributes)){
             throw new CommonException("attributes 需要为json格式");
         }
+        HashMap attributesObj = JsonUtils.parseObj(attributes).toBean(HashMap.class);
         String maps = redisTemplate.opsForValue().get(RedisConstants.SKU_PREFIX + spuId);
         Map resultMaps=null;
         if(!StringUtils.isEmpty(maps)){
-            resultMaps = JsonUtils.parseArray(maps).toBean(Map.class);
+            resultMaps = JsonUtils.parse(maps).toBean(Map.class);
         }else {
             List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
                     .eq(StockKeepingUnit::isAvailable,true).list();
@@ -281,15 +284,34 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                             obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
                     ));
         }
+        Map finalResultMaps = resultMaps;
+        List<String> list = (List) resultMaps.keySet().stream().filter(p -> {
+                    Map<String, String> attributesMap = (Map<String, String>) finalResultMaps.get(p);
+                    return attributesMap.entrySet().equals(attributesObj.entrySet());
+                }
+        ).collect(Collectors.toList());
 
-//        SkuPageVO vo=BeanUtils.copyBean(match,SkuPageVO.class);
-//        if(vo!=null) {
-//            vo.setPrice(match.getPrice());
-//            vo.setSpuName(spuMapper.selectById(vo.getSpuId()).getSpuName());
-//            mediaClient.getFileInfos(Collections.singletonList(match.getImageId())).stream()
-//                    .findFirst().ifPresent(fileDTO -> vo.setImage(fileDTO.getFileUrl()));
-//        }
-        return null;
+        SkuPageVO result = null;
+        if (!CollUtils.isEmpty(list)) {
+            Long matchId = Long.valueOf(list.get(0));
+            StockKeepingUnit match = lambdaQuery()
+                    .eq(StockKeepingUnit::getId, matchId)
+                    .eq(StockKeepingUnit::isAvailable, true)
+                    .one();
+
+            if (match != null) {
+                result = BeanUtils.copyBean(match, SkuPageVO.class);
+                result.setPrice(match.getPrice());
+                result.setSpuName(spuMapper.selectById(result.getSpuId()).getSpuName());
+
+                List<FileDTO> fileDTOs = mediaClient.getFileInfos(Collections.singletonList(match.getImageId()));
+                if (!CollUtils.isEmpty(fileDTOs)) {
+                    result.setImage(fileDTOs.get(0).getFileUrl());
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
