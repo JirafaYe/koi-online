@@ -12,6 +12,7 @@ import feign.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -39,7 +40,7 @@ public class OrderController {
      * @return order id
      */
     @PostMapping("/create")
-    public Long create(@RequestBody OrderVO vo){
+    public Long create(@Valid @RequestBody OrderVO vo){
         return orderService.createOrder(vo);
     }
 
