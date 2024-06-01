@@ -5,6 +5,7 @@ import com.xc.remark.domain.dto.ReviewFormDTO;
 import com.xc.remark.domain.po.Review;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xc.remark.domain.query.ReviewPageQuery;
+import com.xc.remark.domain.query.ReviewUserPageQuery;
 import com.xc.remark.domain.vo.ReviewVO;
 
 /**
@@ -22,4 +23,6 @@ public interface IReviewService extends IService<Review> {
     PageDTO<ReviewVO> queryReviewPage(ReviewPageQuery query);
 
     void deleteReview(Long id);
+
+    PageDTO<ReviewVO> queryReviewById(ReviewUserPageQuery query);
 }

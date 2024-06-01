@@ -4,6 +4,7 @@ package com.xc.remark.controller;
 import com.xc.common.domain.dto.PageDTO;
 import com.xc.remark.domain.dto.ReviewFormDTO;
 import com.xc.remark.domain.query.ReviewPageQuery;
+import com.xc.remark.domain.query.ReviewUserPageQuery;
 import com.xc.remark.domain.vo.ReviewVO;
 import com.xc.remark.service.IReviewService;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,13 @@ public class ReviewController {
     @DeleteMapping("{id}")
     public void deleteReview(@PathVariable("id") Long id){
         reviewService.deleteReview(id);
+    }
+
+    /**
+     * 用户端根据spuId查询评论
+     */
+    @GetMapping("/user/list")
+    public PageDTO<ReviewVO> queryReviewById(ReviewUserPageQuery query){
+        return reviewService.queryReviewById(query);
     }
 }

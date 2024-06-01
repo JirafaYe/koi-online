@@ -21,6 +21,7 @@ import com.xc.remark.domain.dto.ReviewFormDTO;
 import com.xc.remark.domain.po.Reply;
 import com.xc.remark.domain.po.Review;
 import com.xc.remark.domain.query.ReviewPageQuery;
+import com.xc.remark.domain.query.ReviewUserPageQuery;
 import com.xc.remark.domain.vo.ReviewVO;
 import com.xc.remark.mapper.ReplyMapper;
 import com.xc.remark.mapper.ReviewMapper;
@@ -90,6 +91,42 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
         if(CollUtils.isEmpty(records)){
             return PageDTO.empty(page);
         }
+        return queryByPage(page, records);
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long id) {
+        Review review = getById(id);
+        if(review == null){
+            return;
+        }
+        if(!review.getUserId().equals(UserContext.getUser())){
+            throw new BadRequestException("不可删除其他人的评论");
+        }
+        removeById(id);
+        LambdaQueryWrapper<Reply> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Reply::getReviewId, id);
+        replyMapper.delete(wrapper);
+    }
+
+    @Override
+    public PageDTO<ReviewVO> queryReviewById(ReviewUserPageQuery query) {
+        Long spuId = query.getSpuId();
+        if(spuId == null){
+            throw new BadRequestException("商品不存在");
+        }
+        Page<Review> page = lambdaQuery()
+                .eq(Review::getProductId, spuId)
+                .page(query.toMpPageDefaultSortByCreateTimeDesc());
+        List<Review> records = page.getRecords();
+        if(CollUtils.isEmpty(records)){
+            return PageDTO.empty(page);
+        }
+        return queryByPage(page, records);
+    }
+
+    private PageDTO<ReviewVO> queryByPage(Page<Review> page, List<Review> records) {
         Set<Long> userIds = new HashSet<>();
         Set<Long> pIds = new HashSet<>();
         Set<Long> oIds = new HashSet<>();
@@ -177,21 +214,5 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
             voList.add(vo);
         }
         return PageDTO.of(page, voList);
-    }
-
-    @Override
-    @Transactional
-    public void deleteReview(Long id) {
-        Review review = getById(id);
-        if(review == null){
-            return;
-        }
-        if(!review.getUserId().equals(UserContext.getUser())){
-            throw new BadRequestException("不可删除其他人的评论");
-        }
-        removeById(id);
-        LambdaQueryWrapper<Reply> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Reply::getReviewId, id);
-        replyMapper.delete(wrapper);
     }
 }
