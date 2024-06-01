@@ -43,7 +43,11 @@ public class ReportsController {
         return orderService.flowReports();
     }
 
-
+    /**
+     * 下载每日订单销量报表
+     * @param req
+     * @param res
+     */
     @PostMapping("/downLoadFlowReports")
     public void downLoadFlowReports(HttpServletRequest req, HttpServletResponse res) {
         List<FlowReportsVO> vo = orderService.flowReports();

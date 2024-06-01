@@ -7,7 +7,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class GoodsCategroyReportsVO extends BaseRowModel {
+public class GoodsCategroyReportsVO {
 
 /**
      * 商品类型
