@@ -239,9 +239,11 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
         Map<String, Set<String>> attributes= new HashMap<>();
         String key = redisTemplate.opsForValue().get(RedisConstants.SKU_PREFIX + spuId);
         Map resultMaps=null;
+        boolean redis=false;
         if(!StringUtils.isEmpty(key)){
             redisTemplate.expire(RedisConstants.SKU_PREFIX + spuId,Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
             resultMaps = JsonUtils.parse(key).toBean(Map.class);
+            redis=true;
         }else {
             List<StockKeepingUnit> sku = lambdaQuery().eq(StockKeepingUnit::getSpuId, spuId)
                     .eq(StockKeepingUnit::isAvailable,true).list();
@@ -257,9 +259,15 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
             }
         }
 
-        List<JSONObject> maps = new LinkedList<>(resultMaps.values());
-        for (JSONObject mapTmp : maps) {
-            Map map = JsonUtils.toBean(mapTmp,HashMap.class);
+        List maps = new LinkedList<>(resultMaps.values());
+
+        for (Object mapTmp : maps) {
+            Map map;
+            if(redis) {
+               map = JsonUtils.toBean((JSONObject) mapTmp, HashMap.class);
+            }else {
+                map= (Map) mapTmp;
+            }
             map.keySet().forEach(obj->{
                 if(!attributes.containsKey(obj)){
                     attributes.put((String) obj,new HashSet<>(Collections.singletonList((String) map.get(obj))));
