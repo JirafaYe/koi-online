@@ -52,7 +52,11 @@ public interface IOrderService extends IService<Orders> {
 
     boolean canceledOrder(Long orderId);
 
-    PageDTO<OrderDTO> pageQuery(OrderQuery query);
+    OrderDTO queryById(Long orderId);
+
+    PageDTO<OrderDTO> pageQuery(OrderQuery query,boolean isAdmin);
+
+    List<Long> getSKuIds(List<Long> detailsIds);
 
     ReportsByRangeVO getReportsByRange(ReportsByRangeReqDTO reportsByRangeVO);
 }
