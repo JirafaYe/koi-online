@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.xc.trade.entity.enums.RefundStatus.AGREE;
+import static com.xc.trade.entity.enums.RefundStatus.AGREE_RG;
 
 /**
  * <p>
@@ -228,7 +229,15 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
 
             vo.setApproverName(r.getApprover() == null ? "--" : userMap.get(r.getApprover()).getAccount());
             // 4.3.退款状态
-            vo.setRefundStatusDesc(RefundStatus.desc(r.getStatus().getValue()));
+            if(r.getRefundClassify().equals(RefundClassifyStatus.REFUND_ONLY)
+                && r.getStatus().equals(AGREE)){
+                vo.setRefundStatusDesc("同意退款");
+            } else if (r.getRefundClassify().equals(RefundClassifyStatus.RETURN_GOODS_REFUND)
+                && r.getStatus().equals(AGREE_RG)) {
+                vo.setRefundStatusDesc("同意退货");
+            } else {
+                vo.setRefundStatusDesc(RefundStatus.desc(r.getStatus().getValue()));
+            }
             if (RefundStatus.SUCCESS.equalsValue(r.getStatus().getValue())) {
                 vo.setRefundSuccessTime(r.getFinishTime());
             }
