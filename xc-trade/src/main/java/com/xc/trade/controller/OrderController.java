@@ -1,6 +1,7 @@
 package com.xc.trade.controller;
 
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.exceptions.BizIllegalException;
 import com.xc.trade.entity.dto.OrderDTO;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.query.OrderQuery;
@@ -49,17 +50,23 @@ public class OrderController {
      */
     @PostMapping("/delivery/{id}")
     public boolean delivery(@PathVariable Long id){
-        return orderService.delivery(id);
+        if(!orderService.delivery(id)){
+            throw new BizIllegalException("未支付或id不存在，无法发货");
+        }
+        return true;
     }
 
     /**
-     * 管理员删除订单
+     * 删除订单
      * @param id
      * @return
      */
     @PostMapping("/delete/{id}")
     public boolean delete(@PathVariable Long id){
-        return orderService.deleteOrder(id);
+        if(!orderService.deleteOrder(id)){
+            throw new BizIllegalException("订单关闭或成功才可删除");
+        }
+        return true;
     }
 
     /**
@@ -73,13 +80,23 @@ public class OrderController {
     }
 
     /**
-     * 分页查询，可指定spuName
+     * 分页查询，可指定spuName（用户）
      * @param query
      * @return
      */
     @GetMapping("/page")
     public PageDTO<OrderDTO> pageQuery(@Param("page")OrderQuery query){
-        return orderService.pageQuery(query);
+        return orderService.pageQuery(query,false);
+    }
+
+    /**
+     * 分页查询，可指定spuName（管理员）
+     * @param query
+     * @return
+     */
+    @GetMapping("/admin/page")
+    public PageDTO<OrderDTO> pageQueryAdmin(@Param("page")OrderQuery query){
+        return orderService.pageQuery(query,true);
     }
 
     /**
@@ -90,6 +107,26 @@ public class OrderController {
     @PostMapping("/cancel/{id}")
     public boolean cancelOrder(@PathVariable Long id){
         return orderService.canceledOrder(id);
+    }
+
+    /**
+     * 根据id查询详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public OrderDTO queryById(@PathVariable Long id){
+        return orderService.queryById(id);
+    }
+
+    /**
+     * 服务内api，根据orderDetails获得sku ids
+     * @param detailsIds
+     * @return
+     */
+    @GetMapping("/skues")
+    public List<Long> getSKuIds(@RequestBody List<Long> detailsIds){
+        return orderService.getSKuIds(detailsIds);
     }
 
 }

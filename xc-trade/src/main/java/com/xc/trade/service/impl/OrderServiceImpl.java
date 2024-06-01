@@ -111,7 +111,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             List<OrderProductDTO> orderProducts = skuById.stream().map(obj -> {
                 OrderProductDTO dto = new OrderProductDTO();
                 dto.setId(obj.getId());
-                dto.setPrice((int) (obj.getPrice() * 100) * obj.getNum());
+                dto.setPrice(obj.getPrice() * obj.getNum());
                 dto.setCateId(obj.getCategoryId());
                 return dto;
             }).collect(Collectors.toList());
@@ -285,6 +285,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
     @Override
     public boolean finishOrder(Long orderId) {
+        if(lambdaQuery().eq(Orders::getId,orderId).isNotNull(Orders::getPayTime).count().equals(0)){
+            throw new BizIllegalException("用户未支付");
+        }
         return orderMapper.updateOrderStatusByUser(OrdersStatus.SUCCESS.getValue(), orderId, UserContext.getUser()) == 1;
     }
 
@@ -292,6 +295,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Transactional
     public boolean deleteOrder(Long orderId) {
         List<Long> detailsIDs = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId)).stream().map(OrderDetails::getId).collect(Collectors.toList());
+        if(!CollUtils.isEmpty(detailsIDs)){
+            throw new BizIllegalException("orderId 不存在");
+        }
         orderDetailsService.removeByIds(detailsIDs);
         return baseMapper.delete(new LambdaQueryWrapper<Orders>()
                 .eq(Orders::getId, orderId)
@@ -325,9 +331,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     }
 
     @Override
-    public PageDTO<OrderDTO> pageQuery(OrderQuery query) {
+    public PageDTO<OrderDTO> pageQuery(OrderQuery query,boolean isAdmin) {
         List<Long> orders;
-        LambdaQueryChainWrapper<Orders> wrapper = lambdaQuery().eq(Orders::getUserId, UserContext.getUser());
+        LambdaQueryChainWrapper<Orders> wrapper = lambdaQuery();
+        if(!isAdmin){
+            wrapper.eq(Orders::getUserId, UserContext.getUser());
+        }
         if (!StringUtils.isEmpty(query.getSpuName())) {
             orders = orderDetailsMapper.selectOrdersBySpuName(query.getSpuName());
             wrapper.in(Orders::getId, orders);
@@ -360,6 +369,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             res = PageDTO.of(page, collect);
         }
         return res;
+    }
+
+    @Override
+    public List<Long> getSKuIds(List<Long> detailsIds) {
+        return    orderDetailsMapper.selectBatchIds(detailsIds)
+                .stream().map(OrderDetails::getSkuId).collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDTO queryById(Long orderId) {
+        Orders orders = baseMapper.selectById(orderId);
+        if(orders == null){
+            throw new BizIllegalException("order id 不存在");
+        }
+        List<OrderDetails> orderDetails = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>()
+                .eq(OrderDetails::getOrderId,orderId));
+        List<OrderDetailsDTO> dtoList = orderDetails.stream().map(p -> BeanUtils.copyBean(p, OrderDetailsDTO.class)).collect(Collectors.toList());
+
+        OrderDTO orderDTO = BeanUtils.copyBean(orders, OrderDTO.class);
+        orderDTO.setDetails(dtoList);
+        orderDTO.setAddressVO(JsonUtils.parse(orders.getAddress()).toBean(AddressVO.class));
+        return orderDTO;
     }
 
     @Override

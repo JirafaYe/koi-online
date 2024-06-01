@@ -45,6 +45,11 @@ public class OrderDetailsDTO {
     private Integer price;
 
     /**
+     * 优惠后金额*100
+     */
+    private Integer finalPrice;
+
+    /**
      * 不为空则退款，退款申请中0，退款申请成功1，已退款2
      */
     private Integer refundStatus;
