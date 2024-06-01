@@ -285,6 +285,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
     @Override
     public boolean finishOrder(Long orderId) {
+        if(lambdaQuery().eq(Orders::getId,orderId).isNotNull(Orders::getPayTime).count().equals(0)){
+            throw new BizIllegalException("用户未支付");
+        }
         return orderMapper.updateOrderStatusByUser(OrdersStatus.SUCCESS.getValue(), orderId, UserContext.getUser()) == 1;
     }
 
@@ -292,6 +295,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Transactional
     public boolean deleteOrder(Long orderId) {
         List<Long> detailsIDs = orderDetailsMapper.selectList(new LambdaQueryWrapper<OrderDetails>().eq(OrderDetails::getOrderId, orderId)).stream().map(OrderDetails::getId).collect(Collectors.toList());
+        if(!CollUtils.isEmpty(detailsIDs)){
+            throw new BizIllegalException("orderId 不存在");
+        }
         orderDetailsService.removeByIds(detailsIDs);
         return baseMapper.delete(new LambdaQueryWrapper<Orders>()
                 .eq(Orders::getId, orderId)

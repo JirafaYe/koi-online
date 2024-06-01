@@ -1,6 +1,7 @@
 package com.xc.trade.controller;
 
 import com.xc.common.domain.dto.PageDTO;
+import com.xc.common.exceptions.BizIllegalException;
 import com.xc.trade.entity.dto.OrderDTO;
 import com.xc.trade.entity.dto.PreviewOrderDTO;
 import com.xc.trade.entity.query.OrderQuery;
@@ -49,7 +50,10 @@ public class OrderController {
      */
     @PostMapping("/delivery/{id}")
     public boolean delivery(@PathVariable Long id){
-        return orderService.delivery(id);
+        if(!orderService.delivery(id)){
+            throw new BizIllegalException("未支付货id不存在，无法发货");
+        }
+        return true;
     }
 
     /**
@@ -59,7 +63,10 @@ public class OrderController {
      */
     @PostMapping("/delete/{id}")
     public boolean delete(@PathVariable Long id){
-        return orderService.deleteOrder(id);
+        if(!orderService.deleteOrder(id)){
+            throw new BizIllegalException("订单关闭或成功才可删除");
+        }
+        return true;
     }
 
     /**
