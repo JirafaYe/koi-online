@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -244,7 +245,7 @@ public class StockKeepingUnitServiceImpl extends ServiceImpl<StockKeepingUnitMap
                             obj -> JsonUtils.parseObj(obj.getAttributes()).toBean(HashMap.class)
                     ));
             ArrayList maps = new ArrayList<>(resultMaps.values());
-            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString());
+            redisTemplate.opsForValue().set(RedisConstants.SKU_PREFIX+spuId,JsonUtils.parse(resultMaps).toString(), Duration.ofMinutes(RedisConstants.EXPIRATION_MINUTES));
             for (Object mapTmp : maps) {
                 HashMap map = (HashMap) mapTmp;
                 map.keySet().forEach(obj->{
