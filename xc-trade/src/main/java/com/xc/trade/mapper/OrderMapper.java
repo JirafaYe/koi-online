@@ -26,7 +26,7 @@ public interface OrderMapper extends BaseMapper<Orders> {
 
     List<GoodsCategroyReportsVO> getMarketingReports();
 
-    @Update("update orders set delivery_status=1 where id=#{orderId} and payment_id is not null")
+    @Update("update orders set delivery_status=1 where id=#{orderId} and payment_id is not null and status=1")
     int deliveryOrder(Long orderId);
 
     @Update("update orders set status=#{status} where id=#{orderId}")

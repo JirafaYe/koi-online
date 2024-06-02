@@ -89,6 +89,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
     @Override
     public boolean createSpu(SpuVO vo) {
         vo.setId(null);
+        vo.setAvailable(false);
         boolean res=false;
         vo = trimSpuVO(vo);
         if(vo!=null){
@@ -205,7 +206,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         }
         Category category = categoryMapper.selectById(spu.getCategoryId());
         Brand brand = brandMapper.selectById(spu.getBrandId());
-        List<Long> main = splitImagesId(spu.getContentImagesId());
+        List<Long> main = splitImagesId(spu.getMainImagesId());
         List<Long> content = splitImagesId(spu.getContentImagesId());
         HashSet<Long> images = new HashSet<>(main);
         images.addAll(content);
@@ -307,7 +308,7 @@ public class StandardProductUnitServiceImpl extends ServiceImpl<StandardProductU
         }
         Category category = categoryMapper.selectById(spu.getCategoryId());
         Brand brand = brandMapper.selectById(spu.getBrandId());
-        List<Long> main = splitImagesId(spu.getContentImagesId());
+        List<Long> main = splitImagesId(spu.getMainImagesId());
         List<Long> content = splitImagesId(spu.getContentImagesId());
         HashSet<Long> images = new HashSet<>(main);
         images.addAll(content);
