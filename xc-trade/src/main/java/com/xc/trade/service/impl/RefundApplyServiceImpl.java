@@ -90,7 +90,7 @@ public class RefundApplyServiceImpl extends ServiceImpl<RefundApplyMapper, Refun
         refundApply.setOrderDetailId(detail.getId());
         refundApply.setOrderId(order.getId());
         refundApply.setUserId(order.getUserId());
-        refundApply.setRefundAmount(detail.getFinalPrice());
+        refundApply.setRefundAmount(detail.getFinalPrice() * detail.getQuantity());
         refundApply.setRefundReason(refundFormDTO.getRefundReason());
         refundApply.setQuestionDesc(refundFormDTO.getQuestionDesc());
         refundApply.setRefundClassify(refundFormDTO.getRefundClassify());
